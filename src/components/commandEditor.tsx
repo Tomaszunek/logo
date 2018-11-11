@@ -4,7 +4,9 @@ export default class CommandEditor extends React.Component {
   public render() {
     return (
       <div className="commandEditor">
-        <textarea name="" id="">abc</textarea>
+        <div>
+          <div>abc</div>
+        </div>
       </div>
     );
   }
