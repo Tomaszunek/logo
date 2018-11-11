@@ -1,0 +1,40 @@
+.App {
+  text-align: center;
+  display: grid;
+  grid-template-columns: 3fr 4fr;
+  height: 100vh;
+  .editorLine {
+    background-color: gray;
+
+    .commandEditor {
+      width: 100%;
+      textarea {
+        margin: 10px;
+        margin-top: 20px;
+        width: 797px;
+        height: 111px;
+        border: 3px solid black;
+      }
+    }
+    .canvas {
+      resize: both;
+      overflow: auto;
+      width: 800px;
+      background-color: white;
+      margin: 10px; 
+      max-width: 822px;
+      canvas {
+        width: 800px;
+        height: 800px;
+      }
+
+      ::-webkit-scrollbar {
+        width: 0px;
+      }
+    }
+    
+  }
+  .commandListLine {
+    background-color: rgb(95, 95, 95);
+  }
+}
