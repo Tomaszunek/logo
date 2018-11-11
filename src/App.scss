@@ -1,7 +1,7 @@
 .App {
   text-align: center;
   display: grid;
-  grid-template-columns: 3fr 4fr;
+  grid-template-columns: 7fr 6fr;
   height: 100vh;
   .editorLine {
     background-color: gray;
@@ -19,12 +19,12 @@
     .canvas {
       resize: both;
       overflow: auto;
-      width: 800px;
+      width: 1000px;
       background-color: white;
       margin: 10px; 
-      max-width: 822px;
+      max-width: 1022px;
       canvas {
-        width: 800px;
+        width: 1000px;
         height: 800px;
       }
 
