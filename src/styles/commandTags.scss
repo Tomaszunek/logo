@@ -1,0 +1,27 @@
+.commandEditor {
+    width: 100%;    
+    .editorCont {
+        margin: 30px 10px;
+        height: 100px;
+        padding: 10px;
+        background-color: azure;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: flex-start;
+        align-content: space-evenly;
+        ul {
+            padding: 5px;
+            margin: 5px;
+
+            &.fr {
+                background-color: red;
+            }
+        }
+        .woda {
+            background-color: blue;
+            width: 100px;
+            margin: 10px;
+        }
+    }    
+  }
