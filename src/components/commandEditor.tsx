@@ -4,12 +4,15 @@ import ContentEditable from 'react-contenteditable';
 export default class CommandEditor extends React.Component<IProps, IState> { 
   constructor(props: any) {
     super(props)
-    this.state = {html: "<b>Hello <i>World</i></b>"};
+    this.state = {html: "<ul></ul>"};
   };
-
-  public handleChange = (evt:any) => {
-    this.setState({html: evt.target.value});
-  }
+ 
+  public handleChange = (evt:any) => {    
+    this.setState({
+      ...this.state,
+      html: evt.target.value      
+    })
+  } 
 
   public render() {
     return (
@@ -18,8 +21,10 @@ export default class CommandEditor extends React.Component<IProps, IState> {
             html={this.state.html}
             disabled={false}
             onChange={this.handleChange}
+            className="editorCont"            
           />
       </div>
+      
     );
   }  
 }
