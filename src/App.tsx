@@ -55,11 +55,12 @@ export default class App extends React.Component<App.IProps> {
     const activeCount = commands.length - commands.filter((command) => command.value).length;
     const filteredTodos = filter ? commands.filter(FILTER_FUNCTIONS[filter]) : commands;
     const completedCount = commands.reduce((count, todo) => (todo.value ? count + 1 : count), 0);
-    console.log(commands, actions, filter, activeCount, filteredTodos, completedCount);
+    const arr = [commands, actions, filter, activeCount, filteredTodos, completedCount];
+    console.log(arr);
     return (
       <div className="App">
         <div className="editorLine">
-          <CommandEditor commands={commands}/>
+          <CommandEditor commands={commands} actions={actions}/>
           <Canvas/>
         </div>
         <div className="commandListLine">

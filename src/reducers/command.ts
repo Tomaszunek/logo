@@ -19,6 +19,17 @@ const initialState: RootState.CommandState = [
 export const commandReducer = handleActions<RootState.CommandState, ICommandModel>(
   {
     [CommandActions.Type.ADD_TODO]: (state, action) => {
+      console.log(action);
+      if (action.payload) {
+        return [
+          ...state,
+          {
+            id: 10,
+            name: 'fr',
+            value: 100
+          }          
+        ];
+      }
       return state;
     },
     [CommandActions.Type.DELETE_TODO]: (state, action) => {
