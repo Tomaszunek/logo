@@ -1,8 +1,10 @@
+import { CommandTypes } from './CommandTypes';
+
 export interface ICommandModel {
     id: number;
-    name: string;
+    name: CommandTypes;
     value: number;
-    command?: ICommandModel;
+    commands?: Array<ICommandModel>;
   }
   
   export namespace CommandModel {

@@ -2,16 +2,17 @@ import { handleActions } from 'redux-actions';
 import { RootState } from './state';
 import { CommandActions } from '../actions'
 import { ICommandModel } from '../models';
+import { CommandTypes } from 'src/models/CommandTypes';
 
 const initialState: RootState.CommandState = [
   {
     id: 1,
-    name: 'fr',
+    name: CommandTypes.fd,
     value: 100
   },
   {
     id: 2,
-    name: 'rl',
+    name: CommandTypes.lt,
     value: 8
   }
 ];
@@ -25,7 +26,7 @@ export const commandReducer = handleActions<RootState.CommandState, ICommandMode
           ...state,
           {
             id: 10,
-            name: 'fr',
+            name: CommandTypes.fd,
             value: 100
           }          
         ];
