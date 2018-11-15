@@ -1,6 +1,6 @@
 .commandEditor {
     width: 100%;    
-    .editorCont {
+    ul.editorCont {
         margin: 30px 10px;
         height: 100px;
         padding: 10px;
@@ -9,19 +9,19 @@
         flex-wrap: wrap;
         justify-content: flex-start;
         align-items: flex-start;
-        align-content: space-evenly;
-        ul {
-            padding: 5px;
+        align-content: space-evenly;        
+        list-style: none;
+        li {
+            background-color: green;
             margin: 5px;
-
-            &.fr {
+            padding: 5px;
+            border-radius: 15px;
+            &.fd {
                 background-color: red;
             }
-        }
-        .woda {
-            background-color: blue;
-            width: 100px;
-            margin: 10px;
+            &.lt {
+                background-color: blue;
+            }
         }
     }    
   }

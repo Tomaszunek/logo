@@ -1,29 +1,76 @@
-
+import { Color } from 'csstype';
+import logoTurtle from '../logoTurtle.png';
 
 export class Turtle {
-    public turtle: ITurtleInstance;
-    constructor(turtle: ITurtleInstance) {        
-        this.turtle = turtle;
-    }
+    public x: number;
+    public y: number;
+    public homeX: number;
+    public homeY: number;
 
-    public drawLine = (canvas:HTMLCanvasElement, x:number, y:number) => {
-        const ctx = canvas.getContext("2d");
+    public dir: number;
+    public strokeColor: Color;
+    public strokeWeight: number;
+    public pen: boolean;
+
+    public canvas: HTMLCanvasElement | null;
+    constructor(turtle: ITurtleInstance) {        
+        this.x = turtle.homeX;
+        this.y = turtle.homeY;
+        this.homeX = turtle.homeX;
+        this.homeY = turtle.homeY;
+        this.canvas = turtle.canvas;
+        this.dir = turtle.dir;
+        this.strokeColor = turtle.strokeColor;
+        this.strokeWeight = turtle.strokeWeight;
+        this.pen = turtle.pen;
+    }    
+
+    public drawLine = (x:number, y:number) => {
+        if(this.canvas === null) {return};    
+        const ctx = this.canvas.getContext("2d");
         let newX: number;
         let newY: number;
         if(ctx === null) {return};      
         ctx.beginPath();
-        ctx.moveTo(this.turtle.currentX, this.turtle.currentY);
-        
-        newX = x + this.turtle.currentX;
-        newY = y + this.turtle.currentY;
+        ctx.moveTo(this.x, this.y);        
+        newX = x + this.x;
+        newY = y + this.y;
         ctx.lineTo(newX, newY);        
         ctx.stroke();
-        this.turtle.currentX = newX;
-        this.turtle.currentY = newY;
+        this.x = newX;
+        this.y = newY;
+    }
+
+    public drawTurtle = (x:number, y:number) => {
+        if(this.canvas === null) {return};    
+        const ctx = this.canvas.getContext("2d");
+        if(ctx === null) {return}; 
+        const baseImage = new Image();
+        baseImage.src = logoTurtle;
+        baseImage.onload = () => {
+            ctx.drawImage(baseImage, x, y); 
+        }  
+    }
+
+    public clearCanvas = () => {
+        if(this.canvas === null) {return};    
+        const ctx = this.canvas.getContext("2d");
+        if(ctx === null) {return}; 
+        ctx.clearRect(0, 0, 800, 800);
+    }
+
+    public home = () => {
+        this.x = this.homeX;
+        this.y = this.homeY;
     }
 };
 
 export interface ITurtleInstance {
-    currentX: number,
-    currentY: number
+    canvas:HTMLCanvasElement | null,
+    homeX: number,
+    homeY: number,
+    dir: number,
+    strokeColor: Color,
+    strokeWeight: number,
+    pen: boolean
 }

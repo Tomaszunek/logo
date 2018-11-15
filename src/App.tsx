@@ -2,6 +2,7 @@ import * as React from 'react';
 import Canvas from './components/canvas';
 import CommandEditor from './components/commandEditor';
 import CommandList from './components/commandList';
+import CommandInput from './components/commandInput';
 import { RouteComponentProps } from 'react-router';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
@@ -61,6 +62,7 @@ export default class App extends React.Component<App.IProps> {
       <div className="App">
         <div className="editorLine">
           <CommandEditor commands={commands} actions={actions}/>
+          <CommandInput commands={commands} actions={actions}/>
           <Canvas commands={commands} actions={actions}/>
         </div>
         <div className="commandListLine">

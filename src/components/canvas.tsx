@@ -10,21 +10,28 @@ export default class Canvas extends React.Component<IProps, IState> {
   constructor(props: any) {
     super(props);
     this.turtle = new Turtle({
-      currentX: 0,
-      currentY: 0})
+      canvas: null,
+      homeX: 0,
+      homeY: 0,
+      dir: 0,
+      strokeColor: '#ffffff',
+      strokeWeight: 1,
+      pen: true
+    })
   };
 
-  public drawLine() {
-    if(this.canvas === null) {return};
-    const ctx = this.canvas.getContext("2d");
-    if(ctx === null) {return};    
-    this.turtle.drawLine(this.canvas, 100, 200);
-    this.turtle.drawLine(this.canvas, 300, 450);
-    this.turtle.drawLine(this.canvas, 50, 50);
-    this.turtle.drawLine(this.canvas, -250, -650);
+  public drawLine() { 
+    this.turtle.drawLine(100, 200);
+    this.turtle.drawLine(300, 450);
+    this.turtle.drawLine(50, 50);
+    this.turtle.drawLine(-250, -650);
+    this.turtle.drawTurtle(10, 10);
+    this.turtle.clearCanvas();
+    this.turtle.drawTurtle(50, 50);
   }
 
   public componentDidMount() {
+    this.turtle.canvas = this.canvas;
     this.drawLine()
   }
 

@@ -20,15 +20,9 @@ const initialState: RootState.CommandState = [
 export const commandReducer = handleActions<RootState.CommandState, ICommandModel>(
   {
     [CommandActions.Type.ADD_TODO]: (state, action) => {
-      console.log(action);
       if (action.payload) {
-        return [
-          ...state,
-          {
-            id: 10,
-            name: CommandTypes.fd,
-            value: 100
-          }          
+        return [{...action.payload},
+          ...state        
         ];
       }
       return state;
