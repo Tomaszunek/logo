@@ -11,23 +11,28 @@ export class Parser {
 
     public parse(cb: (text: string) => void) {
         const array = this.text.split(' ');
-        const commandArray = new Array<ICommandModel>();        
-        while(array.length > this.index) {
+        const commandArray = new Array<ICommandModel>();
+        let someErrors:boolean = false;       
+        while(array.length > this.index && !someErrors) {
             const cmd = CommandTypes[array[this.index]];
-            if(cmd) {
+            if(cmd && array[this.index + 1]) {
                 const command: ICommandModel = {
-                    id: Date.now(),
+                    id: Math.floor(Math.random() * (21000000 - 0 + 1)) + 0,
                     name: cmd,
                     value: Number(array[++this.index])                
                 }         
                 commandArray.push(command);
+                this.index++;
             } else {
-                cb(array[this.index]);
-            }
-            this.index++;
+                someErrors = true;                
+            }            
         }
+        if(!someErrors) {
+            return commandArray;
+        } else {
+            cb(array[this.index]);
+            return [];
+        }        
         
-        
-        return commandArray;
     }
 } 

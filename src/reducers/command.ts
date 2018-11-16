@@ -12,7 +12,7 @@ const initialState: RootState.CommandState = [
   },
   {
     id: 2,
-    name: CommandTypes.lt,
+    name: CommandTypes.tl,
     value: 8
   }
 ];

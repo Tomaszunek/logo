@@ -1,3 +1,11 @@
+.commandInput {
+    width: calc(100% - 25px);
+    font-size: 2em;
+    margin: 10px;
+    border-radius: 10px;
+    border: 2px solid snow;
+}
+
 .commandEditor {
     width: 100%;    
     ul.editorCont {
@@ -25,3 +33,20 @@
         }
     }    
   }
+
+  .commendList {
+      background-color:aliceblue;
+      margin: 10px;
+      margin-top: 30px;
+
+      div {
+        background-color: green;
+        &.fd {
+            background-color: red;
+        }
+        &.lt {
+            background-color: blue;
+        }
+    }
+  }
+

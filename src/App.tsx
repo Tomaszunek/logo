@@ -26,17 +26,18 @@ const FILTER_FUNCTIONS: Record<CommandModel.Filter, (todo: ICommandModel) => boo
 export namespace App {
   export interface IProps extends RouteComponentProps<void> {
     commands: RootState.CommandState;
+    descriptions: RootState.CommandDescriptionState;
     actions: CommandActions;
     filter: CommandModel.Filter;
   }
 }
 
 @connect(
-  (state: IRootState, ownProps): Pick<App.IProps, 'commands' | 'filter'> => {
+  (state: IRootState, ownProps): Pick<App.IProps, 'commands' | 'descriptions' | 'filter'> => {
     const hash = ownProps.location && ownProps.location.hash.replace('#', '');
     const filter = FILTER_VALUES.find((value) => value === hash) || CommandModel.Filter.SHOW_ALL;
-    return { commands: state.commands, filter };
-  },
+    return { commands: state.commands, descriptions: state.descriptions, filter };
+  },  
   (dispatch: Dispatch): Pick<App.IProps, 'actions'> => ({
     actions: bindActionCreators(omit(CommandActions, 'Type'), dispatch)
   })
@@ -52,11 +53,11 @@ export default class App extends React.Component<App.IProps> {
     this.props.history.push(`#${filter}`);
   }
   public render() {
-    const { commands, actions, filter } = this.props;
+    const { descriptions, commands, actions, filter } = this.props;
     const activeCount = commands.length - commands.filter((command) => command.value).length;
     const filteredTodos = filter ? commands.filter(FILTER_FUNCTIONS[filter]) : commands;
     const completedCount = commands.reduce((count, todo) => (todo.value ? count + 1 : count), 0);
-    const arr = [commands, actions, filter, activeCount, filteredTodos, completedCount];
+    const arr = [commands, actions, filter, activeCount, filteredTodos, completedCount, descriptions];
     console.log(arr);
     return (
       <div className="App">
@@ -66,7 +67,7 @@ export default class App extends React.Component<App.IProps> {
           <Canvas commands={commands} actions={actions}/>
         </div>
         <div className="commandListLine">
-          <CommandList commands={commands} actions={actions}/>
+          <CommandList commands={commands} descriptions={descriptions} actions={actions}/>
         </div>
       </div>
     );

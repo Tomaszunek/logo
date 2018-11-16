@@ -12,7 +12,7 @@ export default class CommandInput extends React.Component<IProps, IState> {
 
   public render() {
     return (
-      <input ref={elem => this.input = elem} onKeyPress={this.onInputChange}/>
+      <input className="commandInput" autoFocus={true} ref={elem => this.input = elem} onKeyPress={this.onInputChange}/>
     );
   }  
 
@@ -23,10 +23,15 @@ export default class CommandInput extends React.Component<IProps, IState> {
   private onInputChange = (e: React.KeyboardEvent) => {
     if(e.key === 'Enter'){
       const parser = new Parser((e.target as HTMLInputElement).value).parse(this.onError);
-      for(const item of parser) {
-        this.props.actions.addTodo(item);
-      }
-      console.log(parser);
+      if(parser.length > 0) {
+        for(const item of parser) {
+          this.props.actions.addTodo(item);
+        }
+        if(this.input === null) {return;}
+        this.input.value = '';
+      } else {
+        console.log(parser);
+      } 
     }   
   }
 

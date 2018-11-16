@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ICommandModel } from 'src/models';
+import { ICommandModel, ICommandDescription } from 'src/models';
 import { CommandActions } from 'src/actions';
 
 export default class CommandList extends React.Component<IProps, IState> {
@@ -11,9 +11,10 @@ export default class CommandList extends React.Component<IProps, IState> {
   public displayCommands = () => {
     const { commands } = this.props;
     return commands.map((item: ICommandModel) => {
+      const itemDesc = this.props.descriptions[item.name];
       return (
         <div className={item.name} key={item.id}>
-          {item.name} | {item.value}
+          {itemDesc.name} | {item.value}
         </div>
       )
     });
@@ -21,7 +22,7 @@ export default class CommandList extends React.Component<IProps, IState> {
   
   public render() {
     return (
-      <div className="CommendList">
+      <div className="commendList">
         {this.displayCommands()}
       </div>
     );
@@ -32,6 +33,7 @@ export default class CommandList extends React.Component<IProps, IState> {
 interface IProps {
   text?: string | null
   commands: Array<ICommandModel>
+  descriptions: Array<ICommandDescription>
   actions: CommandActions
 }
 

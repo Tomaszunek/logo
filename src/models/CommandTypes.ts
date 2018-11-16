@@ -1,8 +1,8 @@
 export enum CommandTypes {
     fd = 'fd',
     bk = 'bk',
-    rt = 'rt',
-    lt = 'lt',
+    tr = 'tr',
+    tl = 'tl',
     repeat = 'repeat',
     hideTurtle = 'hideTurtle',
     showTurtle = 'showTurtle',
