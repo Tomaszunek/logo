@@ -2,10 +2,12 @@ import * as React from 'react';
 import { ICommandModel } from 'src/models';
 import { CommandActions } from 'src/actions';
 import { Turtle } from '../utils/turtle';
+import { Caller } from 'src/utils/caller';
 
 
 export default class Canvas extends React.Component<IProps, IState> {
   public canvas: HTMLCanvasElement | null;
+  public caller: Caller;
   public turtle: Turtle;
   constructor(props: any) {
     super(props);
@@ -18,21 +20,18 @@ export default class Canvas extends React.Component<IProps, IState> {
       strokeWeight: 1,
       pen: true
     })
+    this.caller = new Caller(this.turtle);
   };
-
-  public drawLine() { 
-    this.turtle.drawLine(100, 200);
-    this.turtle.drawLine(300, 450);
-    this.turtle.drawLine(50, 50);
-    this.turtle.drawLine(-250, -650);
-    this.turtle.drawTurtle(10, 10);
-    this.turtle.clearCanvas();
-    this.turtle.drawTurtle(50, 50);
-  }
+  
 
   public componentDidMount() {
     this.turtle.canvas = this.canvas;
-    this.drawLine()
+    const { commands } = this.props;
+    commands.forEach((command: ICommandModel) => {
+      console.log(command, this.caller);
+      this.caller[command.name](command.value);
+    });
+    this.turtle.drawTurtle();
   }
 
   public render() {

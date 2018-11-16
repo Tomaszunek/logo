@@ -41,15 +41,19 @@ export class Turtle {
         this.y = newY;
     }
 
-    public drawTurtle = (x:number, y:number) => {
+    public drawTurtle = () => {
         if(this.canvas === null) {return};    
         const ctx = this.canvas.getContext("2d");
         if(ctx === null) {return}; 
         const baseImage = new Image();
         baseImage.src = logoTurtle;
         baseImage.onload = () => {
-            ctx.drawImage(baseImage, x, y); 
+            ctx.drawImage(baseImage, this.x - 40, this.y - 40); 
         }  
+    }
+
+    public rotate = (dir:number) => {
+        this.dir = this.dir + dir; 
     }
 
     public clearCanvas = () => {
@@ -62,6 +66,7 @@ export class Turtle {
     public home = () => {
         this.x = this.homeX;
         this.y = this.homeY;
+        this.dir = 0;
     }
 };
 
