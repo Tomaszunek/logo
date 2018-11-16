@@ -3,5 +3,5 @@ export interface ICommandDescription {
     name: string;
     long: string;
     description: string;
-  }
+}
   

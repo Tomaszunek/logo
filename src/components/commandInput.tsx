@@ -7,8 +7,7 @@ export default class CommandInput extends React.Component<IProps, IState> {
   public input: HTMLInputElement | null;
   constructor(props: IProps) {
     super(props);
-  };
-  
+  };  
 
   public render() {
     return (
@@ -33,9 +32,7 @@ export default class CommandInput extends React.Component<IProps, IState> {
         console.log(parser);
       } 
     }   
-  }
-
-  
+  }  
 }
 
 interface IProps {
