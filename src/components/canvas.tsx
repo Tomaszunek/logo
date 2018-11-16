@@ -1,11 +1,12 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { ICommandModel } from 'src/models';
 import { CommandActions } from 'src/actions';
 import { Turtle } from '../utils/turtle';
 import { Caller } from 'src/utils/caller';
 
 
-export default class Canvas extends React.Component<IProps, IState> {
+class Canvas extends React.Component<IProps, IState> {
   public canvas: HTMLCanvasElement | null;
   public caller: Caller;
   public turtle: Turtle;
@@ -13,8 +14,8 @@ export default class Canvas extends React.Component<IProps, IState> {
     super(props);
     this.turtle = new Turtle({
       canvas: null,
-      homeX: 0,
-      homeY: 0,
+      homeX: 100,
+      homeY: 100,
       dir: 0,
       strokeColor: '#ffffff',
       strokeWeight: 1,
@@ -28,11 +29,19 @@ export default class Canvas extends React.Component<IProps, IState> {
     this.turtle.canvas = this.canvas;
     const { commands } = this.props;
     commands.forEach((command: ICommandModel) => {
-      console.log(command, this.caller);
       this.caller[command.name](command.value);
     });
     this.turtle.drawTurtle();
   }
+
+  public componentWillReceiveProps(nextProps: IProps){
+    this.turtle.clearCanvas();
+    const { commands } = nextProps;
+    commands.forEach((command: ICommandModel) => {
+      this.caller[command.name](command.value);
+    });
+    this.turtle.drawTurtle();  
+  } 
 
   public render() {
     return (
@@ -42,6 +51,12 @@ export default class Canvas extends React.Component<IProps, IState> {
     );
   }
 }
+
+function mapStateToProps(props: IProps){
+  return props;
+}
+
+export default connect(mapStateToProps)(Canvas);
 
 interface IProps {
   text?: string | null

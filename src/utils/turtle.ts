@@ -61,6 +61,7 @@ export class Turtle {
         const ctx = this.canvas.getContext("2d");
         if(ctx === null) {return}; 
         ctx.clearRect(0, 0, 800, 800);
+        this.home();
     }
 
     public home = () => {
