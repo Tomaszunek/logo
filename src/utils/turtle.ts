@@ -6,8 +6,8 @@ export class Turtle {
     public y: number;
     public homeX: number;
     public homeY: number;
-
     public dir: number;
+
     public strokeColor: Color;
     public strokeWeight: number;
     public pen: boolean;
