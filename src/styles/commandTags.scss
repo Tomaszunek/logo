@@ -1,0 +1,52 @@
+.commandInput {
+    width: calc(100% - 25px);
+    font-size: 2em;
+    margin: 10px;
+    border-radius: 10px;
+    border: 2px solid snow;
+}
+
+.commandEditor {
+    width: 100%;    
+    ul.editorCont {
+        margin: 30px 10px;
+        height: 100px;
+        padding: 10px;
+        background-color: azure;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: flex-start;
+        align-content: space-evenly;        
+        list-style: none;
+        li {
+            background-color: green;
+            margin: 5px;
+            padding: 5px;
+            border-radius: 15px;
+            &.fd {
+                background-color: red;
+            }
+            &.lt {
+                background-color: blue;
+            }
+        }
+    }    
+  }
+
+  .commendList {
+      background-color:aliceblue;
+      margin: 10px;
+      margin-top: 30px;
+
+      div {
+        background-color: green;
+        &.fd {
+            background-color: red;
+        }
+        &.lt {
+            background-color: blue;
+        }
+    }
+  }
+

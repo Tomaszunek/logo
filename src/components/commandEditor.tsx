@@ -1,31 +1,39 @@
 import * as React from 'react';
-import ContentEditable from 'react-contenteditable';
+import { ICommandModel } from 'src/models';
+import { CommandActions } from 'src/actions';
 
-export default class CommandEditor extends React.Component<IProps, IState> { 
+export default class CommandEditor extends React.Component<IProps, IState> {  
   constructor(props: any) {
-    super(props)
-    this.state = {html: "<b>Hello <i>World</i></b>"};
-  };
+    super(props)    
+  }; 
+  
 
-  public handleChange = (evt:any) => {
-    this.setState({html: evt.target.value});
-  }
+  public displayCommands = (commands: Array<ICommandModel>) => {
+    return commands.map((item:ICommandModel) => {
+      const { name, value, id } = item;
+      return (
+        <li key={id} attr-n={id} className={name}>
+          {name} {value}
+        </li>
+      )    
+    })
+  }  
 
   public render() {
     return (
       <div className="commandEditor">
-          <ContentEditable
-            html={this.state.html}
-            disabled={false}
-            onChange={this.handleChange}
-          />
-      </div>
+        <ul className="editorCont">
+          {this.displayCommands(this.props.commands)}
+        </ul>
+      </div>      
     );
   }  
 }
 
 interface IProps {
   text?: string | null
+  commands: Array<ICommandModel>
+  actions: CommandActions
 }
 
 interface IState {
