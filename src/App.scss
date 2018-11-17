@@ -1,4 +1,5 @@
 @import "./styles/commandTags.scss";
+@import "./styles/popup.scss";
 
 .App {
   text-align: center;
@@ -7,7 +8,7 @@
   height: 100vh;
   .editorLine {
     background-color: gray;
-
+    position: relative;
     
     .canvas {
       resize: both;

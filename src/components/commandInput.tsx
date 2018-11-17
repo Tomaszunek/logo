@@ -2,21 +2,56 @@ import * as React from 'react';
 import { ICommandModel } from 'src/models';
 import { CommandActions } from 'src/actions';
 import { Parser } from 'src/utils/parser';
+import Popup from './popup';
 
 export default class CommandInput extends React.Component<IProps, IState> { 
   public input: HTMLInputElement | null;
   constructor(props: IProps) {
     super(props);
+    this.state = {
+      showPopup: false,
+      popupText: ''
+    }
   };  
 
   public render() {
-    return (
-      <input className="commandInput" autoFocus={true} ref={elem => this.input = elem} onKeyPress={this.onInputChange}/>
+    const { showPopup } = this.state;
+    console.log( showPopup );
+    return (      
+      <>        
+        <input className="commandInput" autoFocus={true} 
+          ref={elem => this.input = elem} 
+          onKeyPress={this.onInputChange}
+        />        
+        {this.state.showPopup ? 
+          <Popup
+            massage={this.state.popupText}
+            closePopup={this.togglePopup}
+          />
+          : null
+        }
+      </>
     );
   }  
 
   public onError = (text: string) => {
     console.log(text)
+    this.setState({
+      showPopup: true,
+      popupText: text
+    })
+    setTimeout(() => {
+      this.setState({
+        showPopup: false,
+        popupText: text
+      })
+    }, 3000);
+  }
+
+  public togglePopup = () => {
+    this.setState({
+      showPopup: !this.state.showPopup
+    });
   }
 
   private onInputChange = (e: React.KeyboardEvent) => {
@@ -43,7 +78,8 @@ interface IProps {
   }
   
   interface IState {
-    html: string
+    showPopup: boolean,
+    popupText: string
   }
   
   
