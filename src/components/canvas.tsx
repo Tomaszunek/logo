@@ -19,7 +19,8 @@ class Canvas extends React.Component<IProps, IState> {
       dir: 0,
       strokeColor: '#ffffff',
       strokeWeight: 1,
-      pen: true
+      pen: true,
+      visible: true
     })
     this.caller = new Caller(this.turtle);
   };

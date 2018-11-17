@@ -14,6 +14,11 @@ const initialState: RootState.CommandState = [
     id: 2,
     name: CommandTypes.tl,
     value: 8
+  },
+  {
+    id: 3,
+    name: CommandTypes.fd,
+    value: 100
   }
 ];
 
@@ -21,8 +26,9 @@ export const commandReducer = handleActions<RootState.CommandState, ICommandMode
   {
     [CommandActions.Type.ADD_TODO]: (state, action) => {
       if (action.payload) {
-        return [{...action.payload},
-          ...state        
+        return [
+          ...state,
+          {...action.payload}                  
         ];
       }
       return state;
