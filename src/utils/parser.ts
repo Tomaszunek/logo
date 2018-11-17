@@ -16,9 +16,9 @@ export class Parser {
         const commandArray = new Array<ICommandModel>();
         let someErrors:boolean = false;       
         while(array.length > this.index && !someErrors) {
-            const cmd = CommandTypes[array[this.index]];
-            const argCount = this.commandDescriptions[cmd].argCount;
+            const cmd = CommandTypes[array[this.index]];            
             if(cmd && array[this.index + 1]) {
+                const argCount = this.commandDescriptions[cmd].argCount;
                 let command: ICommandModel = {
                     id: 0, value: 0, name
                 };
