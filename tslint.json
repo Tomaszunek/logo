@@ -5,14 +5,16 @@
     "no-namespace": false,
     "ordered-imports": [false],
     "object-literal-sort-keys": [false],
-    "array-type": [false, "array-for-simple-types"]
+    "array-type": [false, "array-for-simple-types"],
+    "jsx-no-lambda": false
   },
   "jsRules": {
     "no-console": false,
     "no-namespace": false,
     "ordered-imports": [false],
     "object-literal-sort-keys": [false],
-    "array-type": [false, "array-for-simple-types"]
+    "array-type": [false, "array-for-simple-types"],
+    "jsx-no-lambda": false
   },
   "linterOptions": {
     "exclude": [

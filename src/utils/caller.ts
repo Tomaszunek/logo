@@ -21,10 +21,10 @@ export class Caller {
         const caller = new Caller(this.turtle);        
         return caller;
     }
-    public hideTurtle = (dir: number) => {
+    public hideturtle = (dir: number) => {
         return 0;
     }
-    public showTurtle = (dir: number) => {
+    public showturtle = (dir: number) => {
         return 0;
     }
     public penup = (dir: number) => {
