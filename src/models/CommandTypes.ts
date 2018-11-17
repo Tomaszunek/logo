@@ -1,12 +1,19 @@
 export enum CommandTypes {
     fd = 'fd',
     bk = 'bk',
-    tr = 'tr',
     tl = 'tl',
+    tr = 'tr',
     repeat = 'repeat',
-    hideTurtle = 'hideTurtle',
-    showTurtle = 'showTurtle',
+    hideturtle = 'hideturtle',
+    showturtle = 'showturtle',
     penup = 'penup',
-    pendown = 'pendown'
+    pendown = 'pendown',
+    setpc = 'setpc',
+    setbc = 'setbc',
+    to = 'to',
+    save = 'save',
+    load = 'load',
+    home = 'home',
+    setpos = 'setpos'
 }
   

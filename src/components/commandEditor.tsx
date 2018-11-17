@@ -5,15 +5,20 @@ import { CommandActions } from 'src/actions';
 export default class CommandEditor extends React.Component<IProps, IState> {  
   constructor(props: any) {
     super(props)    
-  }; 
+  };   
   
 
   public displayCommands = (commands: Array<ICommandModel>) => {
     return commands.map((item:ICommandModel) => {
       const { name, value, id } = item;
       return (
-        <li key={id} attr-n={id} className={name}>
-          {name} {value}
+        <li key={id} attr-n={id} className={name} onClick={(e) => this.removeCommand(e, id)}>
+          <div className="tagName" >
+            {name} {value}
+          </div>
+          <div className="removeButton">
+            x
+          </div>
         </li>
       )    
     })
@@ -27,7 +32,12 @@ export default class CommandEditor extends React.Component<IProps, IState> {
         </ul>
       </div>      
     );
-  }  
+  } 
+  
+  private removeCommand = (e: React.MouseEvent<HTMLLIElement>, id: number) => {
+    console.log(id, e);
+    this.props.actions.deleteCommand(id);
+  }
 }
 
 interface IProps {

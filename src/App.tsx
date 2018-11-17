@@ -63,7 +63,7 @@ export default class App extends React.Component<App.IProps> {
       <div className="App">
         <div className="editorLine">
           <CommandEditor commands={commands} actions={actions}/>
-          <CommandInput commands={commands} actions={actions}/>
+          <CommandInput commands={commands} actions={actions} descriptions={descriptions}/>
           <Canvas commands={commands} actions={actions}/>
         </div>
         <div className="commandListLine">

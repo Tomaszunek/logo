@@ -21,10 +21,10 @@ export default class CommandInput extends React.Component<IProps, IState> {
 
   private onInputChange = (e: React.KeyboardEvent) => {
     if(e.key === 'Enter'){
-      const parser = new Parser((e.target as HTMLInputElement).value).parse(this.onError);
+      const parser = new Parser((e.target as HTMLInputElement).value, this.props.descriptions).parse(this.onError);
       if(parser.length > 0) {
         for(const item of parser) {
-          this.props.actions.addTodo(item);
+          this.props.actions.addCommand(item);
         }
         if(this.input === null) {return;}
         this.input.value = '';
@@ -39,6 +39,7 @@ interface IProps {
     text?: string | null
     commands: Array<ICommandModel>
     actions: CommandActions
+    descriptions: any
   }
   
   interface IState {

@@ -14,23 +14,34 @@ const initialState: RootState.CommandState = [
     id: 2,
     name: CommandTypes.tl,
     value: 8
+  },
+  {
+    id: 3,
+    name: CommandTypes.fd,
+    value: 100
+  },
+  {
+    id: 4,
+    name: CommandTypes.hideturtle
   }
 ];
 
 export const commandReducer = handleActions<RootState.CommandState, ICommandModel>(
   {
-    [CommandActions.Type.ADD_TODO]: (state, action) => {
+    [CommandActions.Type.ADD_COMMAND]: (state, action) => {      
+      const id = state[state.length - 1].id + 1;
       if (action.payload) {
-        return [{...action.payload},
-          ...state        
+        return [
+          ...state,
+          {...action.payload, id}                  
         ];
       }
       return state;
     },
-    [CommandActions.Type.DELETE_TODO]: (state, action) => {
+    [CommandActions.Type.DELETE_COMMAND]: (state, action) => {
       return state.filter((todo) => todo.id !== (action.payload as any));
     },
-    [CommandActions.Type.EDIT_TODO]: (state, action) => {
+    [CommandActions.Type.EDIT_COMMAND]: (state, action) => {
       return state.map((todo) => {
         if (!todo || !action || !action.payload) {
           return todo;
@@ -38,7 +49,7 @@ export const commandReducer = handleActions<RootState.CommandState, ICommandMode
         return (todo.id || 0) === action.payload.id ? { ...todo, text: action.payload.name } : todo;
       });
     },
-    [CommandActions.Type.COMPLETE_TODO]: (state, action) => {
+    [CommandActions.Type.COMPLETE_COMMAND]: (state, action) => {
       return state.map((todo) =>
         todo.id === (action.payload as any) ? { ...todo, completed: !todo.value } : todo
       );

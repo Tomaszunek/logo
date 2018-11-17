@@ -11,6 +11,7 @@ export class Turtle {
     public strokeColor: Color;
     public strokeWeight: number;
     public pen: boolean;
+    public visible: boolean;
 
     public canvas: HTMLCanvasElement | null;
     constructor(turtle: ITurtleInstance) {        
@@ -23,9 +24,10 @@ export class Turtle {
         this.strokeColor = turtle.strokeColor;
         this.strokeWeight = turtle.strokeWeight;
         this.pen = turtle.pen;
+        this.visible = turtle.visible;
     }    
 
-    public drawLine = (x:number, y:number) => {
+    public drawLine = (dist :number) => {
         if(this.canvas === null) {return};    
         const ctx = this.canvas.getContext("2d");
         let newX: number;
@@ -33,27 +35,33 @@ export class Turtle {
         if(ctx === null) {return};      
         ctx.beginPath();
         ctx.moveTo(this.x, this.y);        
-        newX = x + this.x;
-        newY = y + this.y;
+        this.x = newX = this.x + (Math.cos(this.dir) * dist);
+        this.y = newY = this.y + (Math.sin(this.dir) * dist);
         ctx.lineTo(newX, newY);        
         ctx.stroke();
-        this.x = newX;
-        this.y = newY;
+        ctx.closePath();
     }
 
     public drawTurtle = () => {
         if(this.canvas === null) {return};    
         const ctx = this.canvas.getContext("2d");
-        if(ctx === null) {return}; 
+        if(ctx === null) {return};
+        if(this.visible === false) {return;}
+        ctx.save();
+        ctx.translate(-12,32);
+        ctx.rotate(this.dir * Math.PI/180.0 );
+        ctx.translate(12,-32); 
         const baseImage = new Image();
         baseImage.src = logoTurtle;
         baseImage.onload = () => {
-            ctx.drawImage(baseImage, this.x - 40, this.y - 40); 
-        }  
+            ctx.drawImage(baseImage, this.x + 12, this.y - 32); 
+            ctx.restore(); 
+        } 
+        
     }
 
     public rotate = (dir:number) => {
-        this.dir = this.dir + dir; 
+        this.dir += dir;
     }
 
     public clearCanvas = () => {
@@ -61,6 +69,15 @@ export class Turtle {
         const ctx = this.canvas.getContext("2d");
         if(ctx === null) {return}; 
         ctx.clearRect(0, 0, 800, 800);
+        this.home();
+    }
+
+    public setPen = (isDrawing: boolean) => {
+        this.pen = isDrawing;
+    }
+
+    public setVisible = (isVisible: boolean) => {
+        this.visible = isVisible;
     }
 
     public home = () => {
@@ -77,5 +94,6 @@ export interface ITurtleInstance {
     dir: number,
     strokeColor: Color,
     strokeWeight: number,
-    pen: boolean
+    pen: boolean,
+    visible: boolean
 }
