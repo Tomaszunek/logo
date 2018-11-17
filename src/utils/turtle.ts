@@ -37,7 +37,6 @@ export class Turtle {
         ctx.moveTo(this.x, this.y);        
         this.x = newX = this.x + (Math.cos(this.dir) * dist);
         this.y = newY = this.y + (Math.sin(this.dir) * dist);
-        console.log(this.dir, Math.cos(this.dir), (Math.cos(this.dir) * dist), (Math.sin(this.dir) * dist), Math.sin(this.dir),  newX, newY);
         ctx.lineTo(newX, newY);        
         ctx.stroke();
         ctx.closePath();

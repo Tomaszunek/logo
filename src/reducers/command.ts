@@ -24,11 +24,12 @@ const initialState: RootState.CommandState = [
 
 export const commandReducer = handleActions<RootState.CommandState, ICommandModel>(
   {
-    [CommandActions.Type.ADD_TODO]: (state, action) => {
+    [CommandActions.Type.ADD_TODO]: (state, action) => {      
+      const id = state[state.length - 1].id + 1;
       if (action.payload) {
         return [
           ...state,
-          {...action.payload}                  
+          {...action.payload, id}                  
         ];
       }
       return state;

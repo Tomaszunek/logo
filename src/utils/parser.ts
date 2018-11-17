@@ -17,7 +17,7 @@ export class Parser {
             const cmd = CommandTypes[array[this.index]];
             if(cmd && array[this.index + 1]) {
                 const command: ICommandModel = {
-                    id: Math.floor(Math.random() * (21000000 - 0 + 1)) + 0,
+                    id: 0,
                     name: cmd,
                     value: Number(array[++this.index])                
                 }         
