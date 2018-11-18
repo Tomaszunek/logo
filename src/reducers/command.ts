@@ -60,9 +60,25 @@ const initialState: RootState.CommandState = [
       value: 100
     },
     {
-      id: 12,
-      name: CommandTypes.fd,
-      value: 100
+      id: 14,
+      name: CommandTypes.repeat,
+      value: 4,
+      commands: [{
+        id: 15,
+        name: CommandTypes.fd,
+        value: 100
+      },
+      {
+        id: 16,
+        name: CommandTypes.fd,
+        value: 100
+      },
+      {
+        id: 17,
+        name: CommandTypes.fd,
+        value: 100
+      },
+      ]
     },
     ]
   },

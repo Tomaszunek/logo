@@ -63,7 +63,10 @@
       margin: 10px;
       margin-top: 30px;
       color: white;
-      div {
+      
+      div.commandItem {
+        border: 1px solid rgba($color: gray, $alpha: 0.5);
+        margin-bottom: 5px;
         &.fd {
             background-color: red;
         }
@@ -93,7 +96,7 @@
             margin: 0 5px;
             height: 35px;
             width: 35px;
-
+            border-radius: 5px;
             &.save {
                 background-color: green;
             }

@@ -13,7 +13,7 @@ export default class CommandList extends React.Component<IProps, IState> {
       const itemDesc = this.props.descriptions[item.name];
       const { short, name, long } = itemDesc;
       return (
-        <div className={item.name} key={item.id}>
+        <div className={"commandItem " + item.name} key={item.id}>
           <div className="heading">
             <p>
               {short} | {name}
