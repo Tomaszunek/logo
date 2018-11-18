@@ -31,15 +31,52 @@
             &.fd {
                 background-color: red;             
             }
+            &.bk {
+                background-color: red;             
+            }
             &.tl {
                 background-color: blue;                
             }
-            &.hideturtle {
-                background-color: rgb(22, 150, 155);             
+            &.tr {
+                background-color: blue;                
             }
             &.repeat {
                 background-color: rgb(255, 0, 212);                
             }
+            &.hideturtle {
+                background-color: rgb(22, 150, 155);             
+            }
+            &.showturtle {
+                background-color: rgb(22, 150, 155);             
+            }
+            &.penup {
+                background-color: rgb(217, 236, 40);             
+            }
+            &.pendown {
+                background-color: rgb(217, 236, 40);    ;             
+            }
+            &.setpc {
+                background-color: rgb(102, 102, 102);             
+            }
+            &.setbc {
+                background-color: rgb(102, 102, 102);             
+            }
+            &.to {
+                background-color: rgb(166, 25, 179);             
+            }
+            &.save {
+                background-color: rgb(214, 107, 18);             
+            }
+            &.load {
+                background-color: rgb(214, 107, 18);              
+            }
+            &.home {
+                background-color: rgb(108, 186, 218);             
+            }
+            &.setpos {
+                background-color: rgb(108, 186, 218);               
+            }
+            
 
             .removeButton {                
                 padding: 3px 8px;
