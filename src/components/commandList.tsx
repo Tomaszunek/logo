@@ -8,13 +8,37 @@ export default class CommandList extends React.Component<IProps, IState> {
     super(props)
   };
 
-  public displayCommands = () => {
-    const { commands } = this.props;
-    return commands.map((item: ICommandModel) => {
+  public displayCommands = (items: Array<ICommandModel>) => {
+    return items.map((item: ICommandModel) => {
       const itemDesc = this.props.descriptions[item.name];
+      const { short, name, long } = itemDesc;
       return (
-        <div className={item.name} key={item.id}>
-          {itemDesc.name} | {item.value}
+        <div className={"commandItem " + item.name} key={item.id}>
+          <div className="heading">
+            <p>
+              {short} | {name}
+            </p>
+              <div>
+                {
+                  ((itemDesc.argCount === 1) ?
+                  <input value={item.value} onChange={this.onChangeInput}/> :
+                  null)              
+                }
+                {
+                  ((itemDesc.argCount === 2) ?
+                  <input value={item.value} onChange={this.onChangeInput}/> :
+                  null)              
+                }
+                <button className="save">S</button>
+                <button className="remove">X</button>
+              </div>
+            </div>            
+          <p>
+            {long}
+          </p>
+          {
+            (((item.commands)) ? this.displayCommands(item.commands) : null)
+          }          
         </div>
       )
     });
@@ -23,10 +47,14 @@ export default class CommandList extends React.Component<IProps, IState> {
   public render() {
     return (
       <div className="commendList">
-        {this.displayCommands()}
+        {this.displayCommands(this.props.commands)}
       </div>
     );
   }
+
+  private onChangeInput = () => {
+    console.log("change")
+  } 
 }
 
 

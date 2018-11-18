@@ -33,4 +33,7 @@ export class Caller {
     public pendown = (dir: number) => {
         this.turtle.setPen(true);
     }
+    public setpos = (dir: number) => {
+        this.turtle.setPen(true);
+    }
 } 
