@@ -34,6 +34,12 @@
             &.tl {
                 background-color: blue;                
             }
+            &.hideturtle {
+                background-color: rgb(22, 150, 155);             
+            }
+            &.repeat {
+                background-color: rgb(255, 0, 212);                
+            }
 
             .removeButton {                
                 padding: 3px 8px;
@@ -54,17 +60,46 @@
   }
 
   .commendList {
-      background-color:aliceblue;
       margin: 10px;
       margin-top: 30px;
-
+      color: white;
       div {
-        background-color: green;
         &.fd {
             background-color: red;
         }
-        &.lt {
+        &.tl {
             background-color: blue;
+        }
+        &.hideturtle {
+            background-color: rgb(22, 150, 155);             
+        }
+        &.repeat {
+            background-color: rgb(255, 0, 212);
+            div {
+                margin-left: 30px;
+            }                
+        }
+    }
+    .heading {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        align-items: center;
+
+        input {
+            height: 30px;
+        }
+        button {            
+            margin: 0 5px;
+            height: 35px;
+            width: 35px;
+
+            &.save {
+                background-color: green;
+            }
+            &.remove {
+                background-color: red;
+            }
         }
     }
   }
