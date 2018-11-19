@@ -92,7 +92,7 @@ const initialState: RootState.CommandState = [
 export const commandReducer = handleActions<RootState.CommandState, ICommandModel>(
   {
     [CommandActions.Type.ADD_COMMAND]: (state, action) => {      
-      const id = state[state.length - 1].id + 1;
+      const id = ((state[state.length - 1]) ? (state[state.length - 1].id + 1) : 0);
       if (action.payload) {
         return [
           ...state,

@@ -75,8 +75,7 @@
             }
             &.setpos {
                 background-color: rgb(108, 186, 218);               
-            }
-            
+            }            
 
             .removeButton {                
                 padding: 3px 8px;
@@ -87,6 +86,10 @@
                 &:hover {
                     background-color: rgba($color: #000000, $alpha: 0.7);
                 }
+            }
+
+            ul {
+                display: flex;
             }
 
             .tagName {
