@@ -8,7 +8,7 @@ export default class HelperWindow extends React.Component<IProps, IState> {
 
   public render() {
     return (
-      <div className="helperWindow">
+      <div style={this.props.itemStyle} className={"helperWindow " + this.props.site}>
         abba
       </div>      
     );
@@ -16,7 +16,9 @@ export default class HelperWindow extends React.Component<IProps, IState> {
 }
 
 interface IProps {
-  commandsArray: Array<Array<ICommandModel>>
+  commandsArray: Array<Array<ICommandModel>>,
+  itemStyle: React.CSSProperties,
+  site: string
 }
 
 interface IState {

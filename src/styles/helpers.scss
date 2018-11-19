@@ -29,4 +29,11 @@
     height: 800px;
     width: calc(100vw - 240px);
     display: none;
+
+    &.left {
+        left: 0;
+    }
+    &.right {
+        left: 220px;
+    }
 }
