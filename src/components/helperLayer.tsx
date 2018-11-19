@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { ICommandModel } from 'src/models';
 
-export default class CommandEditor extends React.Component<IProps, IState> {  
+export default class HelperLayer extends React.Component<IProps, IState> {  
   constructor(props: any) {
     super(props)    
   };   
 
   public render() {
     return (
-      <div className="commandEditor">
-        <div>
-            a
+      <div className="helperLayer">
+        <div className="menuIcon left">
+            {">"}
         </div>
-        <div>
-            b
+        <div className="menuIcon right">
+            {"<"}
         </div>
       </div>      
     );

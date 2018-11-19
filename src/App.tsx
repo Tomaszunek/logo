@@ -3,6 +3,7 @@ import Canvas from './components/canvas';
 import CommandEditor from './components/commandEditor';
 import CommandList from './components/commandList';
 import CommandInput from './components/commandInput';
+import HelperLayer from './components/helperLayer';
 import { RouteComponentProps } from 'react-router';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
@@ -61,6 +62,7 @@ export default class App extends React.Component<App.IProps> {
     console.log(arr);
     return (
       <div className="App">
+        <HelperLayer commandsArray={[]}/>
         <div className="editorLine">
           <CommandEditor commands={commands} actions={actions}/>
           <CommandInput commands={commands} actions={actions} descriptions={descriptions}/>
