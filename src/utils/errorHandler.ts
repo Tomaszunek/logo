@@ -1,5 +1,5 @@
 export class ErrorHandler {
-    public errorTexts: IErrorText;
+    private errorTexts: IErrorText;
     private commandDescription: any;
     constructor(errorHandlerTexts: IErrorText, commandDescription: any) {        
        this.errorTexts = errorHandlerTexts;
@@ -37,6 +37,5 @@ function findIndexDiffrenceInStrings(text1: string, text2: string) {
             return i;
         }
     }
-
     return -1;
 }
