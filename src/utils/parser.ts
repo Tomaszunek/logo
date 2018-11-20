@@ -12,10 +12,7 @@ export class Parser {
     }
 
     public parse(cb: (text: string) => void) {
-        // const array = this.text.split(' ');
         const commandArray = new Array<ICommandModel>();
-        // let someErrors:boolean = false;       
-        // while(array.length > this.index && !someErrors) {
         const repeat = new RegExp(/(repeat [0-9]+ \[.+\])/ig);
         const movingArg = new RegExp(/((fd|bk|tl|tr) [0-9]+)/ig);
         const twoArg = new RegExp(/(setpos [0-9]+ [0-9]+)/ig);
@@ -23,9 +20,7 @@ export class Parser {
         const colorArg = new RegExp(/((setpc|setbc) [0-9,a-f]{6})/ig);
         const noArg = new RegExp(/(hideturtle|showturtle|penup|pendown|home)/ig);
         const finalRe = new RegExp(repeat.source + "|" + movingArg.source + "|" + twoArg.source + "|" + saveLoad.source + "|" + colorArg.source + "|" + noArg.source, "ig");
-        const regexArray = this.text.match(finalRe);
-        
-        // console.log(regexArray, this.text, regexArray ? regexArray.join(' ') : '');
+        const regexArray = this.text.match(finalRe);        
         if(regexArray && regexArray.join(' ').length === this.text.length) {
             for(const command of regexArray) {
                 const commandElem : ICommandModel = {id: 0, name: CommandTypes.fd};
