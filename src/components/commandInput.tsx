@@ -55,7 +55,7 @@ export default class CommandInput extends React.Component<IProps, IState> {
   private onInputChange = (e: React.KeyboardEvent) => {
     if(e.key === 'Enter'){
       const parser = new Parser((e.target as HTMLInputElement).value).parse(this.onError);
-      if(parser.length > 0) {
+      if(parser && parser.length > 0) {
         for(const item of parser) {
           this.props.actions.addCommand(item);
         }

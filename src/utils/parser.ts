@@ -20,37 +20,61 @@ export class Parser {
         const finalRe = new RegExp(repeat.source + "|" + movingArg.source + "|" + twoArg.source + "|" + saveLoad.source + "|" + colorArg.source + "|" + noArg.source, "ig");
         const regexArray = this.text.match(finalRe);
         if(regexArray && regexArray.join(' ').length === this.text.length) {
-            for(const command of regexArray) {
-                const commandElem : ICommandModel = {id: 0, name: CommandTypes.fd};
+            for(const command of regexArray) {                
+                const commandArr = command.split(' ');
+                let commandElem : ICommandModel = {id: 0, name: CommandTypes[commandArr[0]]};
                 if(repeat.test(command)){
                     const sob = command.indexOf('[');
                     const firstPart = command.slice(0, sob - 1).split(' ');
-                    const secondPart = command.slice(sob + 1, command.length - 1);                    
-                    commandElem.name = CommandTypes.repeat;
-                    commandElem.value = Number(firstPart[1]);
-                    commandElem.commands = new Parser(secondPart).parse(cb);
+                    const secondPart = command.slice(sob + 1, command.length - 1);
+                    const parser = new Parser(secondPart).parse(cb);
+                    if(parser && parser.length >= 1) { 
+                        commandElem = {
+                            ...commandElem,
+                            value: Number(firstPart[1]),
+                            commands: parser                        
+                        }
+                    } else {
+                        return;
+                    }                    
                 } else if(command.match(movingArg)) {
-                    const commandArr = command.split(' ');
-                    commandElem.name = CommandTypes[commandArr[0]];
-                    commandElem.value = Number(commandArr[1]);
+                    commandElem = {
+                        ...commandElem,
+                        value: Number(commandArr[1])
+                    }
                 } else if(command.match(saveLoad) || command.match(colorArg)) {
-                    const commandArr = command.split(' ');
-                    commandElem.name = CommandTypes[commandArr[0]];
-                    commandElem.value = commandArr[1];
+                    commandElem = { 
+                        ...commandElem,
+                        value: commandArr[1]
+                    }
                 } else if(twoArg.test(command)){
-                    const commandArr = command.split(' ');
-                    commandElem.name = CommandTypes[commandArr[0]];
-                    commandElem.value = Number(commandArr[1]);
-                    commandElem.arg2 = Number(commandArr[2]);
+                    commandElem = { 
+                        ...commandElem,
+                        value: Number(commandArr[1]),
+                        arg2: Number(commandArr[2])
+                    }
                 } else {
                     commandElem.name = CommandTypes[command];
                 }
                 commandArray.push(commandElem);
             }
-        } else {
-            cb("abba");
-        }    
-
+        } else {            
+            if(regexArray) {                
+                cb(findFirstDiffPos(this.text, regexArray.join(' ')).toString());
+            }            
+        }
         return commandArray;
     }
 }
+
+
+function findFirstDiffPos(a :string, b:string)
+{
+  const longerLength = Math.max(a.length, b.length);
+  for (let i = 0; i < longerLength; i++) {
+     if (a[i] !== b[i]) {
+         return i;
+     }
+  }
+  return -1;
+} 
