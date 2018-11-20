@@ -32,8 +32,8 @@ export default class CommandInput extends React.Component<IProps, IState> {
     );
   }  
 
-  public onError = (text: string) => {
-    console.log(text)
+  public onError = (text: string, text2: string) => {
+    console.log(text, "||||||||||||||||||", text2)
     this.setState({
       showPopup: true,
       popupText: text

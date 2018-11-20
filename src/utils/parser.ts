@@ -9,7 +9,7 @@ export class Parser {
         this.index = 0;
     }
 
-    public parse(cb: (text: string) => void) {
+    public parse(cb: (text: string ,text2: string) => void) {
         const commandArray = new Array<ICommandModel>();
         const repeat = new RegExp(/(repeat [0-9]+ \[.+\])/ig);
         const movingArg = new RegExp(/((fd|bk|tl|tr) [0-9]+)/ig);
@@ -60,21 +60,9 @@ export class Parser {
             }
         } else {            
             if(regexArray) {                
-                cb(findFirstDiffPos(this.text, regexArray.join(' ')).toString());
+                cb(this.text, regexArray.join(' '));
             }            
         }
         return commandArray;
     }
 }
-
-
-function findFirstDiffPos(a :string, b:string)
-{
-  const longerLength = Math.max(a.length, b.length);
-  for (let i = 0; i < longerLength; i++) {
-     if (a[i] !== b[i]) {
-         return i;
-     }
-  }
-  return -1;
-} 
