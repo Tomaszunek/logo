@@ -19,8 +19,6 @@ export class Parser {
         const noArg = new RegExp(/(hideturtle|showturtle|penup|pendown|home)/ig);
         const finalRe = new RegExp(repeat.source + "|" + movingArg.source + "|" + twoArg.source + "|" + saveLoad.source + "|" + colorArg.source + "|" + noArg.source, "ig");
         const regexArray = this.text.match(finalRe);
-        // console.log(this.text, regexArray, regexArray && regexArray.join(' '));
-        console.log(this.text)     
         if(regexArray && regexArray.join(' ').length === this.text.length) {
             for(const command of regexArray) {
                 const commandElem : ICommandModel = {id: 0, name: CommandTypes.fd};
@@ -50,7 +48,6 @@ export class Parser {
                 commandArray.push(commandElem);
             }
         } else {
-            // console.log(this.text, regexArray && regexArray.join(' '))
             cb("abba");
         }    
 
