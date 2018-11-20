@@ -3,7 +3,8 @@ import { CommandTypes } from './CommandTypes';
 export interface ICommandModel {
     id: number;
     name: CommandTypes;
-    value?: number;
+    value?: number | string;
+    arg2?: number;
     commands?: Array<ICommandModel>;
   }
   

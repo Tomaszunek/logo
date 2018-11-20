@@ -12,11 +12,12 @@ export default class CommandEditor extends React.Component<IProps, IState> {
     return commands.map((item:ICommandModel) => {
       const { name, value, id } = item;
       return (
-        <li key={id} attr-n={id} className={name} onClick={(e) => this.removeCommand(e, id)}>
+        <li key={id} attr-n={id} className={name}>
           <div className="tagName" >
             {name} {value}
+            {((item.commands) ? (<ul>{this.displayCommands(item.commands)}</ul>) : (null))}
           </div>
-          <div className="removeButton">
+          <div className="removeButton" onClick={(e) => this.removeCommand(e, id)}>
             x
           </div>
         </li>
@@ -34,7 +35,7 @@ export default class CommandEditor extends React.Component<IProps, IState> {
     );
   } 
   
-  private removeCommand = (e: React.MouseEvent<HTMLLIElement>, id: number) => {
+  private removeCommand = (e: React.MouseEvent<HTMLDivElement>, id: number) => {
     console.log(id, e);
     this.props.actions.deleteCommand(id);
   }
