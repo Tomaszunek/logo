@@ -16,6 +16,9 @@ export class Parser {
         const commandArray = new Array<ICommandModel>();
         let someErrors:boolean = false;       
         while(array.length > this.index && !someErrors) {
+            const regex = /(repeat [0-9]+ \[.+\])|((fd|bk|tl|tr) [0-9]+)|((setpc|setbc) [0-9,a-f]{6})|(hideturtle|showturtle|penup|pendown|home)|((save|load) [a-z]{2,})|(setpos [0-9]+ [0-9]+)/ig;
+            const regexArray = this.text.match(regex);
+            console.log(regexArray);
             const cmd = CommandTypes[array[this.index]];            
             if(cmd && array[this.index + 1]) {
                 const argCount = this.commandDescriptions[cmd].argCount;
