@@ -3,6 +3,7 @@ import { ICommandModel } from 'src/models';
 import { CommandActions } from 'src/actions';
 import { Parser } from 'src/utils/parser';
 import Popup from './popup';
+import { ErrorHandler } from 'src/utils/errorHandler';
 
 export default class CommandInput extends React.Component<IProps, IState> { 
   public input: HTMLInputElement | null;
@@ -20,6 +21,7 @@ export default class CommandInput extends React.Component<IProps, IState> {
         <input className="commandInput" autoFocus={true} 
           ref={elem => this.input = elem} 
           onKeyPress={this.onInputChange}
+          defaultValue='repeat 10 [fd 100 tr 100 repeat 10 [fd 100 tr 100]]'
         />        
         {this.state.showPopup ? 
           <Popup
@@ -32,21 +34,25 @@ export default class CommandInput extends React.Component<IProps, IState> {
     );
   }  
 
-  public onError = (text: string, text2: string) => {
-    console.log(text, "||||||||||||||||||", text2)
+  private onError = (insideCommand: string, wrongCommand: string) => {
+    const errorHandler = new ErrorHandler({
+      fullCommand: (this.input) ? this.input.value : '',
+      insideCommand,
+      wrongCommand   
+    }, this.props.descriptions).handleError();
     this.setState({
       showPopup: true,
-      popupText: text
+      popupText: errorHandler
     })
     setTimeout(() => {
       this.setState({
         showPopup: false,
-        popupText: text
+        popupText: errorHandler
       })
-    }, 3000);
+    }, 5000);
   }
 
-  public togglePopup = () => {
+  private togglePopup = () => {
     this.setState({
       showPopup: !this.state.showPopup
     });
@@ -54,7 +60,7 @@ export default class CommandInput extends React.Component<IProps, IState> {
 
   private onInputChange = (e: React.KeyboardEvent) => {
     if(e.key === 'Enter'){
-      const parser = new Parser((e.target as HTMLInputElement).value).parse(this.onError);
+      const parser = new Parser((e.target as HTMLInputElement).value.trim()).parse(this.onError);
       if(parser && parser.length > 0) {
         for(const item of parser) {
           this.props.actions.addCommand(item);
