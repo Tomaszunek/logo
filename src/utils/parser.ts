@@ -12,64 +12,52 @@ export class Parser {
     }
 
     public parse(cb: (text: string) => void) {
-        const array = this.text.split(' ');
+        // const array = this.text.split(' ');
         const commandArray = new Array<ICommandModel>();
-        let someErrors:boolean = false;       
-        while(array.length > this.index && !someErrors) {
-            const regex = /(repeat [0-9]+ \[.+\])|((fd|bk|tl|tr) [0-9]+)|((setpc|setbc) [0-9,a-f]{6})|(hideturtle|showturtle|penup|pendown|home)|((save|load) [a-z]{2,})|(setpos [0-9]+ [0-9]+)/ig;
-            const regexArray = this.text.match(regex);
-            console.log(regexArray);
-            const cmd = CommandTypes[array[this.index]];            
-            if(cmd && array[this.index + 1]) {
-                const argCount = this.commandDescriptions[cmd].argCount;
-                let command: ICommandModel = {
-                    id: 0, value: 0, name
-                };
-                switch (argCount) {
-                    case 0:
-                        command = {
-                            id: 0,
-                            name: cmd
-                        }                          
-                        break;
-                    case 1:
-                        command = {
-                            id: 0,
-                            name: cmd,
-                            value: Number(array[++this.index])                
-                        }                          
-                        break; 
-                    case 2:
-                        const parser = new Parser(array[this.index + 2], this.commandDescriptions).parse(cb);
-                        command = {
-                            id: 0,
-                            name: cmd,
-                            value: Number(array[++this.index]),
-                            commands: parser            
-                        }                      
-                        break; 
-                    case 3:
-                        command = {
-                            id: 0,
-                            name: cmd,
-                            value: Number(array[++this.index])                
-                        }
-                        break;               
-                    default:
-                        break;
-                }                       
-                commandArray.push(command);
-                this.index++;
-            } else {
-                someErrors = true;                
-            }            
-        }
-        if(!someErrors) {
-            return commandArray;
-        } else {
-            cb(array[this.index]);
-            return [];
-        }        
+        // let someErrors:boolean = false;       
+        // while(array.length > this.index && !someErrors) {
+        const repeat = new RegExp(/(repeat [0-9]+ \[.+\])/ig);
+        const movingArg = new RegExp(/((fd|bk|tl|tr) [0-9]+)/ig);
+        const twoArg = new RegExp(/(setpos [0-9]+ [0-9]+)/ig);
+        const saveLoad = new RegExp(/((save|load) [a-z]{2,})/ig);
+        const colorArg = new RegExp(/((setpc|setbc) [0-9,a-f]{6})/ig);
+        const noArg = new RegExp(/(hideturtle|showturtle|penup|pendown|home)/ig);
+        const finalRe = new RegExp(repeat.source + "|" + movingArg.source + "|" + twoArg.source + "|" + saveLoad.source + "|" + colorArg.source + "|" + noArg.source, "ig");
+        const regexArray = this.text.match(finalRe);
         
+        // console.log(regexArray, this.text, regexArray ? regexArray.join(' ') : '');
+        if(regexArray && regexArray.join(' ').length === this.text.length) {
+            for(const command of regexArray) {
+                const commandElem : ICommandModel = {id: 0, name: CommandTypes.fd};
+                if(repeat.test(command)){
+                    const sob = command.indexOf('[');
+                    const firstPart = command.slice(0, sob - 1).split(' ');
+                    const secondPart = command.slice(sob + 1, command.length - 2);                    
+                    commandElem.name = CommandTypes.repeat;
+                    commandElem.value = firstPart[1];
+                    commandElem.commands = new Parser(secondPart, this.commandDescriptions).parse(cb);
+                } else if(command.match(movingArg)) {
+                    const commandArr = command.split(' ');
+                    commandElem.name = CommandTypes[commandArr[0]];
+                    commandElem.value = Number(commandArr[1]);
+                } else if(command.match(saveLoad) || command.match(colorArg)) {
+                    const commandArr = command.split(' ');
+                    commandElem.name = CommandTypes[commandArr[0]];
+                    commandElem.value = commandArr[1];
+                } else if(twoArg.test(command)){
+                    const commandArr = command.split(' ');
+                    commandElem.name = CommandTypes[commandArr[0]];
+                    commandElem.value = Number(commandArr[1]);
+                    commandElem.arg2 = Number(commandArr[2]);
+                } else {
+                    commandElem.name = CommandTypes[command];
+                }
+                commandArray.push(commandElem);
+            }
+        } else {
+            cb("abba");
+        }    
+
+        return commandArray;
     }
 }

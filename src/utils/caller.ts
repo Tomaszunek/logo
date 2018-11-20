@@ -27,6 +27,9 @@ export class Caller {
     public showturtle = (dir: number) => {
         return 0;
     }
+    public home = (dir: number) => {
+        return 0;
+    }
     public penup = (dir: number) => {
         this.turtle.setPen(false);
     }
@@ -34,6 +37,18 @@ export class Caller {
         this.turtle.setPen(true);
     }
     public setpos = (dir: number) => {
+        this.turtle.setPen(true);
+    }
+    public setbc = (dir: number) => {
+        this.turtle.setPen(true);
+    }
+    public setpc = (dir: number) => {
+        this.turtle.setPen(true);
+    }
+    public load = (dir: number) => {
+        this.turtle.setPen(true);
+    }
+    public save = (dir: number) => {
         this.turtle.setPen(true);
     }
 } 
