@@ -4,11 +4,9 @@ import { ICommandModel} from 'src/models/Command'
 export class Parser {
     public text:string;
     public index: number;
-    public commandDescriptions: any;
-    constructor(text: string, cmdDesc: any) {
+    constructor(text: string) {
         this.text = text;
         this.index = 0;
-        this.commandDescriptions = cmdDesc;
     }
 
     public parse(cb: (text: string) => void) {
@@ -20,17 +18,19 @@ export class Parser {
         const colorArg = new RegExp(/((setpc|setbc) [0-9,a-f]{6})/ig);
         const noArg = new RegExp(/(hideturtle|showturtle|penup|pendown|home)/ig);
         const finalRe = new RegExp(repeat.source + "|" + movingArg.source + "|" + twoArg.source + "|" + saveLoad.source + "|" + colorArg.source + "|" + noArg.source, "ig");
-        const regexArray = this.text.match(finalRe);        
+        const regexArray = this.text.match(finalRe);
+        // console.log(this.text, regexArray, regexArray && regexArray.join(' '));
+        console.log(this.text)     
         if(regexArray && regexArray.join(' ').length === this.text.length) {
             for(const command of regexArray) {
                 const commandElem : ICommandModel = {id: 0, name: CommandTypes.fd};
                 if(repeat.test(command)){
                     const sob = command.indexOf('[');
                     const firstPart = command.slice(0, sob - 1).split(' ');
-                    const secondPart = command.slice(sob + 1, command.length - 2);                    
+                    const secondPart = command.slice(sob + 1, command.length - 1);                    
                     commandElem.name = CommandTypes.repeat;
-                    commandElem.value = firstPart[1];
-                    commandElem.commands = new Parser(secondPart, this.commandDescriptions).parse(cb);
+                    commandElem.value = Number(firstPart[1]);
+                    commandElem.commands = new Parser(secondPart).parse(cb);
                 } else if(command.match(movingArg)) {
                     const commandArr = command.split(' ');
                     commandElem.name = CommandTypes[commandArr[0]];
@@ -50,6 +50,7 @@ export class Parser {
                 commandArray.push(commandElem);
             }
         } else {
+            // console.log(this.text, regexArray && regexArray.join(' '))
             cb("abba");
         }    
 

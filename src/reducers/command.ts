@@ -10,83 +10,83 @@ const initialState: RootState.CommandState = [
     name: CommandTypes.fd,
     value: 100
   },
-  {
-    id: 2,
-    name: CommandTypes.tl,
-    value: 8
-  },
-  {
-    id: 3,
-    name: CommandTypes.fd,
-    value: 100
-  },
-  {
-    id: 4,
-    name: CommandTypes.hideturtle
-  },  
-  {
-    id: 5,
-    name: CommandTypes.repeat,
-    value: 4,
-    commands: [{
-      id: 6,
-      name: CommandTypes.fd,
-      value: 100
-    },
-    {
-      id: 7,
-      name: CommandTypes.fd,
-      value: 100
-    },
-    {
-      id: 8,
-      name: CommandTypes.fd,
-      value: 100
-    },
-    ]
-  },
-  {
-    id: 9,
-    name: CommandTypes.repeat,
-    value: 4,
-    commands: [{
-      id: 10,
-      name: CommandTypes.fd,
-      value: 100
-    },
-    {
-      id: 11,
-      name: CommandTypes.fd,
-      value: 100
-    },
-    {
-      id: 14,
-      name: CommandTypes.repeat,
-      value: 4,
-      commands: [{
-        id: 15,
-        name: CommandTypes.fd,
-        value: 100
-      },
-      {
-        id: 16,
-        name: CommandTypes.fd,
-        value: 100
-      },
-      {
-        id: 17,
-        name: CommandTypes.fd,
-        value: 100
-      },
-      ]
-    },
-    ]
-  },
-  {
-    id: 13,
-    name: CommandTypes.setpos,
-    value: 10
-  },
+  // {
+  //   id: 2,
+  //   name: CommandTypes.tl,
+  //   value: 8
+  // },
+  // {
+  //   id: 3,
+  //   name: CommandTypes.fd,
+  //   value: 100
+  // },
+  // {
+  //   id: 4,
+  //   name: CommandTypes.hideturtle
+  // },  
+  // {
+  //   id: 5,
+  //   name: CommandTypes.repeat,
+  //   value: 4,
+  //   commands: [{
+  //     id: 6,
+  //     name: CommandTypes.fd,
+  //     value: 100
+  //   },
+  //   {
+  //     id: 7,
+  //     name: CommandTypes.fd,
+  //     value: 100
+  //   },
+  //   {
+  //     id: 8,
+  //     name: CommandTypes.fd,
+  //     value: 100
+  //   },
+  //   ]
+  // },
+  // {
+  //   id: 9,
+  //   name: CommandTypes.repeat,
+  //   value: 4,
+  //   commands: [{
+  //     id: 10,
+  //     name: CommandTypes.fd,
+  //     value: 100
+  //   },
+  //   {
+  //     id: 11,
+  //     name: CommandTypes.fd,
+  //     value: 100
+  //   },
+  //   {
+  //     id: 14,
+  //     name: CommandTypes.repeat,
+  //     value: 4,
+  //     commands: [{
+  //       id: 15,
+  //       name: CommandTypes.fd,
+  //       value: 100
+  //     },
+  //     {
+  //       id: 16,
+  //       name: CommandTypes.fd,
+  //       value: 100
+  //     },
+  //     {
+  //       id: 17,
+  //       name: CommandTypes.fd,
+  //       value: 100
+  //     },
+  //     ]
+  //   },
+  //   ]
+  // },
+  // {
+  //   id: 13,
+  //   name: CommandTypes.setpos,
+  //   value: 10
+  // },
 ];
 
 export const commandReducer = handleActions<RootState.CommandState, ICommandModel>(
