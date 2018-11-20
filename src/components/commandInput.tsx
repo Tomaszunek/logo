@@ -15,8 +15,6 @@ export default class CommandInput extends React.Component<IProps, IState> {
   };  
 
   public render() {
-    const { showPopup } = this.state;
-    console.log( showPopup );
     return (      
       <>        
         <input className="commandInput" autoFocus={true} 
@@ -34,8 +32,8 @@ export default class CommandInput extends React.Component<IProps, IState> {
     );
   }  
 
-  public onError = (text: string) => {
-    console.log(text)
+  public onError = (text: string, text2: string) => {
+    console.log(text, "||||||||||||||||||", text2)
     this.setState({
       showPopup: true,
       popupText: text
@@ -56,8 +54,8 @@ export default class CommandInput extends React.Component<IProps, IState> {
 
   private onInputChange = (e: React.KeyboardEvent) => {
     if(e.key === 'Enter'){
-      const parser = new Parser((e.target as HTMLInputElement).value, this.props.descriptions).parse(this.onError);
-      if(parser.length > 0) {
+      const parser = new Parser((e.target as HTMLInputElement).value).parse(this.onError);
+      if(parser && parser.length > 0) {
         for(const item of parser) {
           this.props.actions.addCommand(item);
         }
