@@ -10,12 +10,16 @@ class Canvas extends React.Component<IProps, IState> {
   public canvas: HTMLCanvasElement | null;
   public caller: Caller;
   public turtle: Turtle;
+  private canvasX: number;
+  private canvasY: number;
   constructor(props: any) {
     super(props);
+    this.canvasX = 800;
+    this.canvasY = 800;
     this.turtle = new Turtle({
       canvas: null,
-      homeX: 100,
-      homeY: 100,
+      homeX: this.canvasX / 2,
+      homeY: this.canvasY / 2,
       dir: 0,
       strokeColor: '#ffffff',
       strokeWeight: 1,
@@ -47,7 +51,7 @@ class Canvas extends React.Component<IProps, IState> {
   public render() {
     return (
       <div className="canvas">
-        <canvas ref={elem => this.canvas = elem} width="800" height="800"/>
+        <canvas ref={elem => this.canvas = elem} width={this.canvasX} height={this.canvasY}/>
       </div>
     );
   }

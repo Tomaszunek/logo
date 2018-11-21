@@ -4,18 +4,14 @@ import { CommandActions } from '../actions'
 import { ICommandModel } from '../models';
 
 const initialState: RootState.CommandState = [
-  {
-    id: 1,
-    name: 'fd',
-    value: 100
-  }
+  
 ];
 
 export const commandReducer = handleActions<RootState.CommandState, ICommandModel>(
   {
     [CommandActions.Type.ADD_COMMAND]: (state, action) => {      
       let id = 0;
-      if(state[state.length]) {
+      if(!state.length) {
         id = 0;
       } else {
         const lastCommand = state[state.length - 1];
