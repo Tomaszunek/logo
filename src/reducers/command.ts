@@ -92,13 +92,41 @@ const initialState: RootState.CommandState = [
 export const commandReducer = handleActions<RootState.CommandState, ICommandModel>(
   {
     [CommandActions.Type.ADD_COMMAND]: (state, action) => {      
-      const id = ((state[state.length - 1]) ? (state[state.length - 1].id + 1) : 0);
-      if (action.payload) {
-        return [
-          ...state,
-          {...action.payload, id}                  
-        ];
+      let id = 0;
+      // const id = ((state[state.length - 1]) ? (state[state.length - 1].id + 1) : 0);
+      let commands = action.payload ? action.payload.commands : undefined;
+      if(state[state.length]) {
+        id = 0;
+        console.log("no items")
+      } else {
+        const lastCommand = state[state.length - 1];
+        if(lastCommand.commands) {
+          console.log("repeat", lastCommand)
+          id = findMostInsideRepeat(lastCommand.commands)
+          
+        } else {
+          console.log("other item", lastCommand)
+          id = state[state.length - 1].id + 1;
+        }
       }
+      if(action.payload) {
+        if(action.payload.commands) {
+          commands = indexsizeRepeat(commands, id);
+          console.log(commands)
+        } else {
+          return [
+            ...state,
+            {...action.payload, id}                  
+          ];
+        }
+      }
+      console.log(id, action)
+      // if (action.payload) {
+      //   return [
+      //     ...state,
+      //     {...action.payload, id}                  
+      //   ];
+      // }
       return state;
     },
     [CommandActions.Type.DELETE_COMMAND]: (state, action) => {
@@ -126,3 +154,30 @@ export const commandReducer = handleActions<RootState.CommandState, ICommandMode
   },
   initialState
 );
+
+function findMostInsideRepeat(commands: Array<ICommandModel>) {
+  let lastRepeatIndexCommand = 0;
+  for(const command of commands) {
+    console.log(command);
+    if(command.commands) {
+      lastRepeatIndexCommand = findMostInsideRepeat(command.commands);
+    }
+  }
+  lastRepeatIndexCommand = (lastRepeatIndexCommand ? 0 : commands[commands.length -1].id)
+  return lastRepeatIndexCommand++;
+}
+
+function indexsizeRepeat(commands: Array<ICommandModel> | undefined, lastIndex: number) {
+  let index = lastIndex;
+  if(commands) {
+    for(const command of commands) {
+      console.log(command);
+      command.id = index;
+      if(command.commands) {
+        command.commands = indexsizeRepeat(command.commands, ++index);
+      }
+      index++;
+    }
+  } 
+  return commands;
+}
