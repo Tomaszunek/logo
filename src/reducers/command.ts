@@ -2,12 +2,11 @@ import { handleActions } from 'redux-actions';
 import { RootState } from './state';
 import { CommandActions } from '../actions'
 import { ICommandModel } from '../models';
-import { CommandTypes } from 'src/models/CommandTypes';
 
 const initialState: RootState.CommandState = [
   {
     id: 1,
-    name: CommandTypes.fd,
+    name: 'fd',
     value: 100
   }
 ];

@@ -1,6 +1,5 @@
-import { CommandTypes } from 'src/models/CommandTypes';
 import { ICommandModel} from 'src/models/Command'
-
+import { CommandTypes } from 'src/models/CommandTypes';
 export class Parser {
     public text:string;
     public index: number;
@@ -22,7 +21,7 @@ export class Parser {
         if(regexArray && regexArray.join(' ').length === this.text.length) {
             for(const command of regexArray) {                
                 const commandArr = command.split(' ');
-                let commandElem : ICommandModel = {id: 0, name: CommandTypes[commandArr[0]]};
+                let commandElem : ICommandModel = {id: 0, name: commandArr[0] as CommandTypes};
                 if(repeat.test(command)){
                     const sob = command.indexOf('[');
                     const firstPart = command.slice(0, sob - 1).split(' ');
@@ -59,7 +58,7 @@ export class Parser {
                         arg2: Number(commandArr[2])
                     }
                 } else {
-                    commandElem.name = CommandTypes[command];
+                    commandElem.name = command as CommandTypes;
                 }
                 commandArray.push(commandElem);
             }
