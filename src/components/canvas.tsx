@@ -39,7 +39,6 @@ class Canvas extends React.Component<IProps, IState> {
     this.turtle.clearCanvas();
     const { commands } = nextProps;
     commands.forEach((command: ICommandModel) => {
-      console.log(command);
       this.caller[command.name](command.value);
     });
     this.turtle.drawTurtle();  
