@@ -42,10 +42,15 @@ export class Parser {
                         ...commandElem,
                         value: Number(commandArr[1])
                     }
-                } else if(command.match(saveLoad) || command.match(colorArg)) {
+                } else if(command.match(saveLoad)) {
                     commandElem = { 
                         ...commandElem,
-                        value: commandArr[1]
+                        filename: commandArr[1]
+                    }
+                } else if(command.match(colorArg)) {
+                    commandElem = { 
+                        ...commandElem,
+                        color: commandArr[1]
                     }
                 } else if(twoArg.test(command)){
                     commandElem = { 
