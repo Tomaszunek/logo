@@ -54,11 +54,15 @@ export class Caller {
         console.log(x,y)
         this.turtle.setPosition(x, y);
     }
-    public setbc = (dir: number) => {
-        this.turtle.setPen(true);
+    public setbc = (color?: string) => {
+        if(color) {
+            this.turtle.setBackgroundColor(color);
+        }
     }
-    public setpc = (dir: number) => {
-        this.turtle.setPen(true);
+    public setpc = (color?: string) => {
+        if(color) {
+            this.turtle.setPenColor(color);
+        }        
     }
     public load = (dir: number) => {
         this.turtle.setPen(true);

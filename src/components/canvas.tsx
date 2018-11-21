@@ -56,6 +56,8 @@ class Canvas extends React.Component<IProps, IState> {
         this.caller[command.name](command)
       } else if(command.name === 'setpos' && command.value && command.arg2) {
         this.caller[command.name](command.value, command.arg2)                
+      } else if(command.name === 'setpc' || command.name === 'setbc' && command.color) {
+        this.caller[command.name](command.color)                
       } else {
         this.caller[command.name](command.value);
       }

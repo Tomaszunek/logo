@@ -92,6 +92,18 @@ export class Turtle {
         console.log(this);
     }
 
+    public setBackgroundColor = (color: string) => {
+        if(this.canvas === null) {return};    
+        const ctx = this.canvas.getContext("2d");
+        if(ctx === null) {return}; 
+        ctx.fillStyle = '#' + color;
+        ctx.fillRect(0, 0, this.homeX * 2, this.homeY * 2);
+    }
+
+    public setPenColor = (color: string) => {
+        this.strokeColor = color;
+    }
+
 
     // no need to use save and restore between calls as it sets the transform rather 
     // than multiply it like ctx.rotate ctx.translate ctx.scale and ctx.transform
