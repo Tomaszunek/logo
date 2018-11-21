@@ -1,4 +1,5 @@
 import { Turtle } from './turtle';
+import { ICommandModel } from 'src/models';
 
 export class Caller {
     private turtle: Turtle;
@@ -17,8 +18,21 @@ export class Caller {
     public tr = (dir: number) => {
         this.turtle.rotate(-dir);
     }
-    public repeat = (commands: number) => {
-        const caller = new Caller(this.turtle);        
+    public repeat = (command: ICommandModel) => {
+        const caller = new Caller(this.turtle);
+        if(command && command.value) {
+            for(let i = 0; i <= command.value; i++) {
+                if(command.commands) {
+                    command.commands.forEach(newCommand => {
+                        if(newCommand.name === 'repeat' && newCommand.commands) {
+                            caller[newCommand.name](newCommand)
+                        } else {
+                            caller[newCommand.name](newCommand.value);
+                        }
+                    });
+                }
+            }
+        }
         return caller;
     }
     public hideturtle = (dir: number) => {
