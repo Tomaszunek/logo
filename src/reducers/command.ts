@@ -9,95 +9,38 @@ const initialState: RootState.CommandState = [
     id: 1,
     name: CommandTypes.fd,
     value: 100
-  },
-  // {
-  //   id: 2,
-  //   name: CommandTypes.tl,
-  //   value: 8
-  // },
-  // {
-  //   id: 3,
-  //   name: CommandTypes.fd,
-  //   value: 100
-  // },
-  // {
-  //   id: 4,
-  //   name: CommandTypes.hideturtle
-  // },  
-  // {
-  //   id: 5,
-  //   name: CommandTypes.repeat,
-  //   value: 4,
-  //   commands: [{
-  //     id: 6,
-  //     name: CommandTypes.fd,
-  //     value: 100
-  //   },
-  //   {
-  //     id: 7,
-  //     name: CommandTypes.fd,
-  //     value: 100
-  //   },
-  //   {
-  //     id: 8,
-  //     name: CommandTypes.fd,
-  //     value: 100
-  //   },
-  //   ]
-  // },
-  // {
-  //   id: 9,
-  //   name: CommandTypes.repeat,
-  //   value: 4,
-  //   commands: [{
-  //     id: 10,
-  //     name: CommandTypes.fd,
-  //     value: 100
-  //   },
-  //   {
-  //     id: 11,
-  //     name: CommandTypes.fd,
-  //     value: 100
-  //   },
-  //   {
-  //     id: 14,
-  //     name: CommandTypes.repeat,
-  //     value: 4,
-  //     commands: [{
-  //       id: 15,
-  //       name: CommandTypes.fd,
-  //       value: 100
-  //     },
-  //     {
-  //       id: 16,
-  //       name: CommandTypes.fd,
-  //       value: 100
-  //     },
-  //     {
-  //       id: 17,
-  //       name: CommandTypes.fd,
-  //       value: 100
-  //     },
-  //     ]
-  //   },
-  //   ]
-  // },
-  // {
-  //   id: 13,
-  //   name: CommandTypes.setpos,
-  //   value: 10
-  // },
+  }
 ];
 
 export const commandReducer = handleActions<RootState.CommandState, ICommandModel>(
   {
     [CommandActions.Type.ADD_COMMAND]: (state, action) => {      
-      const id = ((state[state.length - 1]) ? (state[state.length - 1].id + 1) : 0);
-      if (action.payload) {
-        return [
-          ...state,
-          {...action.payload, id}                  
-        ];
+      let id = 0;
+      if(state[state.length]) {
+        id = 0;
+      } else {
+        const lastCommand = state[state.length - 1];
+        if(lastCommand.commands) {
+          id = findMostInsideRepeat(lastCommand.commands)
+          
+        } else {
+          id = state[state.length - 1].id + 1;
+        }
+      }
+      if(action.payload) {
+        if(action.payload.commands) {
+          action.payload.id = id;
+          action.payload.commands = indexsizeRepeat(action.payload.commands, ++id);
+          return [
+            ...state,
+            {...action.payload}                  
+          ];
+        } else {
+          return [
+            ...state,
+            {...action.payload, id}                  
+          ];
+        }
       }
       return state;
     },
@@ -126,3 +69,29 @@ export const commandReducer = handleActions<RootState.CommandState, ICommandMode
   },
   initialState
 );
+
+function findMostInsideRepeat(commands: Array<ICommandModel>) {
+  let lastRepeatIndexCommand = 0;
+  for(const command of commands) {
+    lastRepeatIndexCommand = command.id;
+    if(command.commands) {
+      lastRepeatIndexCommand = findMostInsideRepeat(command.commands);
+    }
+  }
+  lastRepeatIndexCommand = (lastRepeatIndexCommand ? lastRepeatIndexCommand : commands[commands.length -1].id)
+  return lastRepeatIndexCommand++;
+}
+
+function indexsizeRepeat(commands: Array<ICommandModel> | undefined, lastIndex: number) {
+  let index = lastIndex;
+  if(commands) {
+    for(const command of commands) {
+      command.id = index;
+      if(command.commands) {
+        command.commands = indexsizeRepeat(command.commands, ++index);
+      }
+      index++;
+    }
+  } 
+  return commands;
+}
