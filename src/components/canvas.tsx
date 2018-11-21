@@ -34,7 +34,16 @@ class Canvas extends React.Component<IProps, IState> {
     this.turtle.canvas = this.canvas;
     const { commands } = this.props;
     commands.forEach((command: ICommandModel) => {
-      this.caller[command.name](command.value);
+      if(command.name === 'repeat' && command.commands) {
+        this.caller[command.name](command)
+      } else if(command.name === 'setpos') {
+        console.log(command)
+        if(command.value && command.arg2) {
+          this.caller[command.name](command.value, command.arg2)
+        }        
+      } else {
+        this.caller[command.name](command.value);
+      }
     });
     this.turtle.drawTurtle();
   }
@@ -45,6 +54,8 @@ class Canvas extends React.Component<IProps, IState> {
     commands.forEach((command: ICommandModel) => {
       if(command.name === 'repeat' && command.commands) {
         this.caller[command.name](command)
+      } else if(command.name === 'setpos' && command.value && command.arg2) {
+        this.caller[command.name](command.value, command.arg2)                
       } else {
         this.caller[command.name](command.value);
       }

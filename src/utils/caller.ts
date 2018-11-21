@@ -35,23 +35,24 @@ export class Caller {
         }
         return caller;
     }
-    public hideturtle = (dir: number) => {
-        return 0;
+    public hideturtle = () => {
+        this.turtle.setVisible(false);
     }
-    public showturtle = (dir: number) => {
-        return 0;
+    public showturtle = () => {
+        this.turtle.setVisible(true);
     }
-    public home = (dir: number) => {
-        return 0;
+    public home = () => {
+        this.turtle.home();
     }
-    public penup = (dir: number) => {
+    public penup = () => {
         this.turtle.setPen(false);
     }
-    public pendown = (dir: number) => {
+    public pendown = () => {
         this.turtle.setPen(true);
     }
-    public setpos = (dir: number) => {
-        this.turtle.setPen(true);
+    public setpos = (x: number, y: number) => {
+        console.log(x,y)
+        this.turtle.setPosition(x, y);
     }
     public setbc = (dir: number) => {
         this.turtle.setPen(true);

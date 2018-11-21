@@ -32,14 +32,21 @@ export class Turtle {
         const ctx = this.canvas.getContext("2d");
         let newX: number;
         let newY: number;
-        if(ctx === null) {return};      
-        ctx.beginPath();
-        ctx.moveTo(this.x, this.y);        
-        this.x = newX = this.x + (Math.cos(this.dir * Math.PI / 180) * dist);
-        this.y = newY = this.y + (Math.sin(this.dir * Math.PI / 180) * dist);
-        ctx.lineTo(newX, newY);        
-        ctx.stroke();
-        ctx.closePath();
+        if(ctx === null) {return};
+        newX = this.x + (Math.cos(this.dir * Math.PI / 180) * dist);
+        newY = this.y + (Math.sin(this.dir * Math.PI / 180) * dist);
+        if(this.pen) {
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(newX, newY);        
+            ctx.stroke();
+            ctx.closePath();
+        } else {
+            ctx.moveTo(newX, newY);
+        }
+        this.x = newX;
+        this.y = newY;
+        
     }
 
     public drawTurtle = () => {
@@ -49,15 +56,8 @@ export class Turtle {
         if(this.visible === false) {return;}
         const baseImage = new Image();
         baseImage.src = logoTurtle;  
-        ctx.save();                     
-        // ctx.rotate(this.dir + 90 * Math.PI/180 );
-        // ctx.translate(this.x, this.y);  
-        // ctx.translate(12,-32); 
+        ctx.save();
         this.drawImageCenter(baseImage, this.x, this.y, 12, 16, 1, this.dir * Math.PI / 180 + Math.PI/2)
-        // baseImage.onload = () => {
-        //     ctx.drawImage(baseImage, 0, 0); 
-        //     ctx.restore(); 
-        // }         
     }
 
     public rotate = (dir:number) => {
@@ -76,7 +76,7 @@ export class Turtle {
         this.pen = isDrawing;
     }
 
-    public setVisible = (isVisible: boolean) => {
+    public setVisible = (isVisible: boolean) => {        
         this.visible = isVisible;
     }
 
@@ -84,6 +84,12 @@ export class Turtle {
         this.x = this.homeX;
         this.y = this.homeY;
         this.dir = 0;
+    }
+
+    public setPosition = (x: number, y: number) => {
+        this.x = x;
+        this.y = y;
+        console.log(this);
     }
 
 
