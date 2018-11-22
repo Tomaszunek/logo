@@ -10,6 +10,7 @@ export class Turtle {
 
     public strokeColor: Color;
     public strokeWeight: number;
+    public strokeWeightHome: number;
     public pen: boolean;
     public visible: boolean;
 
@@ -23,6 +24,7 @@ export class Turtle {
         this.dir = turtle.dir;
         this.strokeColor = turtle.strokeColor;
         this.strokeWeight = turtle.strokeWeight;
+        this.strokeWeightHome = turtle.strokeWeight;
         this.pen = turtle.pen;
         this.visible = turtle.visible;
     }    
@@ -36,9 +38,12 @@ export class Turtle {
         newX = this.x + (Math.cos(this.dir * Math.PI / 180) * dist);
         newY = this.y + (Math.sin(this.dir * Math.PI / 180) * dist);
         if(this.pen) {
+            console.log(this.strokeWeight);
             ctx.beginPath();
             ctx.moveTo(this.x, this.y);
-            ctx.lineTo(newX, newY);        
+            ctx.lineTo(newX, newY);
+            ctx.lineWidth = this.strokeWeight;
+            ctx.strokeStyle = this.strokeColor;
             ctx.stroke();
             ctx.closePath();
         } else {
@@ -84,12 +89,12 @@ export class Turtle {
         this.x = this.homeX;
         this.y = this.homeY;
         this.dir = 0;
+        this.strokeWeight = this.strokeWeightHome;
     }
 
     public setPosition = (x: number, y: number) => {
         this.x = x;
         this.y = y;
-        console.log(this);
     }
 
     public setBackgroundColor = (color: string) => {
@@ -100,8 +105,13 @@ export class Turtle {
         ctx.fillRect(0, 0, this.homeX * 2, this.homeY * 2);
     }
 
-    public setPenColor = (color: string) => {
-        this.strokeColor = color;
+    public setStrokeColor = (color: string) => {
+        console.log(color);
+        this.strokeColor = '#' + color;
+    }
+
+    public setStrokeWeight = (weight: number) => {
+        this.strokeWeight = weight;
     }
 
 
