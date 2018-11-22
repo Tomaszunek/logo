@@ -100,12 +100,12 @@ export class Turtle {
         if(this.canvas === null) {return};    
         const ctx = this.canvas.getContext("2d");
         if(ctx === null) {return}; 
-        ctx.fillStyle = '#' + color;
+        ctx.fillStyle = color;
         ctx.fillRect(0, 0, this.homeX * 2, this.homeY * 2);
     }
 
     public setStrokeColor = (color: string) => {
-        this.strokeColor = '#' + color;
+        this.strokeColor = color;
     }
 
     public setStrokeWeight = (weight: number) => {

@@ -9,25 +9,47 @@
 .commandEditor {
     width: 100%;    
     ul.editorCont {
-        margin: 30px 10px;
-        height: 100px;
+        margin: 30px 10px -5px 10px;
+        height: 150px;
         padding: 10px;
         background-color: azure;
         display: flex;
         flex-wrap: wrap;
         justify-content: flex-start;
         align-items: flex-start;
-        align-content: space-evenly;        
+        align-content: space-evenly;
         list-style: none;
+        scroll-behavior: auto;
+        overflow: scroll;
+        overflow-x: hidden;
+
+        &::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        &::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+        }
         li {
             background-color: green;
-            margin: 5px;
-            padding: 5px 8px;
-            border-radius: 5px;
+            padding: 4px 6px;
+            border-radius: 10px;
             color: white;
             font-weight: 600;
             display: flex;
             line-height: 1.2em;
+            font-size: 13px;
+            margin-bottom: 3px;
+
+            
             &.fd {
                 background-color: red;             
             }
@@ -79,9 +101,10 @@
 
             .removeButton {                
                 padding: 3px 8px;
+                height: 18px;
                 margin-left: 3px;
                 border-radius: 5px;
-                background-color: rgba($color: #000000, $alpha: 0.5);
+                background-color: rgba(0, 0, 0, 0.5);
 
                 &:hover {
                     background-color: rgba($color: #000000, $alpha: 0.7);
@@ -90,10 +113,15 @@
 
             ul {
                 display: flex;
+                padding-left: 5px;
+                padding-right: 5px;
             }
 
             .tagName {
                 margin-top: 3px;
+                display: flex;
+                border-radius: 9px;
+                border: 2px  solid rgba(128, 128, 128, 0.15);
             }
         }
     }    
@@ -106,7 +134,7 @@
       
       div.commandItem {
         border: 1px solid rgba($color: gray, $alpha: 0.5);
-        margin-bottom: 5px;
+        margin-bottom: 5px;        
         &.fd {
             background-color: red;             
         }
@@ -123,6 +151,15 @@
             background-color: rgb(255, 0, 212);
             div {
                 margin-left: 15px;
+            }
+            .repeat {
+                background-color: rgba(238, 5, 199, 0.87);
+                .repeat {
+                    background-color: rgba(238, 5, 199, 0.93);
+                    .repeat {
+                        background-color: rgba(238, 5, 199, 0.99);
+                    }  
+                }  
             }                
         }
         &.hideturtle {
@@ -164,22 +201,34 @@
         flex-wrap: wrap;
         justify-content: space-around;
         align-items: center;
+        height: 36px;     
 
         input {
-            height: 30px;
+            height: 19px;
+            border-radius: 4px;
+            text-align: center;
+            width: 70px;
         }
         button {            
             margin: 0 5px;
-            height: 35px;
-            width: 35px;
-            border-radius: 5px;
-            &.save {
-                background-color: green;
-            }
+            height: 30px;
+            width: 30px;
+            border-radius: 5px;            
             &.remove {
                 background-color: red;
             }
         }
     }
+    .description {
+        p {
+            height: 20px;
+            text-align: right;
+            margin: 0;
+            margin-top: -4px;
+            margin-right: 10px;
+            color: #eadfdf;
+            font-size: x-small;
+        }
+    }    
   }
 

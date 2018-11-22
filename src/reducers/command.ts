@@ -16,8 +16,7 @@ export const commandReducer = handleActions<RootState.CommandState, ICommandMode
       } else {
         const lastCommand = state[state.length - 1];
         if(lastCommand.commands) {
-          id = findMostInsideRepeat(lastCommand.commands)
-          
+          id = findMostInsideRepeat(lastCommand.commands)          
         } else {
           id = state[state.length - 1].id + 1;
         }
@@ -40,15 +39,16 @@ export const commandReducer = handleActions<RootState.CommandState, ICommandMode
       return state;
     },
     [CommandActions.Type.DELETE_COMMAND]: (state, action) => {
-      return state.filter((todo) => todo.id !== (action.payload as any));
+      console.log(filterToDelete(state, (action.payload) ? action.payload.id : 0))      
+      // return state.filter((todo) => todo.id !== (action.payload as any));
+      return filterToDelete(state, (action.payload) ? action.payload as any : 0);
     },
-    [CommandActions.Type.EDIT_COMMAND]: (state, action) => {
-      return state.map((todo) => {
-        if (!todo || !action || !action.payload) {
-          return todo;
-        }
-        return (todo.id || 0) === action.payload.id ? { ...todo, text: action.payload.name } : todo;
-      });
+    [CommandActions.Type.EDIT_COMMAND]: (state, action) => {          
+      if(action && action.payload) {
+        return findElementById(state, action.payload);
+      } else {
+        return state;
+      }
     },
     [CommandActions.Type.COMPLETE_COMMAND]: (state, action) => {
       return state.map((todo) =>
@@ -89,4 +89,33 @@ function indexsizeRepeat(commands: Array<ICommandModel> | undefined, lastIndex: 
     }
   } 
   return commands;
+}
+
+const findElementById = (commands: Array<ICommandModel>, newCommand: ICommandModel):Array<ICommandModel> => {
+  return commands.map((cmd: ICommandModel) => {
+    if(cmd && cmd.id === newCommand.id) {
+      if(cmd.commands) {
+        cmd.commands = findElementById(cmd.commands, newCommand);
+      }
+      return {
+        ...cmd,
+        ...newCommand
+      }
+      
+    } else {
+      return cmd
+    }
+  });
+}
+
+const filterToDelete = (commands: Array<ICommandModel>, ind: number):Array<ICommandModel> => {  
+  return commands.filter((command) => {
+    if(command.id !== ind) {
+      if(command.commands) {
+        command.commands = filterToDelete(command.commands, ind);
+      }
+      return command;
+    }
+    return; 
+  });
 }
