@@ -66,7 +66,14 @@ const initialState: RootState.CommandDescriptionState = {
     description: "",
     argCount: 0
   },
-  setpc: {
+  setsc: {
+    short: "tr",
+    name: "rotate left",
+    long: "Turtle turn to left",
+    description: "",
+    argCount: 1
+  },
+  setsw: {
     short: "tr",
     name: "rotate left",
     long: "Turtle turn to left",

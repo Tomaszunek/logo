@@ -51,7 +51,6 @@ export class Caller {
         this.turtle.setPen(true);
     }
     public setpos = (x: number, y: number) => {
-        console.log(x,y)
         this.turtle.setPosition(x, y);
     }
     public setbc = (color?: string) => {
@@ -59,10 +58,13 @@ export class Caller {
             this.turtle.setBackgroundColor(color);
         }
     }
-    public setpc = (color?: string) => {
+    public setsc = (color?: string) => {
         if(color) {
-            this.turtle.setPenColor(color);
+            this.turtle.setStrokeColor(color);
         }        
+    }
+    public setsw = (weight: number) => {
+        this.turtle.setStrokeWeight(weight);               
     }
     public load = (dir: number) => {
         this.turtle.setPen(true);

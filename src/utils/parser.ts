@@ -11,10 +11,10 @@ export class Parser {
     public parse(cb: (text: string ,text2: string) => void) {
         const commandArray = new Array<ICommandModel>();
         const repeat = new RegExp(/(repeat [0-9]+ \[.+\])/ig);
-        const movingArg = new RegExp(/((fd|bk|tl|tr) [0-9]+)/ig);
+        const movingArg = new RegExp(/((fd|bk|tl|tr|setsw) [0-9]+)/ig);
         const twoArg = new RegExp(/(setpos [0-9]+ [0-9]+)/ig);
         const saveLoad = new RegExp(/((save|load) [a-z]{2,})/ig);
-        const colorArg = new RegExp(/((setpc|setbc) [0-9,a-f]{6})/ig);
+        const colorArg = new RegExp(/((setsc|setbc) [0-9,a-f]{6})/ig);
         const noArg = new RegExp(/(hideturtle|showturtle|penup|pendown|home)/ig);
         const finalRe = new RegExp(repeat.source + "|" + movingArg.source + "|" + twoArg.source + "|" + saveLoad.source + "|" + colorArg.source + "|" + noArg.source, "ig");
         const regexArray = this.text.match(finalRe);

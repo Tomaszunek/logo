@@ -21,7 +21,7 @@ class Canvas extends React.Component<IProps, IState> {
       homeX: this.canvasX / 2,
       homeY: this.canvasY / 2,
       dir: 0,
-      strokeColor: '#ffffff',
+      strokeColor: '#000000',
       strokeWeight: 1,
       pen: true,
       visible: true
@@ -38,7 +38,7 @@ class Canvas extends React.Component<IProps, IState> {
         this.caller[command.name](command)
       } else if(command.name === 'setpos' && command.value && command.arg2) {
         this.caller[command.name](command.value, command.arg2)                
-      } else if(command.name === 'setpc' || command.name === 'setbc' && command.color) {
+      } else if(command.name === 'setsc' || command.name === 'setbc' && command.color) {
         this.caller[command.name](command.color)                
       } else {
         this.caller[command.name](command.value);
@@ -55,7 +55,7 @@ class Canvas extends React.Component<IProps, IState> {
         this.caller[command.name](command)
       } else if(command.name === 'setpos' && command.value && command.arg2) {
         this.caller[command.name](command.value, command.arg2)                
-      } else if(command.name === 'setpc' || command.name === 'setbc' && command.color) {
+      } else if(command.name === 'setsc' || command.name === 'setbc' && command.color) {
         this.caller[command.name](command.color)                
       } else {
         this.caller[command.name](command.value);
