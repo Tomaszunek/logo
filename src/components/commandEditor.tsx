@@ -19,7 +19,7 @@ export default class CommandEditor extends React.Component<IProps, IState> {
           </div>
           <div className="removeButton" onClick={(e) => this.removeCommand(e, id)}>
             x
-          </div>
+          </div>                  
         </li>
       )    
     })
