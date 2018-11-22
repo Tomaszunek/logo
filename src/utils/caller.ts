@@ -1,4 +1,5 @@
 import { Turtle } from './turtle';
+import { ICommandModel } from 'src/models';
 
 export class Caller {
     private turtle: Turtle;
@@ -17,33 +18,51 @@ export class Caller {
     public tr = (dir: number) => {
         this.turtle.rotate(-dir);
     }
-    public repeat = (commands: number) => {
-        const caller = new Caller(this.turtle);        
+    public repeat = (command: ICommandModel) => {
+        const caller = new Caller(this.turtle);
+        if(command && command.value) {
+            for(let i = 0; i <= command.value; i++) {
+                if(command.commands) {
+                    command.commands.forEach(newCommand => {
+                        if(newCommand.name === 'repeat' && newCommand.commands) {
+                            caller[newCommand.name](newCommand)
+                        } else {
+                            caller[newCommand.name](newCommand.value);
+                        }
+                    });
+                }
+            }
+        }
         return caller;
     }
-    public hideturtle = (dir: number) => {
-        return 0;
+    public hideturtle = () => {
+        this.turtle.setVisible(false);
     }
-    public showturtle = (dir: number) => {
-        return 0;
+    public showturtle = () => {
+        this.turtle.setVisible(true);
     }
-    public home = (dir: number) => {
-        return 0;
+    public home = () => {
+        this.turtle.home();
     }
-    public penup = (dir: number) => {
+    public penup = () => {
         this.turtle.setPen(false);
     }
-    public pendown = (dir: number) => {
+    public pendown = () => {
         this.turtle.setPen(true);
     }
-    public setpos = (dir: number) => {
-        this.turtle.setPen(true);
+    public setpos = (x: number, y: number) => {
+        console.log(x,y)
+        this.turtle.setPosition(x, y);
     }
-    public setbc = (dir: number) => {
-        this.turtle.setPen(true);
+    public setbc = (color?: string) => {
+        if(color) {
+            this.turtle.setBackgroundColor(color);
+        }
     }
-    public setpc = (dir: number) => {
-        this.turtle.setPen(true);
+    public setpc = (color?: string) => {
+        if(color) {
+            this.turtle.setPenColor(color);
+        }        
     }
     public load = (dir: number) => {
         this.turtle.setPen(true);

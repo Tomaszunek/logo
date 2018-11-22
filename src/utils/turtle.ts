@@ -32,14 +32,21 @@ export class Turtle {
         const ctx = this.canvas.getContext("2d");
         let newX: number;
         let newY: number;
-        if(ctx === null) {return};      
-        ctx.beginPath();
-        ctx.moveTo(this.x, this.y);        
-        this.x = newX = this.x + (Math.cos(this.dir) * dist);
-        this.y = newY = this.y + (Math.sin(this.dir) * dist);
-        ctx.lineTo(newX, newY);        
-        ctx.stroke();
-        ctx.closePath();
+        if(ctx === null) {return};
+        newX = this.x + (Math.cos(this.dir * Math.PI / 180) * dist);
+        newY = this.y + (Math.sin(this.dir * Math.PI / 180) * dist);
+        if(this.pen) {
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(newX, newY);        
+            ctx.stroke();
+            ctx.closePath();
+        } else {
+            ctx.moveTo(newX, newY);
+        }
+        this.x = newX;
+        this.y = newY;
+        
     }
 
     public drawTurtle = () => {
@@ -47,17 +54,10 @@ export class Turtle {
         const ctx = this.canvas.getContext("2d");
         if(ctx === null) {return};
         if(this.visible === false) {return;}
-        ctx.save();
-        ctx.translate(-12,32);
-        ctx.rotate(this.dir * Math.PI/180.0 );
-        ctx.translate(12,-32); 
         const baseImage = new Image();
-        baseImage.src = logoTurtle;
-        baseImage.onload = () => {
-            ctx.drawImage(baseImage, this.x + 12, this.y - 32); 
-            ctx.restore(); 
-        } 
-        
+        baseImage.src = logoTurtle;  
+        ctx.save();
+        this.drawImageCenter(baseImage, this.x, this.y, 12, 16, 1, this.dir * Math.PI / 180 + Math.PI/2)
     }
 
     public rotate = (dir:number) => {
@@ -68,7 +68,7 @@ export class Turtle {
         if(this.canvas === null) {return};    
         const ctx = this.canvas.getContext("2d");
         if(ctx === null) {return}; 
-        ctx.clearRect(0, 0, 800, 800);
+        ctx.clearRect(0, 0, this.homeX * 2, this.homeY * 2);
         this.home();
     }
 
@@ -76,7 +76,7 @@ export class Turtle {
         this.pen = isDrawing;
     }
 
-    public setVisible = (isVisible: boolean) => {
+    public setVisible = (isVisible: boolean) => {        
         this.visible = isVisible;
     }
 
@@ -85,6 +85,44 @@ export class Turtle {
         this.y = this.homeY;
         this.dir = 0;
     }
+
+    public setPosition = (x: number, y: number) => {
+        this.x = x;
+        this.y = y;
+        console.log(this);
+    }
+
+    public setBackgroundColor = (color: string) => {
+        if(this.canvas === null) {return};    
+        const ctx = this.canvas.getContext("2d");
+        if(ctx === null) {return}; 
+        ctx.fillStyle = '#' + color;
+        ctx.fillRect(0, 0, this.homeX * 2, this.homeY * 2);
+    }
+
+    public setPenColor = (color: string) => {
+        this.strokeColor = color;
+    }
+
+
+    // no need to use save and restore between calls as it sets the transform rather 
+    // than multiply it like ctx.rotate ctx.translate ctx.scale and ctx.transform
+    // Also combining the scale and origin into the one call makes it quicker
+    // x,y position of image center
+    // cx,cy position of image center rotation
+    // scale scale of image
+    // rotation in radians.
+    public drawImageCenter(image: HTMLImageElement, x:number, y:number, cx:number, cy:number, scale:number, rotation:number){
+        if(this.canvas === null) {return};    
+        const ctx = this.canvas.getContext("2d");
+        if(ctx === null) {return}; 
+        ctx.setTransform(scale, 0, 0, scale, x, y); // sets scale and origin
+        ctx.rotate(rotation);
+        image.onload = () => {
+            ctx.drawImage(image, -cx, -cy); 
+            ctx.restore(); 
+        }  
+    } 
 };
 
 export interface ITurtleInstance {

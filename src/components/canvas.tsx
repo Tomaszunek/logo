@@ -10,12 +10,16 @@ class Canvas extends React.Component<IProps, IState> {
   public canvas: HTMLCanvasElement | null;
   public caller: Caller;
   public turtle: Turtle;
+  private canvasX: number;
+  private canvasY: number;
   constructor(props: any) {
     super(props);
+    this.canvasX = 800;
+    this.canvasY = 800;
     this.turtle = new Turtle({
       canvas: null,
-      homeX: 100,
-      homeY: 100,
+      homeX: this.canvasX / 2,
+      homeY: this.canvasY / 2,
       dir: 0,
       strokeColor: '#ffffff',
       strokeWeight: 1,
@@ -30,7 +34,15 @@ class Canvas extends React.Component<IProps, IState> {
     this.turtle.canvas = this.canvas;
     const { commands } = this.props;
     commands.forEach((command: ICommandModel) => {
-      this.caller[command.name](command.value);
+      if(command.name === 'repeat' && command.commands) {
+        this.caller[command.name](command)
+      } else if(command.name === 'setpos' && command.value && command.arg2) {
+        this.caller[command.name](command.value, command.arg2)                
+      } else if(command.name === 'setpc' || command.name === 'setbc' && command.color) {
+        this.caller[command.name](command.color)                
+      } else {
+        this.caller[command.name](command.value);
+      }
     });
     this.turtle.drawTurtle();
   }
@@ -39,7 +51,15 @@ class Canvas extends React.Component<IProps, IState> {
     this.turtle.clearCanvas();
     const { commands } = nextProps;
     commands.forEach((command: ICommandModel) => {
-      this.caller[command.name](command.value);
+      if(command.name === 'repeat' && command.commands) {
+        this.caller[command.name](command)
+      } else if(command.name === 'setpos' && command.value && command.arg2) {
+        this.caller[command.name](command.value, command.arg2)                
+      } else if(command.name === 'setpc' || command.name === 'setbc' && command.color) {
+        this.caller[command.name](command.color)                
+      } else {
+        this.caller[command.name](command.value);
+      }
     });
     this.turtle.drawTurtle();  
   } 
@@ -47,7 +67,7 @@ class Canvas extends React.Component<IProps, IState> {
   public render() {
     return (
       <div className="canvas">
-        <canvas ref={elem => this.canvas = elem} width="800" height="800"/>
+        <canvas ref={elem => this.canvas = elem} width={this.canvasX} height={this.canvasY}/>
       </div>
     );
   }

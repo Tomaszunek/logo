@@ -21,7 +21,6 @@ export default class CommandInput extends React.Component<IProps, IState> {
         <input className="commandInput" autoFocus={true} 
           ref={elem => this.input = elem} 
           onKeyPress={this.onInputChange}
-          defaultValue='repeat 10 [fd 100 tr 100 repeat 10 [fd 100 tr 100]]'
         />        
         {this.state.showPopup ? 
           <Popup
