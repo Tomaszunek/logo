@@ -28,16 +28,17 @@ export namespace App {
   export interface IProps extends RouteComponentProps<void> {
     commands: RootState.CommandState;
     descriptions: RootState.CommandDescriptionState;
+    pathwayExample: RootState.PathwayExample;
     actions: CommandActions;
     filter: CommandModel.Filter;
   }
 }
 
 @connect(
-  (state: IRootState, ownProps): Pick<App.IProps, 'commands' | 'descriptions' | 'filter'> => {
+  (state: IRootState, ownProps): Pick<App.IProps, 'commands' | 'descriptions' | 'pathwayExample' | 'filter'> => {
     const hash = ownProps.location && ownProps.location.hash.replace('#', '');
     const filter = FILTER_VALUES.find((value) => value === hash) || CommandModel.Filter.SHOW_ALL;
-    return { commands: state.commands, descriptions: state.descriptions, filter };
+    return { commands: state.commands, descriptions: state.descriptions, pathwayExample: state.pathwayexpample, filter };
   },  
   (dispatch: Dispatch): Pick<App.IProps, 'actions'> => ({
     actions: bindActionCreators(omit(CommandActions, 'Type'), dispatch)
@@ -54,7 +55,7 @@ export default class App extends React.Component<App.IProps> {
     this.props.history.push(`#${filter}`);
   }
   public render() {
-    const { descriptions, commands, actions, filter } = this.props;
+    const { descriptions, commands, pathwayExample, actions, filter } = this.props;
     const activeCount = commands.length - commands.filter((command) => command.value).length;
     const filteredTodos = filter ? commands.filter(FILTER_FUNCTIONS[filter]) : commands;
     const completedCount = commands.reduce((count, todo) => (todo.value ? count + 1 : count), 0);
@@ -62,7 +63,7 @@ export default class App extends React.Component<App.IProps> {
     console.log(arr);
     return (
       <div className="App">
-        <HelperLayer commandsArray={[]}/>
+        <HelperLayer examplePaths={pathwayExample}/>
         <div className="editorLine">
           <CommandEditor commands={commands} actions={actions}/>
           <CommandInput commands={commands} actions={actions} descriptions={descriptions}/>
