@@ -106,7 +106,7 @@
       
       div.commandItem {
         border: 1px solid rgba($color: gray, $alpha: 0.5);
-        margin-bottom: 5px;
+        margin-bottom: 5px;        
         &.fd {
             background-color: red;             
         }
@@ -164,22 +164,34 @@
         flex-wrap: wrap;
         justify-content: space-around;
         align-items: center;
+        height: 36px;     
 
         input {
-            height: 30px;
+            height: 19px;
+            border-radius: 4px;
+            text-align: center;
+            width: 70px;
         }
         button {            
             margin: 0 5px;
-            height: 35px;
-            width: 35px;
-            border-radius: 5px;
-            &.save {
-                background-color: green;
-            }
+            height: 30px;
+            width: 30px;
+            border-radius: 5px;            
             &.remove {
                 background-color: red;
             }
         }
     }
+    .description {
+        p {
+            height: 20px;
+            text-align: right;
+            margin: 0;
+            margin-top: -4px;
+            margin-right: 10px;
+            color: #eadfdf;
+            font-size: x-small;
+        }
+    }    
   }
 

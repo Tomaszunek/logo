@@ -39,7 +39,9 @@ export const commandReducer = handleActions<RootState.CommandState, ICommandMode
       return state;
     },
     [CommandActions.Type.DELETE_COMMAND]: (state, action) => {
-      return state.filter((todo) => todo.id !== (action.payload as any));
+      console.log(filterToDelete(state, (action.payload) ? action.payload.id : 0))      
+      // return state.filter((todo) => todo.id !== (action.payload as any));
+      return filterToDelete(state, (action.payload) ? action.payload as any : 0);
     },
     [CommandActions.Type.EDIT_COMMAND]: (state, action) => {          
       if(action && action.payload) {
@@ -103,5 +105,17 @@ const findElementById = (commands: Array<ICommandModel>, newCommand: ICommandMod
     } else {
       return cmd
     }
+  });
+}
+
+const filterToDelete = (commands: Array<ICommandModel>, ind: number):Array<ICommandModel> => {  
+  return commands.filter((command) => {
+    if(command.id !== ind) {
+      if(command.commands) {
+        command.commands = filterToDelete(command.commands, ind);
+      }
+      return command;
+    }
+    return; 
   });
 }

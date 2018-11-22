@@ -21,12 +21,12 @@ export default class CommandList extends React.Component<IProps, IState> {
               <div>
                 {
                   ((item.value) ?
-                  <input value={item.value} name="value" onChange={ e => this.onChangeInput(e, item, item.name) }/> :
+                  <input value={item.value} type="number" name="value" onChange={ e => this.onChangeInput(e, item, item.name) }/> :
                   null)              
                 }
                 {
                   ((item.arg2) ?
-                  <input value={item.arg2} name="arg2" onChange={ e => this.onChangeInput(e, item, item.name) }/> :
+                  <input value={item.arg2} type="number" name="arg2" onChange={ e => this.onChangeInput(e, item, item.name) }/> :
                   null)              
                 }
                 {
@@ -34,12 +34,14 @@ export default class CommandList extends React.Component<IProps, IState> {
                   <input type="color" value={item.color} onChange={ e => this.onChangeInput(e, item, item.name) }/> :
                   null)              
                 }
-                <button className="remove">X</button>
+                <button className="remove" onClick={(e) => this.removeCommand(e, item.id)}>X</button>
               </div>
             </div>            
-          <p>
-            {long}
-          </p>
+          <div className="description">
+            <p>
+              {long}
+            </p>
+          </div>
           {
             (((item.commands)) ? this.displayCommands(item.commands) : null)
           }          
@@ -57,7 +59,6 @@ export default class CommandList extends React.Component<IProps, IState> {
   }
 
   private onChangeInput = (e: React.ChangeEvent<HTMLInputElement>, item: ICommandModel, type: CommandTypes) => {
-    console.log(type);
     const command = item;
     if(type === "setbc" || type === "setsc") {
       command.color = e.target.value
@@ -67,11 +68,17 @@ export default class CommandList extends React.Component<IProps, IState> {
       } else {
         command.arg2 = Number(e.target.value)
       }
+    } else {
+      command.value = Number(e.target.value)
     }
     this.props.actions.editCommand({
       ...command
     });
-  } 
+  }
+
+  private removeCommand = (e: React.MouseEvent<HTMLButtonElement>, id: number) => {
+    this.props.actions.deleteCommand(id);
+  }
 }
 
 
