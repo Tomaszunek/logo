@@ -49,7 +49,7 @@ export class Parser {
                 } else if(command.match(colorArg)) {
                     commandElem = { 
                         ...commandElem,
-                        color: commandArr[1]
+                        color: '#' + commandArr[1]
                     }
                 } else if(twoArg.test(command)){
                     commandElem = { 

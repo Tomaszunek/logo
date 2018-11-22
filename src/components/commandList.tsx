@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ICommandModel, ICommandDescription } from 'src/models';
+import { ICommandModel, ICommandDescription, CommandTypes } from 'src/models';
 import { CommandActions } from 'src/actions';
 
 export default class CommandList extends React.Component<IProps, IState> {
@@ -20,16 +20,20 @@ export default class CommandList extends React.Component<IProps, IState> {
             </p>
               <div>
                 {
-                  ((itemDesc.argCount === 1) ?
-                  <input value={item.value} onChange={this.onChangeInput}/> :
+                  ((item.value) ?
+                  <input value={item.value} name="value" onChange={ e => this.onChangeInput(e, item, item.name) }/> :
                   null)              
                 }
                 {
-                  ((itemDesc.argCount === 2) ?
-                  <input value={item.value} onChange={this.onChangeInput}/> :
+                  ((item.arg2) ?
+                  <input value={item.arg2} name="arg2" onChange={ e => this.onChangeInput(e, item, item.name) }/> :
                   null)              
                 }
-                <button className="save">S</button>
+                {
+                  ((item.color) ?
+                  <input type="color" value={item.color} onChange={ e => this.onChangeInput(e, item, item.name) }/> :
+                  null)              
+                }
                 <button className="remove">X</button>
               </div>
             </div>            
@@ -42,7 +46,7 @@ export default class CommandList extends React.Component<IProps, IState> {
         </div>
       )
     });
-  }
+  }  
   
   public render() {
     return (
@@ -52,8 +56,21 @@ export default class CommandList extends React.Component<IProps, IState> {
     );
   }
 
-  private onChangeInput = () => {
-    console.log("change")
+  private onChangeInput = (e: React.ChangeEvent<HTMLInputElement>, item: ICommandModel, type: CommandTypes) => {
+    console.log(type);
+    const command = item;
+    if(type === "setbc" || type === "setsc") {
+      command.color = e.target.value
+    } else if (type === "setpos") {
+      if(e.target.getAttribute("name") === "value") {
+        command.value = Number(e.target.value)
+      } else {
+        command.arg2 = Number(e.target.value)
+      }
+    }
+    this.props.actions.editCommand({
+      ...command
+    });
   } 
 }
 
