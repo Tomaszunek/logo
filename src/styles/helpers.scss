@@ -36,4 +36,65 @@
     &.right {
         left: 220px;
     }
+
+    .header {
+        font-size: 36px;
+        text-transform: uppercase;
+        font-weight: 700;
+        text-decoration: underline;
+        &.simple {
+            color: blue;
+        }
+        &.crazy {
+            color: green
+        }
+        &.color {
+            color: orange
+        }
+    }
+
+    .commandType {
+        display: flex;
+        justify-content: space-around;
+        overflow-x: scroll;
+        
+        p {
+            margin: 3px 0px;
+        }
+
+        .pathexample { 
+            padding: 5px 5px 5px 15px;
+            margin: 5px 5px;
+        }
+        &.crazy {                
+            .pathexample {
+
+                &:hover {                    
+                    -webkit-box-shadow: 0px 0px 41px 3px rgba(57,143,14,1);
+                    -moz-box-shadow: 0px 0px 41px 3px rgba(57,143,14,1);
+                    box-shadow: 0px 0px 41px 3px rgba(57,143,14,1);                    
+                }
+            }            
+        }
+        &.simple {                
+            .pathexample {
+
+                &:hover {                    
+                    -webkit-box-shadow: 0px 0px 41px 3px rgb(14, 44, 143);
+                    -moz-box-shadow: 0px 0px 41px 3px rgb(23, 14, 143);
+                    box-shadow: 0px 0px 41px 3px rgb(38, 14, 143);                    
+                }
+            }            
+        }   
+        &.color {                
+            .pathexample {
+
+                &:hover {                    
+                    -webkit-box-shadow: 0px 0px 41px 3px rgb(143, 102, 14);
+                    -moz-box-shadow: 0px 0px 41px 3px rgb(143, 113, 14);
+                    box-shadow: 0px 0px 41px 3px rgb(143, 124, 14);                    
+                }
+            }            
+        }           
+    }
 }

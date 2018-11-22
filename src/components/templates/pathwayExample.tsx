@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { IPathwayExample } from 'src/models';
-const images = require.context('../../images', true);
+import commandImage from 'src/images/command1.jpg';
+
 
 export default class PathwayExample extends React.Component<IProps, IState> {  
   constructor(props: any) {
@@ -8,15 +9,11 @@ export default class PathwayExample extends React.Component<IProps, IState> {
   };   
 
   public render() {
-    const { name, path, image } = this.props.examplePath;
-    console.log(images, image);
-
-    // const imgSrc = images(image)
-    // console.log(imgSrc);
+    const { name, path } = this.props.examplePath;    
     return (
         <div className="pathexample">
             <p>{name}</p>
-            {/* <img src={imgSrc} alt=""/> */}
+            <img src={commandImage} alt=""/> 
             <p>{path}</p>
         </div>
     );
