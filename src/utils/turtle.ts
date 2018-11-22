@@ -38,7 +38,6 @@ export class Turtle {
         newX = this.x + (Math.cos(this.dir * Math.PI / 180) * dist);
         newY = this.y + (Math.sin(this.dir * Math.PI / 180) * dist);
         if(this.pen) {
-            console.log(this.strokeWeight);
             ctx.beginPath();
             ctx.moveTo(this.x, this.y);
             ctx.lineTo(newX, newY);
@@ -106,7 +105,6 @@ export class Turtle {
     }
 
     public setStrokeColor = (color: string) => {
-        console.log(color);
         this.strokeColor = '#' + color;
     }
 

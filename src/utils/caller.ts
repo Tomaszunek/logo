@@ -60,7 +60,6 @@ export class Caller {
     }
     public setsc = (color?: string) => {
         if(color) {
-            console.log(color);
             this.turtle.setStrokeColor(color);
         }        
     }

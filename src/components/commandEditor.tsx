@@ -36,7 +36,6 @@ export default class CommandEditor extends React.Component<IProps, IState> {
   } 
   
   private removeCommand = (e: React.MouseEvent<HTMLDivElement>, id: number) => {
-    console.log(id, e);
     this.props.actions.deleteCommand(id);
   }
 }
