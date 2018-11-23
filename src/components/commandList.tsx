@@ -11,7 +11,7 @@ export default class CommandList extends React.Component<IProps, IState> {
   public displayCommands = (items: Array<ICommandModel>) => {
     return items.map((item: ICommandModel) => {
       const itemDesc = this.props.descriptions[item.name];
-      const { short, name, long } = itemDesc;
+      const { short, name, long, args } = itemDesc;
       return (
         <div className={"commandItem " + item.name} key={item.id}>
           <div className="heading">
@@ -40,6 +40,12 @@ export default class CommandList extends React.Component<IProps, IState> {
           <div className="description">
             <p>
               {long}
+              {args.map((argument: any) => {
+                return (
+                  '(' + argument.name + ' type of ' + argument.type + ')'
+                )                
+              })}
+              
             </p>
           </div>
           {
