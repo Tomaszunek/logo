@@ -116,9 +116,9 @@
             .pathexample {
                 background-color: rgb(167, 255, 167);
                 &:hover {                    
-                    -webkit-box-shadow: 0px 0px 41px 3px rgba(57,143,14,1);
-                    -moz-box-shadow: 0px 0px 41px 3px rgba(57,143,14,1);
-                    box-shadow: 0px 0px 41px 3px rgba(57,143,14,1);                    
+                    -webkit-box-shadow: 3px 3px 15px 9px rgb(167, 255, 167);
+                    -moz-box-shadow: 3px 3px 15px 9px rgb(167, 255, 167);
+                    box-shadow: 3px 3px 15px 9px rgb(167, 255, 167);;                    
                 }
             }            
         }
@@ -131,9 +131,9 @@
             .pathexample {
                 background-color: rgb(200, 200, 255);
                 &:hover {                    
-                    -webkit-box-shadow: 0px 0px 41px 3px rgb(14, 44, 143);
-                    -moz-box-shadow: 0px 0px 41px 3px rgb(23, 14, 143);
-                    box-shadow: 0px 0px 41px 3px rgb(38, 14, 143);                    
+                    -webkit-box-shadow: 3px 3px 15px 9px #c8c8ff;;
+                    -moz-box-shadow: 3px 3px 15px 9px #c8c8ff;;
+                    box-shadow: 3px 3px 15px 9px #c8c8ff;;                    
                 }
             }            
         }   
@@ -146,9 +146,9 @@
             .pathexample {
                 background-color: rgb(253, 229, 184);                
                 &:hover {                    
-                    -webkit-box-shadow: 0px 0px 41px 3px rgb(143, 102, 14);
-                    -moz-box-shadow: 0px 0px 41px 3px rgb(143, 113, 14);
-                    box-shadow: 0px 0px 41px 3px rgb(143, 124, 14);                    
+                    -webkit-box-shadow: 3px 3px 15px 9px rgb(253, 229, 184); 
+                    -moz-box-shadow: 3px 3px 15px 9px rgb(253, 229, 184); 
+                    box-shadow: 3px 3px 15px 9px rgb(253, 229, 184);                     
                 }
             }            
         }           
