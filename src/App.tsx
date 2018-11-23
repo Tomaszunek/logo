@@ -63,7 +63,7 @@ export default class App extends React.Component<App.IProps> {
     console.log(arr);
     return (
       <div className="App">
-        <HelperLayer examplePaths={pathwayExample}/>
+        <HelperLayer examplePaths={pathwayExample} descriptions={descriptions}/>
         <div className="editorLine">
           <CommandEditor commands={commands} actions={actions}/>
           <CommandInput commands={commands} actions={actions} descriptions={descriptions}/>

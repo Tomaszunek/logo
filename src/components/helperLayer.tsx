@@ -23,7 +23,7 @@ export default class HelperLayer extends React.Component<IProps, IState> {
         <div className="menuIcon right" onClick={(e) => this.openHelperModal(e, "right")}>
             {"<"}
         </div>
-        <HelperWindow itemStyle={display} examplePaths={this.props.examplePaths} site={this.state.site}/>
+        <HelperWindow descriptions={this.props.descriptions} itemStyle={display} examplePaths={this.props.examplePaths} site={this.state.site}/>
       </div>      
     );
   }
@@ -37,7 +37,8 @@ export default class HelperLayer extends React.Component<IProps, IState> {
 }
 
 interface IProps {
-  examplePaths: Array<IPathwayExample>
+  examplePaths: Array<IPathwayExample>,
+  descriptions: any
 }
 
 interface IState {

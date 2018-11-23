@@ -4,5 +4,7 @@ export interface ICommandDescription {
     long: string;
     description: string;
     args: Array<object>;
+    color: string;
+    image: string;
 }
   
