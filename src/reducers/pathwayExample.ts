@@ -5,7 +5,7 @@ import { IPathwayExample } from '../models';
 const initialState: RootState.PathwayExample = [
   {
     name: 'command1',
-    path: "command1",
+    path: "repeat 50 [repeat 159 [tr 44 fd 61] tr 591]",
     command: [],
     image: "command1.jpg",
     type: "simple"

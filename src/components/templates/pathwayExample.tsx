@@ -14,7 +14,7 @@ export default class PathwayExample extends React.Component<IProps, IState> {
         <div className="pathexample">
             <p>{name}</p>
             <img src={commandImage} alt=""/> 
-            <p>{path}</p>
+            <p className="path">{path}</p>
         </div>
     );
   } 

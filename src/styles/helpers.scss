@@ -23,18 +23,36 @@
     position: absolute;
     z-index: 3;
     background: white;
-    top: 80px;
+    top: 20px;
     left: 0;
     border: 1px solid black;
-    height: 800px;
+    height: 850px;
     width: calc(100vw - 240px);
     display: none;
 
     &.left {
-        left: 0;
+        left: 100px;
+        animation: movingLeftToRight 3s 1 alternate ease-in-out;
+        @keyframes movingLeftToRight{
+            from {
+                left: -5000%;
+            }        
+            to {
+                left: 350%;
+            }
+        }
     }
     &.right {
-        left: 220px;
+        left: 100px;
+        animation: movingRightToLeft 3s 1 alternate ease-in-out;
+        @keyframes movingRightToLeft{
+            from {
+                left: 5000%;
+            }        
+            to {
+                left: 350%;
+            }
+        }
     }
 
     .header {
@@ -55,7 +73,7 @@
 
     .commandType {
         display: flex;
-        justify-content: space-around;
+        justify-content: start;
         overflow-x: scroll;
         
         &::-webkit-scrollbar {
@@ -75,11 +93,19 @@
         }
         p {
             margin: 3px 0px;
+
+            &.path {
+                background-color: rgb(222, 248, 239);
+                border-radius: 5px;
+                border: 1px solid gray;
+                font-size: 12px;
+                margin: 0px;
+            }
         }
 
         .pathexample { 
             padding: 5px 5px 5px 15px;
-            margin: 5px 5px;
+            margin: 12px 8px;
         }
         &.crazy {           
 
