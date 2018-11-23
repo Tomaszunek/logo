@@ -153,4 +153,25 @@
             }            
         }           
     }
+
+    .commandsList {
+        display: grid;
+        grid-template-columns: 50% 50%;
+
+        .commandItem {
+            display: flex;
+        }
+
+        .commandsLeft {
+            .commandItem {
+                flex-direction: row-reverse;
+            }
+        }
+
+        .commandsRight {
+            .commandItem {
+                flex-direction: row;
+            }
+        }
+    }
 }
