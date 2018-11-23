@@ -45,35 +45,35 @@ const initialState: RootState.CommandDescriptionState = {
   },
   hideturtle: {
     short: "hideturtle",
-    name: "rotate left",
-    long: "Turtle turn to left",
+    name: "Show turtle",
+    long: "Turtle will hide",
     description: "",
     argCount: 0,
-    args: [       {name: "no arguments", type: "none"}     ] 
+    args: [           ] 
   },
   showturtle: {
     short: "showturtle",
-    name: "forward",
-    long: "Turtle go forward",
+    name: "Hide turtle",
+    long: "Turtle will shown",
     description: "",
     argCount: 0,
-    args: [       {name: "no arguments", type: "none"}     ] 
+    args: [           ] 
   },
   penup: {
     short: "penup",
-    name: "rotate left",
-    long: "Turtle turn to left",
+    name: "Turtle penup",
+    long: "Tuttle will stop drawing",
     description: "",
     argCount: 0,
-    args: [       {name: "no arguments", type: "none"}     ] 
+    args: [           ] 
   },
   pendown: {
     short: "pendown",
-    name: "rotate left",
-    long: "Turtle turn to left",
+    name: "Turtle pendown",
+    long: "Tuttle will start drawing",
     description: "",
     argCount: 0,
-    args: [       {name: "no arguments", type: "none"}     ] 
+    args: [           ] 
   },
   setsc: {
     short: "setsc",
@@ -129,7 +129,7 @@ const initialState: RootState.CommandDescriptionState = {
     long: "Turtle go to home",
     description: "",
     argCount: 0,
-    args: [       {name: "no arguments", type: "none"}     ] 
+    args: [           ] 
   },
   setpos: {
     short: "setpos",
