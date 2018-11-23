@@ -38,7 +38,7 @@
     }
 
     .header {
-        font-size: 36px;
+        font-size: 22px;
         text-transform: uppercase;
         font-weight: 700;
         text-decoration: underline;
@@ -58,6 +58,21 @@
         justify-content: space-around;
         overflow-x: scroll;
         
+        &::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        &::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.4);
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.4);
+            border-radius: 10px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.75);
+        }
         p {
             margin: 3px 0px;
         }
@@ -66,10 +81,14 @@
             padding: 5px 5px 5px 15px;
             margin: 5px 5px;
         }
-        &.crazy {
-            background-color: rgb(167, 255, 167);          
-            .pathexample {
+        &.crazy {           
 
+            &::-webkit-scrollbar-thumb {
+                background-color: rgba(67, 230, 17, 0.24);  
+            }
+          
+            .pathexample {
+                background-color: rgb(167, 255, 167);
                 &:hover {                    
                     -webkit-box-shadow: 0px 0px 41px 3px rgba(57,143,14,1);
                     -moz-box-shadow: 0px 0px 41px 3px rgba(57,143,14,1);
@@ -77,10 +96,14 @@
                 }
             }            
         }
-        &.simple {
-            background-color: rgb(200, 200, 255);                 
+        &.simple {           
+            
+            &::-webkit-scrollbar-thumb {
+                background-color: rgba(17, 31, 230, 0.24);  
+            }
+            
             .pathexample {
-
+                background-color: rgb(200, 200, 255);
                 &:hover {                    
                     -webkit-box-shadow: 0px 0px 41px 3px rgb(14, 44, 143);
                     -moz-box-shadow: 0px 0px 41px 3px rgb(23, 14, 143);
@@ -89,9 +112,13 @@
             }            
         }   
         &.color {
-            background-color: rgb(253, 229, 184);                 
+            
+            &::-webkit-scrollbar-thumb {
+                background-color: rgba(230, 145, 17, 0.24);  
+            }
+            
             .pathexample {
-
+                background-color: rgb(253, 229, 184);                
                 &:hover {                    
                     -webkit-box-shadow: 0px 0px 41px 3px rgb(143, 102, 14);
                     -moz-box-shadow: 0px 0px 41px 3px rgb(143, 113, 14);
