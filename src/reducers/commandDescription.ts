@@ -44,7 +44,7 @@ const initialState: RootState.CommandDescriptionState = {
     args: [       {name: "count", type: "number"} , {name: "commands", type: "another commands"}    ] 
   },
   hideturtle: {
-    short: "tr",
+    short: "hideturtle",
     name: "rotate left",
     long: "Turtle turn to left",
     description: "",
@@ -52,7 +52,7 @@ const initialState: RootState.CommandDescriptionState = {
     args: [       {name: "no arguments", type: "none"}     ] 
   },
   showturtle: {
-    short: "fd",
+    short: "showturtle",
     name: "forward",
     long: "Turtle go forward",
     description: "",
@@ -60,7 +60,7 @@ const initialState: RootState.CommandDescriptionState = {
     args: [       {name: "no arguments", type: "none"}     ] 
   },
   penup: {
-    short: "tr",
+    short: "penup",
     name: "rotate left",
     long: "Turtle turn to left",
     description: "",
@@ -68,7 +68,7 @@ const initialState: RootState.CommandDescriptionState = {
     args: [       {name: "no arguments", type: "none"}     ] 
   },
   pendown: {
-    short: "tr",
+    short: "pendown",
     name: "rotate left",
     long: "Turtle turn to left",
     description: "",
@@ -76,52 +76,52 @@ const initialState: RootState.CommandDescriptionState = {
     args: [       {name: "no arguments", type: "none"}     ] 
   },
   setsc: {
-    short: "tr",
-    name: "rotate left",
-    long: "Turtle turn to left",
+    short: "setsc",
+    name: "Setting stroke color",
+    long: "Setting stroke color",
     description: "",
     argCount: 1,
-    args: [       {name: "distance", type: "number"}     ] 
+    args: [       {name: "line color", type: "color"}    ]
   },
   setsw: {
-    short: "tr",
-    name: "rotate left",
-    long: "Turtle turn to left",
+    short: "setsw",
+    name: "Setting stroke waight",
+    long: "Setting stroke waight",
     description: "",
     argCount: 1,
-    args: [       {name: "distance", type: "number"}     ] 
+    args: [       {name: "weight stroke", type: "color"}    ]
   },
   setbc: {
-    short: "tr",
-    name: "rotate left",
-    long: "Turtle turn to left",
+    short: "setbc",
+    name: "Setting background",
+    long: "Setting background color to canvas",
     description: "",
     argCount: 1,
-    args: [       {name: "distance", type: "number"}     ] 
+    args: [       {name: "background color", type: "color"}     ] 
   },
   to: {
-    short: "tr",
-    name: "rotate left",
-    long: "Turtle turn to left",
+    short: "to",
+    name: "Function to",
+    long: "Make function",
     description: "",
     argCount: 3,
-    args: [       {name: "distance", type: "number"}     ] 
+    args: [       {name: "function name", type: "string"}, {name: "function args", type: "array"} , {name: "function body", type: "any"}      ] 
   },
   save: {
-    short: "tr",
-    name: "rotate left",
-    long: "Turtle turn to left",
+    short: "save",
+    name: "Save file",
+    long: "Save file from canvas",
     description: "",
     argCount: 1,
-    args: [       {name: "distance", type: "number"}     ] 
+    args: [       {name: "file name", type: "string"}     ] 
   },
   load: {
-    short: "tr",
-    name: "rotate left",
-    long: "Turtle turn to left",
+    short: "load",
+    name: "Load file",
+    long: "Load file to canvas",
     description: "",
     argCount: 1,
-    args: [       {name: "distance", type: "number"}     ] 
+    args: [       {name: "file name", type: "string"}     ] 
   },
   home: {
     short: "home",
