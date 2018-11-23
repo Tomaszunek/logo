@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ICommandModel } from 'src/models';
+import { IPathwayExample } from 'src/models';
 import HelperWindow from './helperWindow';
 
 export default class HelperLayer extends React.Component<IProps, IState> {  
@@ -23,7 +23,7 @@ export default class HelperLayer extends React.Component<IProps, IState> {
         <div className="menuIcon right" onClick={(e) => this.openHelperModal(e, "right")}>
             {"<"}
         </div>
-        <HelperWindow itemStyle={display} commandsArray={this.props.commandsArray} site={this.state.site}/>
+        <HelperWindow itemStyle={display} examplePaths={this.props.examplePaths} site={this.state.site}/>
       </div>      
     );
   }
@@ -37,7 +37,7 @@ export default class HelperLayer extends React.Component<IProps, IState> {
 }
 
 interface IProps {
-  commandsArray: Array<Array<ICommandModel>>
+  examplePaths: Array<IPathwayExample>
 }
 
 interface IState {

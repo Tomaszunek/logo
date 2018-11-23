@@ -23,17 +23,134 @@
     position: absolute;
     z-index: 3;
     background: white;
-    top: 80px;
+    top: 20px;
     left: 0;
     border: 1px solid black;
-    height: 800px;
+    height: 850px;
     width: calc(100vw - 240px);
     display: none;
 
     &.left {
-        left: 0;
+        left: 100px;
+        animation: movingLeftToRight 3s 1 alternate ease-in-out;
+        @keyframes movingLeftToRight{
+            from {
+                left: -5000%;
+            }        
+            to {
+                left: 350%;
+            }
+        }
     }
     &.right {
-        left: 220px;
+        left: 100px;
+        animation: movingRightToLeft 3s 1 alternate ease-in-out;
+        @keyframes movingRightToLeft{
+            from {
+                left: 5000%;
+            }        
+            to {
+                left: 350%;
+            }
+        }
+    }
+
+    .header {
+        font-size: 22px;
+        text-transform: uppercase;
+        font-weight: 700;
+        text-decoration: underline;
+        &.simple {
+            color: blue;
+        }
+        &.crazy {
+            color: green
+        }
+        &.color {
+            color: orange
+        }
+    }
+
+    .commandType {
+        display: flex;
+        justify-content: start;
+        overflow-x: scroll;
+        
+        &::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        &::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.4);
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.4);
+            border-radius: 10px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.75);
+        }
+        p {
+            margin: 3px 0px;
+
+            &.path {
+                background-color: rgb(222, 248, 239);
+                border-radius: 5px;
+                border: 1px solid gray;
+                font-size: 12px;
+                margin: 0px;
+            }
+        }
+
+        .pathexample { 
+            padding: 5px 5px 5px 15px;
+            margin: 12px 8px;
+        }
+        &.crazy {           
+
+            &::-webkit-scrollbar-thumb {
+                background-color: rgba(67, 230, 17, 0.24);  
+            }
+          
+            .pathexample {
+                background-color: rgb(167, 255, 167);
+                &:hover {                    
+                    -webkit-box-shadow: 0px 0px 41px 3px rgba(57,143,14,1);
+                    -moz-box-shadow: 0px 0px 41px 3px rgba(57,143,14,1);
+                    box-shadow: 0px 0px 41px 3px rgba(57,143,14,1);                    
+                }
+            }            
+        }
+        &.simple {           
+            
+            &::-webkit-scrollbar-thumb {
+                background-color: rgba(17, 31, 230, 0.24);  
+            }
+            
+            .pathexample {
+                background-color: rgb(200, 200, 255);
+                &:hover {                    
+                    -webkit-box-shadow: 0px 0px 41px 3px rgb(14, 44, 143);
+                    -moz-box-shadow: 0px 0px 41px 3px rgb(23, 14, 143);
+                    box-shadow: 0px 0px 41px 3px rgb(38, 14, 143);                    
+                }
+            }            
+        }   
+        &.color {
+            
+            &::-webkit-scrollbar-thumb {
+                background-color: rgba(230, 145, 17, 0.24);  
+            }
+            
+            .pathexample {
+                background-color: rgb(253, 229, 184);                
+                &:hover {                    
+                    -webkit-box-shadow: 0px 0px 41px 3px rgb(143, 102, 14);
+                    -moz-box-shadow: 0px 0px 41px 3px rgb(143, 113, 14);
+                    box-shadow: 0px 0px 41px 3px rgb(143, 124, 14);                    
+                }
+            }            
+        }           
     }
 }
