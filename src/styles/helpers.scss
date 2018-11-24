@@ -166,6 +166,7 @@
                 width: 93.5px;
                 height: 93.5px;
             }
+           
         }
 
         .commandsLeft {
@@ -176,6 +177,10 @@
                     border-left: 1px solid black;
                     border-right: 1px solid black;
                 }
+
+                .description {
+
+                }
             }
         }
 
@@ -185,6 +190,10 @@
 
                 img {
                     border-right: 1px solid black;
+                }
+
+                .description {
+                
                 }
             }
         }
