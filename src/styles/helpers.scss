@@ -160,17 +160,32 @@
 
         .commandItem {
             display: flex;
+            border-bottom: 1px solid black;
+            
+            img {
+                width: 93.5px;
+                height: 93.5px;
+            }
         }
 
         .commandsLeft {
             .commandItem {
                 flex-direction: row-reverse;
+
+                img {
+                    border-left: 1px solid black;
+                    border-right: 1px solid black;
+                }
             }
         }
 
         .commandsRight {
             .commandItem {
                 flex-direction: row;
+
+                img {
+                    border-right: 1px solid black;
+                }
             }
         }
     }
