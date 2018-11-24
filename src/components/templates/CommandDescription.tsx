@@ -8,12 +8,13 @@ export default class CommandDescription extends React.Component<IProps, IState> 
   };   
 
   public render() {
-    const { name } = this.props.description;    
+    const { short, name, long,  color, description, argCount, args } = this.props.description;    
     return (
       <div className="commandItem">
         <img src={commandImage}/>
         <div className="description">
           {name}
+          {color}
         </div>        
       </div>
     );
