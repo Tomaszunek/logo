@@ -9,22 +9,18 @@ export default class CommandDescription extends React.Component<IProps, IState> 
 
   public render() {
     // const { short, name, long,  color, description, argCount, args } = this.props.description;
-    const { description } = this.props;   
+    const { name, color, short, long, description, argCount} = this.props.description;   
  
     return (
       <div className="commandItem">
         <img src={commandImage}/>
         <div className="description">
-          {description.map((desc: any, index: string) => {
-            if(Array.isArray(desc)) {
-              return;
-            } else {
-              return <div key={index}>
-              {index + " : " + desc}
-            </div>
-            }            
-          })}
-          {}
+          {name}
+          {color}
+          {short}
+          {long}
+          {argCount}
+          {description}
           {/* {args} */}
         </div>        
       </div>
