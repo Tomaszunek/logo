@@ -25,7 +25,7 @@ export default class CommandDescription extends React.Component<IProps, IState> 
             }            
           })}
           {}
-          {/* {args} */abc}
+          {/* {args} */abcd}
         </div>        
       </div>
     );
