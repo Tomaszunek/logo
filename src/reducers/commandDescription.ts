@@ -80,7 +80,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "Turtle penup",
     long: "Tuttle will stop drawing",
     description: "", 
-    color: "#",
+    color: "#d9ec28",
     argCount: 0,
     args: [           ] 
   },
@@ -98,7 +98,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "Setting stroke color",
     long: "Setting stroke color",
     description: "", 
-    color: "#d9ec28",
+    color: "#00ff00",
     argCount: 1,
     args: [       {name: "line color", type: "color"}    ]
   },
@@ -129,15 +129,6 @@ const initialState: RootState.CommandDescriptionState = {
     argCount: 1,
     args: [       {name: "file name", type: "string"}     ] 
   },
-  to: {
-    short: "to",
-    name: "Function to",
-    long: "Make function",
-    description: "", 
-    color: "#aabbcc",
-    argCount: 3,
-    args: [       {name: "function name", type: "string"}, {name: "function args", type: "array"} , {name: "function body", type: "any"}      ] 
-  },
   load: {
     short: "load",
     name: "Load file",
@@ -156,6 +147,15 @@ const initialState: RootState.CommandDescriptionState = {
     argCount: 0,
     args: [           ] 
   },
+  // to: {
+  //   short: "to",
+  //   name: "Function to",
+  //   long: "Make function",
+  //   description: "", 
+  //   color: "#aabbcc",
+  //   argCount: 3,
+  //   args: [       {name: "function name", type: "string"}, {name: "function args", type: "array"} , {name: "function body", type: "any"}      ] 
+  // },
   
 };
 

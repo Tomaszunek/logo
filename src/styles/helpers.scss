@@ -175,7 +175,6 @@
                     text-align: center;                    
     
                     div {
-                        border-left: 1px solid black;
                         border-bottom: 1px solid black;
                     }
                 }
@@ -195,8 +194,11 @@
 
                 .itemDesc {
                     .description {
+                        div {
+                            border-right: 1px solid black;
+                        }                  
     
-                    }                    
+                    }
                 }
 
             }
@@ -212,7 +214,9 @@
 
                 .itemDesc {
                     .description {
-    
+                        div {
+                            border-right: 1px solid black;
+                        } 
                     }                    
                 }
             }
