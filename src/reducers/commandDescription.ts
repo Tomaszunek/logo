@@ -3,6 +3,24 @@ import { RootState } from './state';
 import { ICommandDescription } from '../models';
 
 const initialState: RootState.CommandDescriptionState = {
+  setpos: {
+    short: "setpos",
+    name: "Set position",
+    long: "Turtle set postion to <x,y>",
+    description: "", 
+    color: "#6cbada",
+    argCount: 2,
+    args: [       {name: "position x", type: "number"}, {name: "position y", type: "number"}      ] 
+  },
+  repeat: {
+    short: "repeat",
+    name: "repeat",
+    long: "Turtle move repeatdly",
+    description: "", 
+    color: "#ff00d4",
+    argCount: 2,
+    args: [       {name: "count", type: "number"} , {name: "commands", type: "another commands"}    ] 
+  },
   fd: {
     short: "fd",
     name: "forward",
@@ -47,15 +65,6 @@ const initialState: RootState.CommandDescriptionState = {
     color: "#16969b",
     argCount: 0,
     args: [           ] 
-  },
-  repeat: {
-    short: "repeat",
-    name: "repeat",
-    long: "Turtle move repeatdly",
-    description: "", 
-    color: "#ff00d4",
-    argCount: 2,
-    args: [       {name: "count", type: "number"} , {name: "commands", type: "another commands"}    ] 
   },
   showturtle: {
     short: "showturtle",
@@ -137,15 +146,6 @@ const initialState: RootState.CommandDescriptionState = {
     color: "#d66b12",
     argCount: 1,
     args: [       {name: "file name", type: "string"}     ] 
-  },
-  setpos: {
-    short: "setpos",
-    name: "Set position",
-    long: "Turtle set postion to <x,y>",
-    description: "", 
-    color: "#6cbada",
-    argCount: 2,
-    args: [       {name: "position x", type: "number"}, {name: "position y", type: "number"}      ] 
   },
   home: {
     short: "home",
