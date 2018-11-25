@@ -8,23 +8,30 @@ export default class CommandDescription extends React.Component<IProps, IState> 
   };   
 
   public render() {
-    const { description } = this.props; 
+    const { description } = this.props;
+    const { descArr, args } = this.displayDescription(description)
     return (
       <div className="commandItem">
-        <img src={commandImage}/>
-        <div className="description">          
-          {this.displayDescription(description)}
-        </div>        
+        <img src={commandImage}/>        
+        <div className="itemDesc">
+          <div className="description">          
+            {descArr}
+          </div>
+          <div className="args">
+            {args} 
+          </div>
+        </div>       
       </div>
     );
   }
 
   private displayDescription = (desc: any) => {
     const descArr = [];
+    let args: any;
     for(const key in desc) {
       if(desc[key]) {
-        if(Array.isArray(desc[key])) {
-          descArr.push(
+        if(Array.isArray(desc[key]) && desc[key].length) {
+          args = (
             (
               <div key={key}>
                 Function arguments:
@@ -39,15 +46,18 @@ export default class CommandDescription extends React.Component<IProps, IState> 
             )
           )
         } else {
+          const style = {
+            background: (key === "color") ? desc[key] : ''
+          }
           descArr.push(
-            <div key={key}>
+            <div style={style} key={key}>
               {key + " : " + desc[key]}
             </div>
           )
         }        
       }      
     }
-    return descArr;
+    return {descArr, args};
   };
 }
 

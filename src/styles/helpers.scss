@@ -161,17 +161,27 @@
         .commandItem {
             display: flex;
             border-bottom: 1px solid black;
+            height: 100px;
             
             img {
                 width: 93.5px;
                 height: 93.5px;
             }
 
-            .description {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                text-align: center;
+            .itemDesc {
+                width: 100%;
+                .description {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    text-align: center;                    
+    
+                    div {
+                        border-left: 1px solid black;
+                        border-bottom: 1px solid black;
+                    }
+                }
             }
+
            
         }
 
@@ -184,9 +194,12 @@
                     border-right: 1px solid black;
                 }
 
-                .description {
-
+                .itemDesc {
+                    .description {
+    
+                    }                    
                 }
+
             }
         }
 
@@ -198,8 +211,10 @@
                     border-right: 1px solid black;
                 }
 
-                .description {
-                    
+                .itemDesc {
+                    .description {
+    
+                    }                    
                 }
             }
         }
