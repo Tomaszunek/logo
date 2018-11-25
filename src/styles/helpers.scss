@@ -166,6 +166,12 @@
                 width: 93.5px;
                 height: 93.5px;
             }
+
+            .description {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                text-align: center;
+            }
            
         }
 
@@ -193,7 +199,7 @@
                 }
 
                 .description {
-                
+                    
                 }
             }
         }
