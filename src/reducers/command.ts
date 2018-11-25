@@ -39,8 +39,6 @@ export const commandReducer = handleActions<RootState.CommandState, ICommandMode
       return state;
     },
     [CommandActions.Type.DELETE_COMMAND]: (state, action) => {
-      console.log(filterToDelete(state, (action.payload) ? action.payload.id : 0))      
-      // return state.filter((todo) => todo.id !== (action.payload as any));
       return filterToDelete(state, (action.payload) ? action.payload as any : 0);
     },
     [CommandActions.Type.EDIT_COMMAND]: (state, action) => {          
