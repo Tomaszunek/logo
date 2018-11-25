@@ -4,6 +4,7 @@ import CommandEditor from './components/commandEditor';
 import CommandList from './components/commandList';
 import CommandInput from './components/commandInput';
 import HelperLayer from './components/helperLayer';
+import TutorialPopup from './components/tutorialPopup';
 import { RouteComponentProps } from 'react-router';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
@@ -64,6 +65,7 @@ export default class App extends React.Component<App.IProps> {
     return (
       <div className="App">
         <HelperLayer examplePaths={pathwayExample} descriptions={descriptions}/>
+        <TutorialPopup tutorialPages={[]}/>
         <div className="editorLine">
           <CommandEditor commands={commands} actions={actions}/>
           <CommandInput commands={commands} actions={actions} descriptions={descriptions}/>

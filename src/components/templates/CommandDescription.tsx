@@ -8,8 +8,7 @@ export default class CommandDescription extends React.Component<IProps, IState> 
   };   
 
   public render() {
-    const { description } = this.props;
-    const { descArr, args } = this.displayDescription(description)
+    const { descArr, args } = this.displayDescription(this.props.description)
     return (
       <div className="commandItem">
         <img src={commandImage}/>        
