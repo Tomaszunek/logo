@@ -6,6 +6,7 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
   };  
 
   public render() {
+    console.log(this.setVisibility())
     return (
       <div className="tutorialPopup">
         <div>
@@ -20,7 +21,7 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
   }
 
   private setVisibility = () => {
-
+    return 0;
   }
 }
 

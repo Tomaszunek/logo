@@ -233,7 +233,8 @@
     border: 1px solid black;
     left: 22.5%;
     top: 17.5%;
-    display: block;
+    display: grid;
+    grid-template-rows: 90% 10%;
 
     .tutorialNav {
         display: flex;
