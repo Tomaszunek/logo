@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 export default class TutorialPopup extends React.Component<IProps, IState> { 
-  public input: HTMLInputElement | null;
   constructor(props: IProps) {
     super(props);
   };  
@@ -18,7 +17,11 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
         </div>
       </div>
     );
-  } 
+  }
+
+  private setVisibility = () => {
+
+  }
 }
 
 interface IProps {
