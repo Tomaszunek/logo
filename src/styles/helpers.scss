@@ -234,4 +234,11 @@
     left: 22.5%;
     top: 17.5%;
     display: block;
+
+    .tutorialNav {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 90px;
+        border-top: 1px solid;     
+    }
 }
