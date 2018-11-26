@@ -2,7 +2,8 @@ import { combineReducers } from 'redux';
 import { IRootState, RootState } from './state';
 import { commandReducer } from './command';
 import { commandDescriptionReducer } from './commandDescription';
-import { pathwayExampleReducer } from './pathwayExample' 
+import { pathwayExampleReducer } from './pathwayExample';
+import { tutorialPageReducer } from './tutorialPageReducer' 
 export { IRootState, RootState };
 
 // NOTE: current type definition of Reducer in 'redux-actions' module
@@ -10,5 +11,6 @@ export { IRootState, RootState };
 export const rootReducer = combineReducers<IRootState>({
   commands: commandReducer as any,
   descriptions: commandDescriptionReducer as any,
-  pathwayexpample: pathwayExampleReducer as any
+  pathwayexpample: pathwayExampleReducer as any,
+  tutorialPages: tutorialPageReducer as any
 });
