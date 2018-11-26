@@ -9,7 +9,13 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
   public render() {
     return (
       <div className="tutorialPopup">
-        a     
+        <div>
+          turorial          
+        </div>
+        <div className="tutorialNav">
+          <button>BACK</button>
+          <button>NEXT</button>
+        </div>
       </div>
     );
   } 
