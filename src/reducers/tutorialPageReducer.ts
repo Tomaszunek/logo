@@ -6,7 +6,7 @@ const initialState: RootState.TutorialPages = [
     
 ];
 
-export const tutorialPageReducer = handleActions<RootState.CommandDescriptionState, ITutorialPage>(
+export const tutorialPageReducer = handleActions<RootState.TutorialPages, ITutorialPage>(
   {    
   },
   initialState
