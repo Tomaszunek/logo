@@ -30,16 +30,17 @@ export namespace App {
     commands: RootState.CommandState;
     descriptions: RootState.CommandDescriptionState;
     pathwayExample: RootState.PathwayExample;
+    tutorialPages: RootState.TutorialPages;
     actions: CommandActions;
     filter: CommandModel.Filter;
   }
 }
 
 @connect(
-  (state: IRootState, ownProps): Pick<App.IProps, 'commands' | 'descriptions' | 'pathwayExample' | 'filter'> => {
+  (state: IRootState, ownProps): Pick<App.IProps, 'commands' | 'descriptions' | 'pathwayExample' | 'tutorialPages' | 'filter'> => {
     const hash = ownProps.location && ownProps.location.hash.replace('#', '');
     const filter = FILTER_VALUES.find((value) => value === hash) || CommandModel.Filter.SHOW_ALL;
-    return { commands: state.commands, descriptions: state.descriptions, pathwayExample: state.pathwayexpample, filter };
+    return { commands: state.commands, descriptions: state.descriptions, pathwayExample: state.pathwayexpample, tutorialPages: state.tutorialPages, filter };
   },  
   (dispatch: Dispatch): Pick<App.IProps, 'actions'> => ({
     actions: bindActionCreators(omit(CommandActions, 'Type'), dispatch)
@@ -56,7 +57,7 @@ export default class App extends React.Component<App.IProps> {
     this.props.history.push(`#${filter}`);
   }
   public render() {
-    const { descriptions, commands, pathwayExample, actions, filter } = this.props;
+    const { descriptions, commands, pathwayExample, tutorialPages, actions, filter } = this.props;
     const activeCount = commands.length - commands.filter((command) => command.value).length;
     const filteredTodos = filter ? commands.filter(FILTER_FUNCTIONS[filter]) : commands;
     const completedCount = commands.reduce((count, todo) => (todo.value ? count + 1 : count), 0);
@@ -65,7 +66,7 @@ export default class App extends React.Component<App.IProps> {
     return (
       <div className="App">
         <HelperLayer examplePaths={pathwayExample} descriptions={descriptions}/>
-        <TutorialPopup tutorialPages={[]}/>
+        <TutorialPopup tutorialPages={tutorialPages}/>
         <div className="editorLine">
           <CommandEditor commands={commands} actions={actions}/>
           <CommandInput commands={commands} actions={actions} descriptions={descriptions}/>

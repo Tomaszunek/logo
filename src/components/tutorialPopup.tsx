@@ -5,19 +5,29 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      siteNumber: 0
+      siteNumber: 0,
+      visibility: true
     }
   };  
 
   public render() {
     console.log(this.setVisibility())
-    const tutorialPage = this.props.tutorialPages[this.state.siteNumber]
+    const tutorialPage = this.props.tutorialPages[this.state.siteNumber];
+    const style = {
+      display: (this.state.visibility ? 'grid' : 'none')
+    }
+    const bbstyle = {
+      display: (this.state.siteNumber === 0 ? 'none' : 'block')
+    }
+    const brstyle = {
+      display: (this.state.siteNumber !== this.props.tutorialPages.length - 1 ? 'block' : 'none')
+    }
     return (
-      <div className="tutorialPopup">
+      <div className="tutorialPopup" style={style}>
         {this.displayContent(tutorialPage)}
         <div className="tutorialNav">
-          <button  onClick={(e) => this.changeSite(e, "left")}>{"< BACK"}</button>
-          <button onClick={(e) => this.changeSite(e, "right")}>{"NEXT >"}</button>
+          <button style={bbstyle} onClick={(e) => this.changeSite(e, "left")}>{"< BACK"}</button>
+          <button style={brstyle} onClick={(e) => this.changeSite(e, "right")}>{"NEXT >"}</button>
         </div>
       </div>
     );
@@ -28,15 +38,18 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
   }
 
   private changeSite = (e: React.MouseEvent<HTMLButtonElement>, siteButton: "left" | "right") => {
+    const counter = this.state.siteNumber;
     switch (siteButton) {
       case "left":
         this.setState({
-          siteNumber: this.state.siteNumber - 1
+          ...this.state,
+          siteNumber: counter- 1
         })
         break;
       case "right":
         this.setState({
-          siteNumber: this.state.siteNumber + 1
+          ...this.state,
+          siteNumber: counter + 1
         })
         break;        
       default:
@@ -49,13 +62,20 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
       const { title } = tutorialPage;
       return (
         <div>
-          <button>X</button>
-          <p>{title}</p>      
+          <button onClick={(e) => this.closePopup(e)}>X</button>
+          <p>{this.state.siteNumber + 1 + ") " + title}</p>      
         </div>
       ) 
     } else {
       return null;
     }       
+  }
+
+  private closePopup = (e: React.MouseEvent<HTMLButtonElement>) => {
+     this.setState({
+       ...this.state,
+       visibility: !this.state.visibility
+     })    
   }
 }
 
@@ -63,7 +83,8 @@ interface IProps {
     tutorialPages: Array<ITutorialPage>,
 }
 interface IState {
-    siteNumber: number
+    siteNumber: number,
+    visibility: boolean
 }
   
   
