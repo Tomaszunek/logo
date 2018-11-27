@@ -61,9 +61,11 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
             <button onClick={(e) => this.closePopup(e)}>X</button>
             <p>{this.state.siteNumber + 1 + ") " + title + " - " + name}</p>      
           </div>
-          <div>
-            {image}
-            {content}
+          <div className="content">
+            <img src="" alt={image}/>
+            <div className="tip">
+              {content}
+            </div>            
           </div>
         </div>
       ) 
