@@ -38,7 +38,7 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
       case "left":
         this.setState({
           ...this.state,
-          siteNumber: counter- 1
+          siteNumber: counter - 1
         })
         break;
       case "right":
