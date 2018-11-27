@@ -11,7 +11,6 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
   };  
 
   public render() {
-    console.log(this.setVisibility())
     const tutorialPage = this.props.tutorialPages[this.state.siteNumber];
     const style = {
       display: (this.state.visibility ? 'grid' : 'none')
@@ -33,11 +32,6 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
       </div>
     );
   }
-
-  private setVisibility = () => {
-    return 0;
-  }
-
   private changeSite = (e: React.MouseEvent<HTMLButtonElement>, siteButton: "left" | "right") => {
     const counter = this.state.siteNumber;
     switch (siteButton) {
