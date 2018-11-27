@@ -14,7 +14,19 @@ const initialState: RootState.TutorialPages = [
     image: "abc",
     title: "woda",
     content: "string"
-  }     
+  },
+  {
+    name: "a",
+    image: "abc",
+    title: "woda",
+    content: "string"
+  },
+  {
+    name: "a",
+    image: "abc",
+    title: "woda",
+    content: "string"
+  }  
 ];
 
 export const tutorialPageReducer = handleActions<RootState.TutorialPages, ITutorialPage>(

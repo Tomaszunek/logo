@@ -20,7 +20,8 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
       display: (this.state.siteNumber === 0 ? 'none' : 'block')
     }
     const brstyle = {
-      display: (this.state.siteNumber !== this.props.tutorialPages.length - 1 ? 'block' : 'none')
+      display: (this.state.siteNumber !== this.props.tutorialPages.length - 1 ? 'block' : 'none'),
+      "margin-left": (this.state.siteNumber === 0 ? '676px' : '578px')
     }
     return (
       <div className="tutorialPopup" style={style}>
@@ -59,11 +60,17 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
 
   private displayContent = (tutorialPage: ITutorialPage) => {
     if(tutorialPage) {
-      const { title } = tutorialPage;
+      const { title, content, image, name } = tutorialPage;
       return (
         <div>
-          <button onClick={(e) => this.closePopup(e)}>X</button>
-          <p>{this.state.siteNumber + 1 + ") " + title}</p>      
+          <div className="title">
+            <button onClick={(e) => this.closePopup(e)}>X</button>
+            <p>{this.state.siteNumber + 1 + ") " + title + " - " + name}</p>      
+          </div>
+          <div>
+            {image}
+            {content}
+          </div>
         </div>
       ) 
     } else {
