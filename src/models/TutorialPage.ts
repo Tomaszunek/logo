@@ -1,6 +1,7 @@
 export interface ITutorialPage {
     name: string,
-    image: string
-    
+    image: string,
+    title: string,
+    content: string    
 }
   
