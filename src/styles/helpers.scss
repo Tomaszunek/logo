@@ -256,11 +256,14 @@
         grid-template-columns: 50% 50%;
 
         img {
-            margin: 20px;
+            padding: 20px;
+            height: 100%;            
         }
 
         .tip {
-            margin: 20px;
+            border-left: 1px solid;
+            padding: 20px;
+            height: 100%;   
         }
     }
 
