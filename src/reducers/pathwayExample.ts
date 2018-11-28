@@ -1536,12 +1536,1225 @@ const initialState: RootState.PathwayExample = [
     type: "crazy"
   },  
   {
-    name: 'command37',    
-    path: "command1",
-    command: {id: 0, name: "fd"},
-    image: "command1.jpg",
+    name: 'command1',    
+    path: "repeat 100 [tr 5 fd 10 setsc abcdef bk 150 tl 10 setsc 0ef12b repeat 10 [repeat 15 [fd 5 setsc a33a93 tr 15 bk 10 setsc 616161 tl 19 bk 55 fd 10 setsc e3ce45 tl 30 bk 20]]]",
+    command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 100,
+      "commands": [
+         {
+            "id": 1,
+            "name": "tr",
+            "value": 5
+         },
+         {
+            "id": 2,
+            "name": "fd",
+            "value": 10
+         },
+         {
+            "id": 3,
+            "name": "setsc",
+            "color": "#abcdef"
+         },
+         {
+            "id": 4,
+            "name": "bk",
+            "value": 150
+         },
+         {
+            "id": 5,
+            "name": "tl",
+            "value": 10
+         },
+         {
+            "id": 6,
+            "name": "setsc",
+            "color": "#0ef12b"
+         },
+         {
+            "id": 7,
+            "name": "repeat",
+            "value": 10,
+            "commands": [
+               {
+                  "id": 8,
+                  "name": "repeat",
+                  "value": 15,
+                  "commands": [
+                     {
+                        "id": 9,
+                        "name": "fd",
+                        "value": 5
+                     },
+                     {
+                        "id": 10,
+                        "name": "setsc",
+                        "color": "#a33a93"
+                     },
+                     {
+                        "id": 11,
+                        "name": "tr",
+                        "value": 15
+                     },
+                     {
+                        "id": 12,
+                        "name": "bk",
+                        "value": 10
+                     },
+                     {
+                        "id": 13,
+                        "name": "setsc",
+                        "color": "#616161"
+                     },
+                     {
+                        "id": 14,
+                        "name": "tl",
+                        "value": 19
+                     },
+                     {
+                        "id": 15,
+                        "name": "bk",
+                        "value": 55
+                     },
+                     {
+                        "id": 16,
+                        "name": "fd",
+                        "value": 10
+                     },
+                     {
+                        "id": 17,
+                        "name": "setsc",
+                        "color": "#e3ce45"
+                     },
+                     {
+                        "id": 18,
+                        "name": "tl",
+                        "value": 30
+                     },
+                     {
+                        "id": 19,
+                        "name": "bk",
+                        "value": 20
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+    image: "ccolor1.jpg",
     type: "color"
-  }
+  },
+  {
+   name: 'command2',    
+   path: "repeat 100 [tr 11 fd 12 setsc ff1500 bk 150 tl 18 setsc 7f00ff repeat 11 [repeat 31 [fd 5 setsc 00f2ff tr 15 bk 10 setsc 006eff tl 19 bk 55 fd 10 setsc ff8c00 tl 30 bk 20]]]",
+   command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 100,
+      "commands": [
+         {
+            "id": 1,
+            "name": "tr",
+            "value": 11
+         },
+         {
+            "id": 2,
+            "name": "fd",
+            "value": 12
+         },
+         {
+            "id": 3,
+            "name": "setsc",
+            "color": "#ff1500"
+         },
+         {
+            "id": 4,
+            "name": "bk",
+            "value": 150
+         },
+         {
+            "id": 5,
+            "name": "tl",
+            "value": 18
+         },
+         {
+            "id": 6,
+            "name": "setsc",
+            "color": "#7f00ff"
+         },
+         {
+            "id": 7,
+            "name": "repeat",
+            "value": 11,
+            "commands": [
+               {
+                  "id": 8,
+                  "name": "repeat",
+                  "value": 31,
+                  "commands": [
+                     {
+                        "id": 9,
+                        "name": "fd",
+                        "value": 5
+                     },
+                     {
+                        "id": 10,
+                        "name": "setsc",
+                        "color": "#00f2ff"
+                     },
+                     {
+                        "id": 11,
+                        "name": "tr",
+                        "value": 15
+                     },
+                     {
+                        "id": 12,
+                        "name": "bk",
+                        "value": 10
+                     },
+                     {
+                        "id": 13,
+                        "name": "setsc",
+                        "color": "#006eff"
+                     },
+                     {
+                        "id": 14,
+                        "name": "tl",
+                        "value": 19
+                     },
+                     {
+                        "id": 15,
+                        "name": "bk",
+                        "value": 55
+                     },
+                     {
+                        "id": 16,
+                        "name": "fd",
+                        "value": 10
+                     },
+                     {
+                        "id": 17,
+                        "name": "setsc",
+                        "color": "#ff8c00"
+                     },
+                     {
+                        "id": 18,
+                        "name": "tl",
+                        "value": 30
+                     },
+                     {
+                        "id": 19,
+                        "name": "bk",
+                        "value": 20
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   image: "ccolor2.jpg",
+   type: "color"
+ },
+ {
+   name: 'command3',    
+   path: "repeat 100 [tr 11 fd 12 setsc 4a4a4a bk 150 tl 28 setsc 808080 repeat 11 [repeat 34 [fd 5 setsc 454545 tr 15 bk 10 setsc ababab tl 19 bk 55 fd 10 setsc d4d4d4 tl 30 bk 20]]]",
+   command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 100,
+      "commands": [
+         {
+            "id": 1,
+            "name": "tr",
+            "value": 11
+         },
+         {
+            "id": 2,
+            "name": "fd",
+            "value": 12
+         },
+         {
+            "id": 3,
+            "name": "setsc",
+            "color": "#4a4a4a"
+         },
+         {
+            "id": 4,
+            "name": "bk",
+            "value": 150
+         },
+         {
+            "id": 5,
+            "name": "tl",
+            "value": 28
+         },
+         {
+            "id": 6,
+            "name": "setsc",
+            "color": "#808080"
+         },
+         {
+            "id": 7,
+            "name": "repeat",
+            "value": 11,
+            "commands": [
+               {
+                  "id": 8,
+                  "name": "repeat",
+                  "value": 34,
+                  "commands": [
+                     {
+                        "id": 9,
+                        "name": "fd",
+                        "value": 5
+                     },
+                     {
+                        "id": 10,
+                        "name": "setsc",
+                        "color": "#454545"
+                     },
+                     {
+                        "id": 11,
+                        "name": "tr",
+                        "value": 15
+                     },
+                     {
+                        "id": 12,
+                        "name": "bk",
+                        "value": 10
+                     },
+                     {
+                        "id": 13,
+                        "name": "setsc",
+                        "color": "#ababab"
+                     },
+                     {
+                        "id": 14,
+                        "name": "tl",
+                        "value": 19
+                     },
+                     {
+                        "id": 15,
+                        "name": "bk",
+                        "value": 55
+                     },
+                     {
+                        "id": 16,
+                        "name": "fd",
+                        "value": 10
+                     },
+                     {
+                        "id": 17,
+                        "name": "setsc",
+                        "color": "#d4d4d4"
+                     },
+                     {
+                        "id": 18,
+                        "name": "tl",
+                        "value": 30
+                     },
+                     {
+                        "id": 19,
+                        "name": "bk",
+                        "value": 20
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   image: "ccolor3.jpg",
+   type: "color"
+ },
+ {
+   name: 'command4',    
+   path: "repeat 100 [tr 11 fd 12 setsc c9d2fd bk 150 tl 34 setsc 909bd0 repeat 17 [repeat 34 [fd 5 setsc 5f71c4 tr 16 bk 120 setsc 4561de tl 19 bk 5 fd 15 setsc e0e3f0 tl 30 bk 20]]]",
+   command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 100,
+      "commands": [
+         {
+            "id": 1,
+            "name": "tr",
+            "value": 11
+         },
+         {
+            "id": 2,
+            "name": "fd",
+            "value": 12
+         },
+         {
+            "id": 3,
+            "name": "setsc",
+            "color": "#c9d2fd"
+         },
+         {
+            "id": 4,
+            "name": "bk",
+            "value": 150
+         },
+         {
+            "id": 5,
+            "name": "tl",
+            "value": 34
+         },
+         {
+            "id": 6,
+            "name": "setsc",
+            "color": "#909bd0"
+         },
+         {
+            "id": 7,
+            "name": "repeat",
+            "value": 17,
+            "commands": [
+               {
+                  "id": 8,
+                  "name": "repeat",
+                  "value": 34,
+                  "commands": [
+                     {
+                        "id": 9,
+                        "name": "fd",
+                        "value": 5
+                     },
+                     {
+                        "id": 10,
+                        "name": "setsc",
+                        "color": "#5f71c4"
+                     },
+                     {
+                        "id": 11,
+                        "name": "tr",
+                        "value": 16
+                     },
+                     {
+                        "id": 12,
+                        "name": "bk",
+                        "value": 120
+                     },
+                     {
+                        "id": 13,
+                        "name": "setsc",
+                        "color": "#4561de"
+                     },
+                     {
+                        "id": 14,
+                        "name": "tl",
+                        "value": 19
+                     },
+                     {
+                        "id": 15,
+                        "name": "bk",
+                        "value": 5
+                     },
+                     {
+                        "id": 16,
+                        "name": "fd",
+                        "value": 15
+                     },
+                     {
+                        "id": 17,
+                        "name": "setsc",
+                        "color": "#e0e3f0"
+                     },
+                     {
+                        "id": 18,
+                        "name": "tl",
+                        "value": 30
+                     },
+                     {
+                        "id": 19,
+                        "name": "bk",
+                        "value": 20
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   image: "ccolor4.jpg",
+   type: "color"
+ },
+ {
+   name: 'command5',    
+   path: "repeat 12 [tr 10 fd 5 setsc c9d2fd bk 153 tl 39 setsc 909bd0 repeat 27 [repeat 48 [fd 5 setsc 5f71c4 tr 27 bk 112 setsc 4561de tl 21 bk 9 fd 13 setsc e0e3f0 tl 39 bk 20]]]",
+   command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 12,
+      "commands": [
+         {
+            "id": 1,
+            "name": "tr",
+            "value": 10
+         },
+         {
+            "id": 2,
+            "name": "fd",
+            "value": 5
+         },
+         {
+            "id": 3,
+            "name": "setsc",
+            "color": "#c9d2fd"
+         },
+         {
+            "id": 4,
+            "name": "bk",
+            "value": 153
+         },
+         {
+            "id": 5,
+            "name": "tl",
+            "value": 39
+         },
+         {
+            "id": 6,
+            "name": "setsc",
+            "color": "#909bd0"
+         },
+         {
+            "id": 7,
+            "name": "repeat",
+            "value": 27,
+            "commands": [
+               {
+                  "id": 8,
+                  "name": "repeat",
+                  "value": 48,
+                  "commands": [
+                     {
+                        "id": 9,
+                        "name": "fd",
+                        "value": 5
+                     },
+                     {
+                        "id": 10,
+                        "name": "setsc",
+                        "color": "#5f71c4"
+                     },
+                     {
+                        "id": 11,
+                        "name": "tr",
+                        "value": 27
+                     },
+                     {
+                        "id": 12,
+                        "name": "bk",
+                        "value": 112
+                     },
+                     {
+                        "id": 13,
+                        "name": "setsc",
+                        "color": "#4561de"
+                     },
+                     {
+                        "id": 14,
+                        "name": "tl",
+                        "value": 21
+                     },
+                     {
+                        "id": 15,
+                        "name": "bk",
+                        "value": 9
+                     },
+                     {
+                        "id": 16,
+                        "name": "fd",
+                        "value": 13
+                     },
+                     {
+                        "id": 17,
+                        "name": "setsc",
+                        "color": "#e0e3f0"
+                     },
+                     {
+                        "id": 18,
+                        "name": "tl",
+                        "value": 39
+                     },
+                     {
+                        "id": 19,
+                        "name": "bk",
+                        "value": 20
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   image: "ccolor5.jpg",
+   type: "color"
+ },
+ {
+   name: 'command6',    
+   path: "repeat 8 [tr 15 fd 1 setsc debad3 bk 15 tl 47 setsc daa9cc repeat 27 [fd 10 tr 10 bk 10 tl 42 repeat 84 [fd 57 setsc 4d3345 tr 31 bk 11 setsc 5f3f55 tl 21 bk 9 fd 13 setsc ba97af tl 39 bk 20]]]",
+   command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 8,
+      "commands": [
+         {
+            "id": 1,
+            "name": "tr",
+            "value": 15
+         },
+         {
+            "id": 2,
+            "name": "fd",
+            "value": 1
+         },
+         {
+            "id": 3,
+            "name": "setsc",
+            "color": "#debad3"
+         },
+         {
+            "id": 4,
+            "name": "bk",
+            "value": 15
+         },
+         {
+            "id": 5,
+            "name": "tl",
+            "value": 47
+         },
+         {
+            "id": 6,
+            "name": "setsc",
+            "color": "#daa9cc"
+         },
+         {
+            "id": 7,
+            "name": "repeat",
+            "value": 27,
+            "commands": [
+               {
+                  "id": 8,
+                  "name": "fd",
+                  "value": 10
+               },
+               {
+                  "id": 9,
+                  "name": "tr",
+                  "value": 10
+               },
+               {
+                  "id": 10,
+                  "name": "bk",
+                  "value": 10
+               },
+               {
+                  "id": 11,
+                  "name": "tl",
+                  "value": 42
+               },
+               {
+                  "id": 12,
+                  "name": "repeat",
+                  "value": 84,
+                  "commands": [
+                     {
+                        "id": 13,
+                        "name": "fd",
+                        "value": 57
+                     },
+                     {
+                        "id": 14,
+                        "name": "setsc",
+                        "color": "#4d3345"
+                     },
+                     {
+                        "id": 15,
+                        "name": "tr",
+                        "value": 31
+                     },
+                     {
+                        "id": 16,
+                        "name": "bk",
+                        "value": 11
+                     },
+                     {
+                        "id": 17,
+                        "name": "setsc",
+                        "color": "#5f3f55"
+                     },
+                     {
+                        "id": 18,
+                        "name": "tl",
+                        "value": 21
+                     },
+                     {
+                        "id": 19,
+                        "name": "bk",
+                        "value": 9
+                     },
+                     {
+                        "id": 20,
+                        "name": "fd",
+                        "value": 13
+                     },
+                     {
+                        "id": 21,
+                        "name": "setsc",
+                        "color": "#ba97af"
+                     },
+                     {
+                        "id": 22,
+                        "name": "tl",
+                        "value": 39
+                     },
+                     {
+                        "id": 23,
+                        "name": "bk",
+                        "value": 20
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   image: "ccolor6.jpg",
+   type: "color"
+ },
+ {
+   name: 'command7',    
+   path: "repeat 8 [tr 15 fd 1 setsc debad3 bk 15 tl 47 setsc daa9cc repeat 27 [fd 10 tr 10 bk 10 tl 42 repeat 84 [fd 57 setsc 4d3345 tr 39 bk 11 setsc 5f3f55 tl 21 bk 9 fd 13 setsc ba97af tl 39 bk 20]]]",
+   command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 8,
+      "commands": [
+         {
+            "id": 1,
+            "name": "tr",
+            "value": 15
+         },
+         {
+            "id": 2,
+            "name": "fd",
+            "value": 1
+         },
+         {
+            "id": 3,
+            "name": "setsc",
+            "color": "#debad3"
+         },
+         {
+            "id": 4,
+            "name": "bk",
+            "value": 15
+         },
+         {
+            "id": 5,
+            "name": "tl",
+            "value": 47
+         },
+         {
+            "id": 6,
+            "name": "setsc",
+            "color": "#daa9cc"
+         },
+         {
+            "id": 7,
+            "name": "repeat",
+            "value": 27,
+            "commands": [
+               {
+                  "id": 8,
+                  "name": "fd",
+                  "value": 10
+               },
+               {
+                  "id": 9,
+                  "name": "tr",
+                  "value": 10
+               },
+               {
+                  "id": 10,
+                  "name": "bk",
+                  "value": 10
+               },
+               {
+                  "id": 11,
+                  "name": "tl",
+                  "value": 42
+               },
+               {
+                  "id": 12,
+                  "name": "repeat",
+                  "value": 84,
+                  "commands": [
+                     {
+                        "id": 13,
+                        "name": "fd",
+                        "value": 57
+                     },
+                     {
+                        "id": 14,
+                        "name": "setsc",
+                        "color": "#4d3345"
+                     },
+                     {
+                        "id": 15,
+                        "name": "tr",
+                        "value": 39
+                     },
+                     {
+                        "id": 16,
+                        "name": "bk",
+                        "value": 11
+                     },
+                     {
+                        "id": 17,
+                        "name": "setsc",
+                        "color": "#5f3f55"
+                     },
+                     {
+                        "id": 18,
+                        "name": "tl",
+                        "value": 21
+                     },
+                     {
+                        "id": 19,
+                        "name": "bk",
+                        "value": 9
+                     },
+                     {
+                        "id": 20,
+                        "name": "fd",
+                        "value": 13
+                     },
+                     {
+                        "id": 21,
+                        "name": "setsc",
+                        "color": "#ba97af"
+                     },
+                     {
+                        "id": 22,
+                        "name": "tl",
+                        "value": 39
+                     },
+                     {
+                        "id": 23,
+                        "name": "bk",
+                        "value": 20
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   image: "ccolor7.jpg",
+   type: "color"
+ },
+ {
+   name: 'command8',    
+   path: "repeat 8 [tr 15 fd 1 setsc debad3 bk 15 tl 47 setsc daa9cc repeat 27 [fd 10 tr 10 bk 10 tl 74 repeat 88 [fd 57 setsc 4d3345 tr 39 bk 11 setsc 5f3f55 tl 29 bk 9 fd 13 setsc ba97af tl 39 bk 20]]]",
+   command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 8,
+      "commands": [
+         {
+            "id": 1,
+            "name": "tr",
+            "value": 15
+         },
+         {
+            "id": 2,
+            "name": "fd",
+            "value": 1
+         },
+         {
+            "id": 3,
+            "name": "setsc",
+            "color": "#debad3"
+         },
+         {
+            "id": 4,
+            "name": "bk",
+            "value": 15
+         },
+         {
+            "id": 5,
+            "name": "tl",
+            "value": 47
+         },
+         {
+            "id": 6,
+            "name": "setsc",
+            "color": "#daa9cc"
+         },
+         {
+            "id": 7,
+            "name": "repeat",
+            "value": 27,
+            "commands": [
+               {
+                  "id": 8,
+                  "name": "fd",
+                  "value": 10
+               },
+               {
+                  "id": 9,
+                  "name": "tr",
+                  "value": 10
+               },
+               {
+                  "id": 10,
+                  "name": "bk",
+                  "value": 10
+               },
+               {
+                  "id": 11,
+                  "name": "tl",
+                  "value": 74
+               },
+               {
+                  "id": 12,
+                  "name": "repeat",
+                  "value": 88,
+                  "commands": [
+                     {
+                        "id": 13,
+                        "name": "fd",
+                        "value": 57
+                     },
+                     {
+                        "id": 14,
+                        "name": "setsc",
+                        "color": "#4d3345"
+                     },
+                     {
+                        "id": 15,
+                        "name": "tr",
+                        "value": 39
+                     },
+                     {
+                        "id": 16,
+                        "name": "bk",
+                        "value": 11
+                     },
+                     {
+                        "id": 17,
+                        "name": "setsc",
+                        "color": "#5f3f55"
+                     },
+                     {
+                        "id": 18,
+                        "name": "tl",
+                        "value": 29
+                     },
+                     {
+                        "id": 19,
+                        "name": "bk",
+                        "value": 9
+                     },
+                     {
+                        "id": 20,
+                        "name": "fd",
+                        "value": 13
+                     },
+                     {
+                        "id": 21,
+                        "name": "setsc",
+                        "color": "#ba97af"
+                     },
+                     {
+                        "id": 22,
+                        "name": "tl",
+                        "value": 39
+                     },
+                     {
+                        "id": 23,
+                        "name": "bk",
+                        "value": 20
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   image: "ccolor8.jpg",
+   type: "color"
+ },
+ {
+   name: 'command9',    
+   path: "repeat 8 [tr 15 fd 1 setsc debad3 bk 15 tl 47 setsc daa9cc repeat 27 [fd 10 tr 10 bk 10 tl 74 repeat 88 [fd 90 setsc 4d3345 tr 40 bk 11 setsc 5f3f55 tl 34 bk 9 fd 13 setsc ba97af tl 39 bk 20]]]",
+   command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 8,
+      "commands": [
+         {
+            "id": 1,
+            "name": "tr",
+            "value": 15
+         },
+         {
+            "id": 2,
+            "name": "fd",
+            "value": 1
+         },
+         {
+            "id": 3,
+            "name": "setsc",
+            "color": "#debad3"
+         },
+         {
+            "id": 4,
+            "name": "bk",
+            "value": 15
+         },
+         {
+            "id": 5,
+            "name": "tl",
+            "value": 47
+         },
+         {
+            "id": 6,
+            "name": "setsc",
+            "color": "#daa9cc"
+         },
+         {
+            "id": 7,
+            "name": "repeat",
+            "value": 27,
+            "commands": [
+               {
+                  "id": 8,
+                  "name": "fd",
+                  "value": 10
+               },
+               {
+                  "id": 9,
+                  "name": "tr",
+                  "value": 10
+               },
+               {
+                  "id": 10,
+                  "name": "bk",
+                  "value": 10
+               },
+               {
+                  "id": 11,
+                  "name": "tl",
+                  "value": 74
+               },
+               {
+                  "id": 12,
+                  "name": "repeat",
+                  "value": 88,
+                  "commands": [
+                     {
+                        "id": 13,
+                        "name": "fd",
+                        "value": 90
+                     },
+                     {
+                        "id": 14,
+                        "name": "setsc",
+                        "color": "#4d3345"
+                     },
+                     {
+                        "id": 15,
+                        "name": "tr",
+                        "value": 40
+                     },
+                     {
+                        "id": 16,
+                        "name": "bk",
+                        "value": 11
+                     },
+                     {
+                        "id": 17,
+                        "name": "setsc",
+                        "color": "#5f3f55"
+                     },
+                     {
+                        "id": 18,
+                        "name": "tl",
+                        "value": 34
+                     },
+                     {
+                        "id": 19,
+                        "name": "bk",
+                        "value": 9
+                     },
+                     {
+                        "id": 20,
+                        "name": "fd",
+                        "value": 13
+                     },
+                     {
+                        "id": 21,
+                        "name": "setsc",
+                        "color": "#ba97af"
+                     },
+                     {
+                        "id": 22,
+                        "name": "tl",
+                        "value": 39
+                     },
+                     {
+                        "id": 23,
+                        "name": "bk",
+                        "value": 20
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   image: "ccolor9.jpg",
+   type: "color"
+ },
+ {
+   name: 'command10',    
+   path: "repeat 8 [tr 25 fd 10 setsc debad3 bk 15 tl 50 setsc daa9cc repeat 4 [fd 130 tr 41 bk 10 tl 64 repeat 88 [fd 90 setsc 4d3345 tr 31 bk 9 setsc 5f3f55 tl 34 bk 11 fd 11 setsc ba97af tl 34 bk 20]]]",
+   command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 8,
+      "commands": [
+         {
+            "id": 1,
+            "name": "tr",
+            "value": 25
+         },
+         {
+            "id": 2,
+            "name": "fd",
+            "value": 10
+         },
+         {
+            "id": 3,
+            "name": "setsc",
+            "color": "#debad3"
+         },
+         {
+            "id": 4,
+            "name": "bk",
+            "value": 15
+         },
+         {
+            "id": 5,
+            "name": "tl",
+            "value": 50
+         },
+         {
+            "id": 6,
+            "name": "setsc",
+            "color": "#daa9cc"
+         },
+         {
+            "id": 7,
+            "name": "repeat",
+            "value": 4,
+            "commands": [
+               {
+                  "id": 8,
+                  "name": "fd",
+                  "value": 130
+               },
+               {
+                  "id": 9,
+                  "name": "tr",
+                  "value": 41
+               },
+               {
+                  "id": 10,
+                  "name": "bk",
+                  "value": 10
+               },
+               {
+                  "id": 11,
+                  "name": "tl",
+                  "value": 64
+               },
+               {
+                  "id": 12,
+                  "name": "repeat",
+                  "value": 88,
+                  "commands": [
+                     {
+                        "id": 13,
+                        "name": "fd",
+                        "value": 90
+                     },
+                     {
+                        "id": 14,
+                        "name": "setsc",
+                        "color": "#4d3345"
+                     },
+                     {
+                        "id": 15,
+                        "name": "tr",
+                        "value": 31
+                     },
+                     {
+                        "id": 16,
+                        "name": "bk",
+                        "value": 9
+                     },
+                     {
+                        "id": 17,
+                        "name": "setsc",
+                        "color": "#5f3f55"
+                     },
+                     {
+                        "id": 18,
+                        "name": "tl",
+                        "value": 34
+                     },
+                     {
+                        "id": 19,
+                        "name": "bk",
+                        "value": 11
+                     },
+                     {
+                        "id": 20,
+                        "name": "fd",
+                        "value": 11
+                     },
+                     {
+                        "id": 21,
+                        "name": "setsc",
+                        "color": "#ba97af"
+                     },
+                     {
+                        "id": 22,
+                        "name": "tl",
+                        "value": 34
+                     },
+                     {
+                        "id": 23,
+                        "name": "bk",
+                        "value": 20
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   image: "ccolor10.jpg",
+   type: "color"
+ }
 ];
 
 export const pathwayExampleReducer = handleActions<RootState.PathwayExample, IPathwayExample>(

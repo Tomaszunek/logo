@@ -24,11 +24,15 @@ export class Caller {
             for(let i = 0; i <= command.value; i++) {
                 if(command.commands) {
                     command.commands.forEach(newCommand => {
-                        if(newCommand.name === 'repeat' && newCommand.commands) {
+                        if(command.name === 'repeat' && newCommand.commands) {
                             caller[newCommand.name](newCommand)
-                        } else {
+                          } else if(newCommand.name === 'setpos' && newCommand.value && newCommand.arg2) {
+                            caller[newCommand.name](newCommand.value, newCommand.arg2)                
+                          } else if(newCommand.name === 'setsc' || newCommand.name === 'setbc' && newCommand.color) {
+                            caller[newCommand.name](newCommand.color)                
+                          } else {
                             caller[newCommand.name](newCommand.value);
-                        }
+                          }
                     });
                 }
             }

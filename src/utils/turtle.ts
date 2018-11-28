@@ -88,6 +88,7 @@ export class Turtle {
         this.x = this.homeX;
         this.y = this.homeY;
         this.dir = 0;
+        this.strokeColor = "#000000";
         this.strokeWeight = this.strokeWeightHome;
     }
 
@@ -104,7 +105,7 @@ export class Turtle {
         ctx.fillRect(0, 0, this.homeX * 2, this.homeY * 2);
     }
 
-    public setStrokeColor = (color: string) => {
+    public setStrokeColor = (color: string) => {        
         this.strokeColor = color;
     }
 
