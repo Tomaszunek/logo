@@ -22,9 +22,10 @@ export const commandReducer = handleActions<RootState.CommandState, ICommandMode
         }
       }
       if(action.payload) {
-        if(action.payload.commands) {
+        if(action.payload.commands) {          
           action.payload.id = id;
           action.payload.commands = indexsizeRepeat(action.payload.commands, ++id);
+          console.log(JSON.stringify(action.payload));
           return [
             ...state,
             {...action.payload}                  
@@ -35,7 +36,7 @@ export const commandReducer = handleActions<RootState.CommandState, ICommandMode
             {...action.payload, id}                  
           ];
         }
-      }
+      }      
       return state;
     },
     [CommandActions.Type.DELETE_COMMAND]: (state, action) => {
@@ -44,6 +45,14 @@ export const commandReducer = handleActions<RootState.CommandState, ICommandMode
     [CommandActions.Type.EDIT_COMMAND]: (state, action) => {          
       if(action && action.payload) {
         return findElementById(state, action.payload);
+      } else {
+        return state;
+      }
+    },
+    [CommandActions.Type.SET_COMMAND]: (state, action) => { 
+      if(action.payload && action.payload.commands) {
+        console.log(state, action.payload.commands);
+        return action.payload.commands;        
       } else {
         return state;
       }

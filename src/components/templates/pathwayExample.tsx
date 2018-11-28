@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IPathwayExample } from 'src/models';
-import commandImage from 'src/images/command1.jpg';
+import { CommandActions } from 'src/actions';
 
 
 export default class PathwayExample extends React.Component<IProps, IState> {  
@@ -9,19 +9,31 @@ export default class PathwayExample extends React.Component<IProps, IState> {
   };   
 
   public render() {
-    const { name, path } = this.props.examplePath;    
+    const { name, path, image} = this.props.examplePath;    
     return (
-        <div className="pathexample">
+        <div className="pathexample" onClick={(e) => this.setCommands(e)}>
             <p>{name}</p>
-            <img src={commandImage} alt=""/> 
+            <img src={"./images/examples/" + image} alt=""/> 
             <p className="path">{path}</p>
         </div>
     );
-  } 
+  }
+
+  private setCommands = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { command } = this.props.examplePath;    
+    console.log(command);
+    this.props.actions.setCommand({
+      id: 10000,
+      name: "fd",
+      commands: [command]
+    });
+
+  }
 }
 
 interface IProps {
-    examplePath: IPathwayExample
+    examplePath: IPathwayExample,
+    actions: CommandActions
 }
 
 interface IState {

@@ -1,6 +1,4 @@
 import * as React from 'react';
-import commandImage from 'src/images/command1.jpg';
-
 
 export default class CommandDescription extends React.Component<IProps, IState> {  
   constructor(props: any) {
@@ -8,10 +6,11 @@ export default class CommandDescription extends React.Component<IProps, IState> 
   };   
 
   public render() {
-    const { descArr, args } = this.displayDescription(this.props.description)
+    const { descArr, args } = this.displayDescription(this.props.description);
+    const { image } = this.props.description;
     return (
       <div className="commandItem">
-        <img src={commandImage}/>        
+        <img src={"./images/commands/" + image}/>        
         <div className="itemDesc">
           <div className="description">          
             {descArr}
@@ -27,8 +26,10 @@ export default class CommandDescription extends React.Component<IProps, IState> 
   private displayDescription = (desc: any) => {
     const descArr = [];
     let args: any;
+    let image = "";
     for(const key in desc) {
       if(desc[key]) {
+        image = desc[key].image;
         if(Array.isArray(desc[key]) && desc[key].length) {
           args = (
             (
@@ -48,15 +49,17 @@ export default class CommandDescription extends React.Component<IProps, IState> 
           const style = {
             background: (key === "color") ? desc[key] : ''
           }
-          descArr.push(
-            <div style={style} key={key}>
-              {key + " : " + desc[key]}
-            </div>
-          )
+          if(key !== "image") {
+            descArr.push(
+              <div style={style} key={key}>
+                {key + " : " + desc[key]}
+              </div>
+            )
+          }          
         }        
       }      
     }
-    return {descArr, args};
+    return {descArr, args, image};
   };
 }
 

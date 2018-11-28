@@ -13,7 +13,7 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
   public render() {
     const tutorialPage = this.props.tutorialPages[this.state.siteNumber];
     const style = {
-      display: (this.state.visibility ? 'grid' : 'none')
+      display: (this.state.visibility ? 'none' : 'none')
     }
     const bbstyle = {
       display: (this.state.siteNumber === 0 ? 'none' : 'block')
@@ -62,7 +62,7 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
             <p>{this.state.siteNumber + 1 + ") " + title + " - " + name}</p>      
           </div>
           <div className="content">
-            <img src="" alt={image}/>
+            <img src={"./images/tutorial/" + image} alt={image}/>
             <div className="tip">
               {content}
             </div>            

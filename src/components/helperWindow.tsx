@@ -2,6 +2,7 @@ import * as React from 'react';
 import { IPathwayExample } from 'src/models';
 import PathwayExample from './templates/pathwayExample';
 import CommandDescription from './templates/CommandDescription';
+import { CommandActions } from 'src/actions';
 
 export default class HelperWindow extends React.Component<IProps, IState> {  
   constructor(props: any) {
@@ -32,10 +33,7 @@ export default class HelperWindow extends React.Component<IProps, IState> {
     for(const i in groups) {      
       if(groups[i]) {
         renderedTypes.push(
-          <div key={i}>
-            <div className={"header " + i}>
-              {i}
-            </div>
+          <div key={i}>            
             <div className={"commandType " + i}>
               {this.displayExample(groups[i])}
             </div>
@@ -49,7 +47,7 @@ export default class HelperWindow extends React.Component<IProps, IState> {
   private displayExample(examples: Array<IPathwayExample>) {
     return examples.map((example) => {
       return (
-        <PathwayExample key={example.name} examplePath={example}/>
+        <PathwayExample actions={this.props.actions} key={example.name} examplePath={example}/>
       )          
     })
   }
@@ -90,7 +88,8 @@ interface IProps {
   examplePaths: Array<IPathwayExample>,
   descriptions: any,
   itemStyle: React.CSSProperties,
-  site: string
+  site: string,
+  actions: CommandActions
 }
 
 interface IState {
