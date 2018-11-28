@@ -13,7 +13,7 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
   public render() {
     const tutorialPage = this.props.tutorialPages[this.state.siteNumber];
     const style = {
-      display: (this.state.visibility ? 'none' : 'none')
+      display: (this.state.visibility ? 'grid' : 'none')
     }
     const bbstyle = {
       display: (this.state.siteNumber === 0 ? 'none' : 'block')

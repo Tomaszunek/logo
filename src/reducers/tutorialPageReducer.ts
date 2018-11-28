@@ -4,29 +4,35 @@ import { ITutorialPage } from '../models';
 
 const initialState: RootState.TutorialPages = [
   {
-    name: "a",
-    image: "command1.jpg",
-    title: "woda",
-    content: "string"
+    name: "Command input",
+    image: "tutorial1.gif",
+    title: "Type command",
+    content: "Type command in command input and press enter."
   },
   {
-    name: "a",
-    image: "command1.jpg",
-    title: "woda",
-    content: "string"
+    name: "Canvas",
+    image: "tutorial2.gif",
+    title: "Display turtle",
+    content: "Wait for display your tutrle canvas."
   },
   {
-    name: "a",
-    image: "command1.jpg",
-    title: "woda",
-    content: "string"
+    name: "Side editor",
+    image: "tutorial3.gif",
+    title: "Edit params",
+    content: "In side editor or in upper panel you can change numbers and deleting commands."
   },
   {
-    name: "a",
-    image: "command1.jpg",
-    title: "woda",
-    content: "string"
-  }  
+    name: "Left panel",
+    image: "tutorial4.gif",
+    title: "Check list command",
+    content: "Clicking in left arrow check all commands in turtle system"
+  },
+  {
+    name: "Right panel",
+    image: "tutorial5.gif",
+    title: "Check list of examples",
+    content: "Clicking in right arrow check our examples in turtle system"
+  }   
 ];
 
 export const tutorialPageReducer = handleActions<RootState.TutorialPages, ITutorialPage>(
