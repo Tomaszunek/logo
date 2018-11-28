@@ -5,6 +5,7 @@ export namespace CommandActions {
   export enum Type {
     ADD_COMMAND = 'ADD_COMMAND',
     EDIT_COMMAND = 'EDIT_COMMAND',
+    SET_COMMAND = 'SET_COMMAND',
     DELETE_COMMAND = 'DELETE_COMMAND',
     COMPLETE_COMMAND = 'COMPLETE_COMMAND',
     COMPLETE_ALL = 'COMPLETE_ALL',
@@ -13,6 +14,7 @@ export namespace CommandActions {
 
   export const addCommand = createAction<PartialPick<ICommandModel, 'name'>>(Type.ADD_COMMAND);
   export const editCommand = createAction<PartialPick<ICommandModel, 'id'>>(Type.EDIT_COMMAND);
+  export const setCommand = createAction<PartialPick<ICommandModel, "id">>(Type.SET_COMMAND);
   export const deleteCommand = createAction<ICommandModel['id']>(Type.DELETE_COMMAND);
   export const completeCommand = createAction<ICommandModel['id']>(Type.COMPLETE_COMMAND);
   export const completeAll = createAction(Type.COMPLETE_ALL);
