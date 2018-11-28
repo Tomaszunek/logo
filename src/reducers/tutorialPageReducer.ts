@@ -5,25 +5,25 @@ import { ITutorialPage } from '../models';
 const initialState: RootState.TutorialPages = [
   {
     name: "a",
-    image: "abc",
+    image: "command1.jpg",
     title: "woda",
     content: "string"
   },
   {
     name: "a",
-    image: "abc",
+    image: "command1.jpg",
     title: "woda",
     content: "string"
   },
   {
     name: "a",
-    image: "abc",
+    image: "command1.jpg",
     title: "woda",
     content: "string"
   },
   {
     name: "a",
-    image: "abc",
+    image: "command1.jpg",
     title: "woda",
     content: "string"
   }  
