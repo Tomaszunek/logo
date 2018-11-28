@@ -8,7 +8,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "Set position",
     long: "Turtle set postion to <x,y>",
     description: "",  
-		image: "command1.jpg",
+		image: "setpos.gif",
     color: "#6cbada",
     argCount: 2,
     args: [       {name: "position x", type: "number"}, {name: "position y", type: "number"}      ] 
@@ -18,7 +18,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "repeat",
     long: "Turtle move repeatdly",
     description: "",  
-		image: "command1.jpg",
+		image: "repeat.gif",
     color: "#ff00d4",
     argCount: 2,
     args: [       {name: "count", type: "number"} , {name: "commands", type: "another commands"}    ] 
@@ -28,7 +28,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "forward",
     long: "Turtle will go forward.",
     description: "",  
-		image: "command1.jpg",
+		image: "fd.gif",
     color: "#ff0000",
     argCount: 1,    
     args: [       {name: "distance", type: "number"}     ] 
@@ -38,7 +38,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "backward",
     long: "Turtle go backward",
     description: "",  
-		image: "command1.jpg",
+		image: "bk.gif",
     color: "#ff0000",
     argCount: 1,    
     args: [       {name: "distance", type: "number"}     ] 
@@ -48,7 +48,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "rotate left",
     long: "Turtle turn to left",
     description: "",  
-		image: "command1.jpg",
+		image: "tl.gif",
     color: "#0000ff",
     argCount: 1,
     args: [       {name: "angle", type: "number:degree"}     ] 
@@ -58,7 +58,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "rotate right",
     long: "Turtle turn to right",
     description: "",  
-		image: "command1.jpg",
+		image: "tr.gif",
     color: "#0000ff",
     argCount: 1,
     args: [       {name: "angle", type: "number:degree"}     ] 
@@ -68,7 +68,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "Show turtle",
     long: "Turtle will hide",
     description: "",  
-		image: "command1.jpg",
+		image: "hidet.gif",
     color: "#16969b",
     argCount: 0,
     args: [           ] 
@@ -78,7 +78,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "Hide turtle",
     long: "Turtle will shown",
     description: "",  
-		image: "command1.jpg",
+		image: "showt.gif",
     color: "#16969b",
     argCount: 0,
     args: [           ] 
@@ -88,7 +88,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "Turtle penup",
     long: "Tuttle will stop drawing",
     description: "",  
-		image: "command1.jpg",
+		image: "penup.gif",
     color: "#d9ec28",
     argCount: 0,
     args: [           ] 
@@ -98,7 +98,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "Turtle pendown",
     long: "Tuttle will start drawing",
     description: "",  
-		image: "command1.jpg",
+		image: "pendown.gif",
     color: "#d9ec28",
     argCount: 0,
     args: [           ] 
@@ -108,7 +108,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "Setting stroke color",
     long: "Setting stroke color",
     description: "",  
-		image: "command1.jpg",
+		image: "setsc.gif",
     color: "#00ff00",
     argCount: 1,
     args: [       {name: "line color", type: "color"}    ]
@@ -118,7 +118,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "Setting stroke waight",
     long: "Setting stroke waight",
     description: "",  
-		image: "command1.jpg",
+		image: "setsw.gif",
     color: "#00ff00",
     argCount: 1,
     args: [       {name: "weight stroke", type: "color"}    ]
@@ -128,7 +128,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "Setting background",
     long: "Setting background color to canvas",
     description: "",  
-		image: "command1.jpg",
+		image: "setbc.gif",
     color: "#00ff00",
     argCount: 1,
     args: [       {name: "background color", type: "color"}     ] 
@@ -138,7 +138,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "Save file",
     long: "Save file from canvas",
     description: "",  
-		image: "command1.jpg",
+		image: "save.jpg",
     color: "#d66b12",
     argCount: 1,
     args: [       {name: "file name", type: "string"}     ] 
@@ -148,7 +148,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "Load file",
     long: "Load file to canvas",
     description: "",  
-		image: "command1.jpg",
+		image: "load.jpg",
     color: "#d66b12",
     argCount: 1,
     args: [       {name: "file name", type: "string"}     ] 
@@ -158,7 +158,7 @@ const initialState: RootState.CommandDescriptionState = {
     name: "Go home",
     long: "Turtle go to home",
     description: "",  
-		image: "command1.jpg",
+		image: "home.gif",
     color: "#6cbada",
     argCount: 0,
     args: [           ] 
@@ -168,7 +168,7 @@ const initialState: RootState.CommandDescriptionState = {
   //   name: "Function to",
   //   long: "Make function",
   //   description: "",  
-	//   image: "command1.jpg",
+	//   image: "command1.gif",
   //   color: "#aabbcc",
   //   argCount: 3,
   //   args: [       {name: "function name", type: "string"}, {name: "function args", type: "array"} , {name: "function body", type: "any"}      ] 
