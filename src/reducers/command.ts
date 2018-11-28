@@ -25,7 +25,6 @@ export const commandReducer = handleActions<RootState.CommandState, ICommandMode
         if(action.payload.commands) {          
           action.payload.id = id;
           action.payload.commands = indexsizeRepeat(action.payload.commands, ++id);
-          console.log(JSON.stringify(action.payload));
           return [
             ...state,
             {...action.payload}                  
@@ -51,7 +50,6 @@ export const commandReducer = handleActions<RootState.CommandState, ICommandMode
     },
     [CommandActions.Type.SET_COMMAND]: (state, action) => { 
       if(action.payload && action.payload.commands) {
-        console.log(state, action.payload.commands);
         return action.payload.commands;        
       } else {
         return state;

@@ -67,7 +67,7 @@ export default class CommandInput extends React.Component<IProps, IState> {
         if(this.input === null) {return;}
         this.input.value = '';
       } else {
-        console.log(parser);
+        // 
       } 
     }   
   }  

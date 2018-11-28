@@ -21,7 +21,6 @@ export default class PathwayExample extends React.Component<IProps, IState> {
 
   private setCommands = (e: React.MouseEvent<HTMLDivElement>) => {
     const { command } = this.props.examplePath;    
-    console.log(command);
     this.props.actions.setCommand({
       id: 10000,
       name: "fd",

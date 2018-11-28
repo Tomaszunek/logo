@@ -9,7 +9,7 @@ import { RouteComponentProps } from 'react-router';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { CommandActions } from './actions';
-import { CommandModel, ICommandModel } from './models';
+import { CommandModel } from './models';
 import { IRootState, RootState } from './reducers';
 import { omit } from './utils';
 import './App.scss';
@@ -18,12 +18,6 @@ const FILTER_VALUES = (Object.keys(CommandModel.Filter) as
   (keyof typeof CommandModel.Filter)[]).map(
   (key) => CommandModel.Filter[key]
 );
-
-const FILTER_FUNCTIONS: Record<CommandModel.Filter, (todo: ICommandModel) => boolean> = {
-  [CommandModel.Filter.SHOW_ALL]: () => true,
-  [CommandModel.Filter.SHOW_ACTIVE]: (command) => !command.value,
-  [CommandModel.Filter.SHOW_COMPLETED]: (command) => !!command.value
-};
 
 export namespace App {
   export interface IProps extends RouteComponentProps<void> {
@@ -57,12 +51,7 @@ export default class App extends React.Component<App.IProps> {
     this.props.history.push(`#${filter}`);
   }
   public render() {
-    const { descriptions, commands, pathwayExample, tutorialPages, actions, filter } = this.props;
-    const activeCount = commands.length - commands.filter((command) => command.value).length;
-    const filteredTodos = filter ? commands.filter(FILTER_FUNCTIONS[filter]) : commands;
-    const completedCount = commands.reduce((count, todo) => (todo.value ? count + 1 : count), 0);
-    const arr = [commands, actions, filter, activeCount, filteredTodos, completedCount, descriptions];
-    console.log(arr);
+    const { descriptions, commands, pathwayExample, tutorialPages, actions } = this.props;
     return (
       <div className="App">
         <HelperLayer examplePaths={pathwayExample} descriptions={descriptions} actions={actions}/>
