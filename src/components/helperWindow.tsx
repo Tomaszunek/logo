@@ -33,10 +33,7 @@ export default class HelperWindow extends React.Component<IProps, IState> {
     for(const i in groups) {      
       if(groups[i]) {
         renderedTypes.push(
-          <div key={i}>
-            <div className={"header " + i}>
-              {i}
-            </div>
+          <div key={i}>            
             <div className={"commandType " + i}>
               {this.displayExample(groups[i])}
             </div>

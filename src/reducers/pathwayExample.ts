@@ -548,14 +548,993 @@ const initialState: RootState.PathwayExample = [
    },
     image: "cnormal12.jpg",
     type: "simple"
-  },   
+  },
   {
-    name: 'command36',
-    path: "command1",
-    command: {id: 0, name: "fd"},
-    image: "command1.jpg",
+    name: 'command1',
+    path: "repeat 150 [fd 99 repeat 19 [bk 90 repeat 10 [tr 15 tl 18 bk 3 tr 62]] tr 16]",
+    command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 150,
+      "commands": [
+         {
+            "id": 1,
+            "name": "fd",
+            "value": 99
+         },
+         {
+            "id": 2,
+            "name": "repeat",
+            "value": 19,
+            "commands": [
+               {
+                  "id": 3,
+                  "name": "bk",
+                  "value": 90
+               },
+               {
+                  "id": 4,
+                  "name": "repeat",
+                  "value": 10,
+                  "commands": [
+                     {
+                        "id": 5,
+                        "name": "tr",
+                        "value": 15
+                     },
+                     {
+                        "id": 6,
+                        "name": "tl",
+                        "value": 18
+                     },
+                     {
+                        "id": 7,
+                        "name": "bk",
+                        "value": 3
+                     },
+                     {
+                        "id": 8,
+                        "name": "tr",
+                        "value": 62
+                     }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 4,
+            "name": "tr",
+            "value": 16
+         }
+      ]
+   },
+    image: "ccrazy1.jpg",
     type: "crazy"
   },
+  {
+    name: 'command2',
+    path: "repeat 60 [fd 100 repeat 10 [bk 17 repeat 10 [tr 15 fd 1 tl 20 bk 18 tr 12]] tr 10 fd 20]",
+    command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 60,
+      "commands": [
+         {
+            "id": 1,
+            "name": "fd",
+            "value": 100
+         },
+         {
+            "id": 2,
+            "name": "repeat",
+            "value": 10,
+            "commands": [
+               {
+                  "id": 3,
+                  "name": "bk",
+                  "value": 17
+               },
+               {
+                  "id": 4,
+                  "name": "repeat",
+                  "value": 10,
+                  "commands": [
+                     {
+                        "id": 5,
+                        "name": "tr",
+                        "value": 15
+                     },
+                     {
+                        "id": 6,
+                        "name": "fd",
+                        "value": 1
+                     },
+                     {
+                        "id": 7,
+                        "name": "tl",
+                        "value": 20
+                     },
+                     {
+                        "id": 8,
+                        "name": "bk",
+                        "value": 18
+                     },
+                     {
+                        "id": 9,
+                        "name": "tr",
+                        "value": 12
+                     }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 4,
+            "name": "tr",
+            "value": 10
+         },
+         {
+            "id": 5,
+            "name": "fd",
+            "value": 20
+         }
+      ]
+   },
+    image: "ccrazy2.jpg",
+    type: "crazy"
+  },
+  {
+    name: 'command3',
+    path: "repeat 60 [fd 102 repeat 1 [bk 17 repeat 10 [tr 15 fd 1 tl 20 bk 18 tr 12]] tr 10 fd 20]",
+    command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 60,
+      "commands": [
+         {
+            "id": 1,
+            "name": "fd",
+            "value": 102
+         },
+         {
+            "id": 2,
+            "name": "repeat",
+            "value": 1,
+            "commands": [
+               {
+                  "id": 3,
+                  "name": "bk",
+                  "value": 17
+               },
+               {
+                  "id": 4,
+                  "name": "repeat",
+                  "value": 10,
+                  "commands": [
+                     {
+                        "id": 5,
+                        "name": "tr",
+                        "value": 15
+                     },
+                     {
+                        "id": 6,
+                        "name": "fd",
+                        "value": 1
+                     },
+                     {
+                        "id": 7,
+                        "name": "tl",
+                        "value": 20
+                     },
+                     {
+                        "id": 8,
+                        "name": "bk",
+                        "value": 18
+                     },
+                     {
+                        "id": 9,
+                        "name": "tr",
+                        "value": 12
+                     }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 4,
+            "name": "tr",
+            "value": 10
+         },
+         {
+            "id": 5,
+            "name": "fd",
+            "value": 20
+         }
+      ]
+   },
+    image: "ccrazy3.jpg",
+    type: "crazy"
+  },
+  {
+    name: 'command4',
+    path: "repeat 60 [fd 102 repeat 1 [bk 17 repeat 10 [tr 15 fd 1 tl 20 bk 18 tr 12]] tr 25 fd 22]",
+    command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 60,
+      "commands": [
+         {
+            "id": 1,
+            "name": "fd",
+            "value": 102
+         },
+         {
+            "id": 2,
+            "name": "repeat",
+            "value": 1,
+            "commands": [
+               {
+                  "id": 3,
+                  "name": "bk",
+                  "value": 17
+               },
+               {
+                  "id": 4,
+                  "name": "repeat",
+                  "value": 10,
+                  "commands": [
+                     {
+                        "id": 5,
+                        "name": "tr",
+                        "value": 15
+                     },
+                     {
+                        "id": 6,
+                        "name": "fd",
+                        "value": 1
+                     },
+                     {
+                        "id": 7,
+                        "name": "tl",
+                        "value": 20
+                     },
+                     {
+                        "id": 8,
+                        "name": "bk",
+                        "value": 18
+                     },
+                     {
+                        "id": 9,
+                        "name": "tr",
+                        "value": 12
+                     }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 4,
+            "name": "tr",
+            "value": 25
+         },
+         {
+            "id": 5,
+            "name": "fd",
+            "value": 22
+         }
+      ]
+   },
+    image: "ccrazy4.jpg",
+    type: "crazy"
+  },
+  {
+    name: 'command5',
+    path: "repeat 61 [fd 97 repeat 10 [bk 17 setsw 2 repeat 10 [tr 15 setsw 1 fd 1 tl 20 bk 18 tr 13]] tr 23 setsw 15 fd 17]",
+    command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 61,
+      "commands": [
+         {
+            "id": 1,
+            "name": "fd",
+            "value": 97
+         },
+         {
+            "id": 2,
+            "name": "repeat",
+            "value": 10,
+            "commands": [
+               {
+                  "id": 3,
+                  "name": "bk",
+                  "value": 17
+               },
+               {
+                  "id": 4,
+                  "name": "setsw",
+                  "value": 2
+               },
+               {
+                  "id": 5,
+                  "name": "repeat",
+                  "value": 10,
+                  "commands": [
+                     {
+                        "id": 6,
+                        "name": "tr",
+                        "value": 15
+                     },
+                     {
+                        "id": 7,
+                        "name": "setsw",
+                        "value": 1
+                     },
+                     {
+                        "id": 8,
+                        "name": "fd",
+                        "value": 1
+                     },
+                     {
+                        "id": 9,
+                        "name": "tl",
+                        "value": 20
+                     },
+                     {
+                        "id": 10,
+                        "name": "bk",
+                        "value": 18
+                     },
+                     {
+                        "id": 11,
+                        "name": "tr",
+                        "value": 13
+                     }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 4,
+            "name": "tr",
+            "value": 23
+         },
+         {
+            "id": 5,
+            "name": "setsw",
+            "value": 15
+         },
+         {
+            "id": 6,
+            "name": "fd",
+            "value": 17
+         }
+      ]
+   },
+    image: "ccrazy5.jpg",
+    type: "crazy"
+  },
+  {
+    name: 'command6',
+    path: "repeat 61 [fd 97 repeat 23 [bk 1 setsw 1 fd 12 repeat 10 [tr 9 fd 1 setsw 1 tl 20 bk 7 tr 13]] tr 23 setsw 7 fd 14]",
+    command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 61,
+      "commands": [
+         {
+            "id": 1,
+            "name": "fd",
+            "value": 97
+         },
+         {
+            "id": 2,
+            "name": "repeat",
+            "value": 23,
+            "commands": [
+               {
+                  "id": 3,
+                  "name": "bk",
+                  "value": 1
+               },
+               {
+                  "id": 4,
+                  "name": "setsw",
+                  "value": 1
+               },
+               {
+                  "id": 5,
+                  "name": "fd",
+                  "value": 12
+               },
+               {
+                  "id": 6,
+                  "name": "repeat",
+                  "value": 10,
+                  "commands": [
+                     {
+                        "id": 7,
+                        "name": "tr",
+                        "value": 9
+                     },
+                     {
+                        "id": 8,
+                        "name": "fd",
+                        "value": 1
+                     },
+                     {
+                        "id": 9,
+                        "name": "setsw",
+                        "value": 1
+                     },
+                     {
+                        "id": 10,
+                        "name": "tl",
+                        "value": 20
+                     },
+                     {
+                        "id": 11,
+                        "name": "bk",
+                        "value": 7
+                     },
+                     {
+                        "id": 12,
+                        "name": "tr",
+                        "value": 13
+                     }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 4,
+            "name": "tr",
+            "value": 23
+         },
+         {
+            "id": 5,
+            "name": "setsw",
+            "value": 7
+         },
+         {
+            "id": 6,
+            "name": "fd",
+            "value": 14
+         }
+      ]
+   },
+    image: "ccrazy6.jpg",
+    type: "crazy"
+  },
+  {
+    name: 'command7',
+    path: "repeat 46 [fd 97 repeat 23 [bk 1 setsw 1 fd 12 repeat 4 [tr 9 fd 1 setsw 1 tl 20 bk 7 tr 13]] tr 22 setsw 2 fd 12]",
+    command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 46,
+      "commands": [
+         {
+            "id": 1,
+            "name": "fd",
+            "value": 97
+         },
+         {
+            "id": 2,
+            "name": "repeat",
+            "value": 23,
+            "commands": [
+               {
+                  "id": 3,
+                  "name": "bk",
+                  "value": 1
+               },
+               {
+                  "id": 4,
+                  "name": "setsw",
+                  "value": 1
+               },
+               {
+                  "id": 5,
+                  "name": "fd",
+                  "value": 12
+               },
+               {
+                  "id": 6,
+                  "name": "repeat",
+                  "value": 4,
+                  "commands": [
+                     {
+                        "id": 7,
+                        "name": "tr",
+                        "value": 9
+                     },
+                     {
+                        "id": 8,
+                        "name": "fd",
+                        "value": 1
+                     },
+                     {
+                        "id": 9,
+                        "name": "setsw",
+                        "value": 1
+                     },
+                     {
+                        "id": 10,
+                        "name": "tl",
+                        "value": 20
+                     },
+                     {
+                        "id": 11,
+                        "name": "bk",
+                        "value": 7
+                     },
+                     {
+                        "id": 12,
+                        "name": "tr",
+                        "value": 13
+                     }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 4,
+            "name": "tr",
+            "value": 22
+         },
+         {
+            "id": 5,
+            "name": "setsw",
+            "value": 2
+         },
+         {
+            "id": 6,
+            "name": "fd",
+            "value": 12
+         }
+      ]
+   },
+    image: "ccrazy7.jpg",
+    type: "crazy"
+  },
+  {
+    name: 'command8',
+    path: "fd 160 tr 48 tl 111 repeat 50 [fd 97 repeat 23 [bk 1 setsw 3 fd 11 repeat 5 [tr 9 fd 1 setsw 2 tl 20 bk 7 tr 13]] tr 21 setsw 1 fd 10]",
+    command: {
+      "id": 3,
+      "name": "repeat",
+      "value": 50,
+      "commands": [
+         {
+            "id": 4,
+            "name": "fd",
+            "value": 97
+         },
+         {
+            "id": 5,
+            "name": "repeat",
+            "value": 23,
+            "commands": [
+               {
+                  "id": 6,
+                  "name": "bk",
+                  "value": 1
+               },
+               {
+                  "id": 7,
+                  "name": "setsw",
+                  "value": 3
+               },
+               {
+                  "id": 8,
+                  "name": "fd",
+                  "value": 11
+               },
+               {
+                  "id": 9,
+                  "name": "repeat",
+                  "value": 5,
+                  "commands": [
+                     {
+                        "id": 10,
+                        "name": "tr",
+                        "value": 9
+                     },
+                     {
+                        "id": 11,
+                        "name": "fd",
+                        "value": 1
+                     },
+                     {
+                        "id": 12,
+                        "name": "setsw",
+                        "value": 2
+                     },
+                     {
+                        "id": 13,
+                        "name": "tl",
+                        "value": 20
+                     },
+                     {
+                        "id": 14,
+                        "name": "bk",
+                        "value": 7
+                     },
+                     {
+                        "id": 15,
+                        "name": "tr",
+                        "value": 13
+                     }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 7,
+            "name": "tr",
+            "value": 21
+         },
+         {
+            "id": 8,
+            "name": "setsw",
+            "value": 1
+         },
+         {
+            "id": 9,
+            "name": "fd",
+            "value": 10
+         }
+      ]
+   },
+    image: "ccrazy8.jpg",
+    type: "crazy"
+  },
+  {
+    name: 'command9',
+    path: "repeat 50 [fd 97 repeat 50 [bk 14 setsw 0 fd 11 repeat 5 [tr 37 fd 1 setsw 2 tl 23 bk 42 tr 17]] tr 24 setsw 65 fd 10]",
+    command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 50,
+      "commands": [
+         {
+            "id": 1,
+            "name": "fd",
+            "value": 97
+         },
+         {
+            "id": 2,
+            "name": "repeat",
+            "value": 50,
+            "commands": [
+               {
+                  "id": 3,
+                  "name": "bk",
+                  "value": 14
+               },
+               {
+                  "id": 4,
+                  "name": "setsw",
+                  "value": 0
+               },
+               {
+                  "id": 5,
+                  "name": "fd",
+                  "value": 11
+               },
+               {
+                  "id": 6,
+                  "name": "repeat",
+                  "value": 5,
+                  "commands": [
+                     {
+                        "id": 7,
+                        "name": "tr",
+                        "value": 37
+                     },
+                     {
+                        "id": 8,
+                        "name": "fd",
+                        "value": 1
+                     },
+                     {
+                        "id": 9,
+                        "name": "setsw",
+                        "value": 2
+                     },
+                     {
+                        "id": 10,
+                        "name": "tl",
+                        "value": 23
+                     },
+                     {
+                        "id": 11,
+                        "name": "bk",
+                        "value": 42
+                     },
+                     {
+                        "id": 12,
+                        "name": "tr",
+                        "value": 17
+                     }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 4,
+            "name": "tr",
+            "value": 24
+         },
+         {
+            "id": 5,
+            "name": "setsw",
+            "value": 65
+         },
+         {
+            "id": 6,
+            "name": "fd",
+            "value": 10
+         }
+      ]
+   },
+    image: "ccrazy9.jpg",
+    type: "crazy"
+  },
+  {
+    name: 'command10',
+    path: "repeat 150 [fd 99 setsw 3 repeat 19 [bk 90 repeat 10 [tr 15 tl 15 bk 10 tr 62]] tr 16]",
+    command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 150,
+      "commands": [
+         {
+            "id": 1,
+            "name": "fd",
+            "value": 99
+         },
+         {
+            "id": 2,
+            "name": "setsw",
+            "value": 3
+         },
+         {
+            "id": 3,
+            "name": "repeat",
+            "value": 19,
+            "commands": [
+               {
+                  "id": 4,
+                  "name": "bk",
+                  "value": 90
+               },
+               {
+                  "id": 5,
+                  "name": "repeat",
+                  "value": 10,
+                  "commands": [
+                     {
+                        "id": 6,
+                        "name": "tr",
+                        "value": 15
+                     },
+                     {
+                        "id": 7,
+                        "name": "tl",
+                        "value": 15
+                     },
+                     {
+                        "id": 8,
+                        "name": "bk",
+                        "value": 10
+                     },
+                     {
+                        "id": 9,
+                        "name": "tr",
+                        "value": 62
+                     }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 5,
+            "name": "tr",
+            "value": 16
+         }
+      ]
+   },
+    image: "ccrazy10.jpg",
+    type: "crazy"
+  },
+  {
+    name: 'command11',
+    path: "repeat 10 [fd 97 repeat 33 [setsw 0 fd 116 repeat 5 [tr 18 fd 1 setsw 1 bk 42 tr 31]] tr 4 setsw 2 fd 10]",
+    command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 10,
+      "commands": [
+         {
+            "id": 1,
+            "name": "fd",
+            "value": 97
+         },
+         {
+            "id": 2,
+            "name": "repeat",
+            "value": 33,
+            "commands": [
+               {
+                  "id": 3,
+                  "name": "setsw",
+                  "value": 0
+               },
+               {
+                  "id": 4,
+                  "name": "fd",
+                  "value": 116
+               },
+               {
+                  "id": 5,
+                  "name": "repeat",
+                  "value": 5,
+                  "commands": [
+                     {
+                        "id": 6,
+                        "name": "tr",
+                        "value": 18
+                     },
+                     {
+                        "id": 7,
+                        "name": "fd",
+                        "value": 1
+                     },
+                     {
+                        "id": 8,
+                        "name": "setsw",
+                        "value": 1
+                     },
+                     {
+                        "id": 9,
+                        "name": "bk",
+                        "value": 42
+                     },
+                     {
+                        "id": 10,
+                        "name": "tr",
+                        "value": 31
+                     }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 4,
+            "name": "tr",
+            "value": 4
+         },
+         {
+            "id": 5,
+            "name": "setsw",
+            "value": 2
+         },
+         {
+            "id": 6,
+            "name": "fd",
+            "value": 10
+         }
+      ]
+   },
+    image: "ccrazy11.jpg",
+    type: "crazy"
+  },
+  {
+    name: 'command12',
+    path: "repeat 40 [fd 330 tr 1 repeat 20 [bk 4 tl 7 fd 1 repeat 12 [repeat 14 [fd 5 tr 4 bk 3] fd 11 tr 7] bk 4 tl 2] fd 4 tr 12]",
+    command: {
+      "id": 0,
+      "name": "repeat",
+      "value": 40,
+      "commands": [
+         {
+            "id": 1,
+            "name": "fd",
+            "value": 330
+         },
+         {
+            "id": 2,
+            "name": "tr",
+            "value": 1
+         },
+         {
+            "id": 3,
+            "name": "repeat",
+            "value": 20,
+            "commands": [
+               {
+                  "id": 4,
+                  "name": "bk",
+                  "value": 4
+               },
+               {
+                  "id": 5,
+                  "name": "tl",
+                  "value": 7
+               },
+               {
+                  "id": 6,
+                  "name": "fd",
+                  "value": 1
+               },
+               {
+                  "id": 7,
+                  "name": "repeat",
+                  "value": 12,
+                  "commands": [
+                     {
+                        "id": 8,
+                        "name": "repeat",
+                        "value": 14,
+                        "commands": [
+                           {
+                              "id": 9,
+                              "name": "fd",
+                              "value": 5
+                           },
+                           {
+                              "id": 10,
+                              "name": "tr",
+                              "value": 4
+                           },
+                           {
+                              "id": 11,
+                              "name": "bk",
+                              "value": 3
+                           }
+                        ]
+                     },
+                     {
+                        "id": 10,
+                        "name": "fd",
+                        "value": 11
+                     },
+                     {
+                        "id": 11,
+                        "name": "tr",
+                        "value": 7
+                     }
+                  ]
+               },
+               {
+                  "id": 9,
+                  "name": "bk",
+                  "value": 4
+               },
+               {
+                  "id": 10,
+                  "name": "tl",
+                  "value": 2
+               }
+            ]
+         },
+         {
+            "id": 5,
+            "name": "fd",
+            "value": 4
+         },
+         {
+            "id": 6,
+            "name": "tr",
+            "value": 12
+         }
+      ]
+   },
+    image: "ccrazy12.jpg",
+    type: "crazy"
+  },  
   {
     name: 'command37',    
     path: "command1",
