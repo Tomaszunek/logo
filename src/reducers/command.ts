@@ -54,18 +54,7 @@ export const commandReducer = handleActions<RootState.CommandState, ICommandMode
       } else {
         return state;
       }
-    },
-    [CommandActions.Type.COMPLETE_COMMAND]: (state, action) => {
-      return state.map((todo) =>
-        todo.id === (action.payload as any) ? { ...todo, completed: !todo.value } : todo
-      );
-    },
-    [CommandActions.Type.COMPLETE_ALL]: (state, action) => {
-      return state.map((todo) => ({ ...todo, completed: true }));
-    },
-    [CommandActions.Type.CLEAR_COMPLETED]: (state, action) => {
-      return state.filter((todo) => !!todo.value === false);
-    }
+    },    
   },
   initialState
 );

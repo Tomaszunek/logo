@@ -40,16 +40,7 @@ export namespace App {
     actions: bindActionCreators(omit(CommandActions, 'Type'), dispatch)
   })
 )
-export default class App extends React.Component<App.IProps> {
-  public handleClearCompleted(): void {
-    const hasCompletedTodo = this.props.commands.some((todo) => !!todo.value || false);
-    if (hasCompletedTodo) {
-      this.props.actions.clearCompleted();
-    }
-  }
-  public handleFilterChange(filter: CommandModel.Filter): void {
-    this.props.history.push(`#${filter}`);
-  }
+export default class App extends React.Component<App.IProps> {    
   public render() {
     const { descriptions, commands, pathwayExample, tutorialPages, actions } = this.props;
     return (
