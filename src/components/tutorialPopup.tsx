@@ -20,7 +20,7 @@ export default class TutorialPopup extends React.Component<IProps, IState> {
     }
     const brstyle = {
       display: (this.state.siteNumber !== this.props.tutorialPages.length - 1 ? 'block' : 'none'),
-      marginLeft: (this.state.siteNumber === 0 ? '676px' : '578px')
+      // marginLeft: (this.state.siteNumber === 0 ? '676px' : '578px')
     }
     return (
       <div className="tutorialPopup" style={style}>
