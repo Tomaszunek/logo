@@ -2,25 +2,48 @@
 @import "./styles/popup.scss";
 @import "./styles/helpers.scss";
 
+$scr-xs: 320px;
+$scr-sm: 768px;
+$scr-md: 992px;
+$scr-lg: 1200px;
+
+@media screen and (min-width: $scr-xs) and (max-width: $scr-sm) {
+}
+
+@media screen and (min-width: $scr-sm) and (max-width: $scr-md)  {
+    
+}
+
+@media screen and (min-width: $scr-md) and (max-width: $scr-lg)  {
+
+}
+
 .App {
   text-align: center;
   display: grid;
-  grid-template-columns: 7fr 6fr;
-  height: 100vh;
+  grid-template-columns: 8fr 5fr;
+
+  @media screen and (min-width: $scr-xs) and (max-width: $scr-sm) {
+    background-color: red;
+    grid-template-columns: 1fr;
+  }
+
+  @media screen and (min-width: $scr-sm) and (max-width: $scr-md)  {
+    background-color: green;
+    grid-template-columns: 1fr;
+  }
+
+  @media screen and (min-width: $scr-md) and (max-width: $scr-lg)  {
+    
+  }
   .editorLine {
     background-color: gray;
     position: relative;
-    width: 1022px;
+    min-width: 60%;
     .canvas {
-      resize: both;
-      overflow: auto;
-      width: 1000px;
       background-color: white;
-      margin: 10px; 
-      max-width: 1022px;
-      canvas {
-        width: 1000px;
-        height: 800px;
+      margin: 0px 10px;      
+      canvas {        
       }
 
       ::-webkit-scrollbar {

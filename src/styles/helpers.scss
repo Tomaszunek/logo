@@ -1,3 +1,9 @@
+$scr-xs: 320px;
+$scr-sm: 768px;
+$scr-md: 992px;
+$scr-lg: 1200px;
+
+
 .helperLayer {
     position: absolute;
     z-index: 5;
@@ -157,7 +163,7 @@
 
     .commandsList {
         display: grid;
-        grid-template-columns: 50% 50%;
+        grid-template-columns: 50% 50%;        
 
         .commandItem {
             display: flex;
@@ -227,15 +233,16 @@
 
 .tutorialPopup {
     position: absolute;
-    width: 55%;
+    width: 60%;
     height: 65%;
     background: white;
     z-index: 10;
     border: 1px solid black;
-    left: 22.5%;
+    left: 20%;
     top: 17.5%;
     display: grid;
-    grid-template-rows: 90% 10%;
+    grid-template-rows: 90% 10%;    
+    
     
     .title {
         border-bottom: 1px solid black;
@@ -246,7 +253,7 @@
         flex-direction: row-reverse;
 
         p {
-            margin-right: 360px;
+            margin-right: 280px;
             font-size: 20px;
             font-weight: 800;
         }
@@ -255,10 +262,12 @@
     .content {
         display: grid;
         grid-template-columns: 50% 50%;
+        height: 100%;
 
         img {
             padding: 20px;
-            height: 156%;
+            height: 70%;
+            width: 90%;
             border-right: 1px solid;           
         }
 
@@ -293,6 +302,135 @@
         justify-content: space-between;
         padding: 10px 90px;
         border-top: 1px solid;     
+    }
+
+    @media screen and (min-width: $scr-xs) and (max-width: $scr-sm) {
+        width: 83%;
+        height: 91%;
+        left: 10.5%;
+        top: 5.5%;
+
+        .title {
+            padding-left: 9px;
+            flex-direction: row;    
+    
+            p {
+                margin-left: 17px;
+                font-size: 12px;
+                margin-right: 0;        
+            }
+        }
+
+        .content {            
+            grid-template-columns: 1fr;
+            img {                
+                padding: 10px;
+                height: 600%;
+                width: 95%;
+                border-right: 0px solid;  
+                border-bottom: 1px solid;    
+            }
+    
+            .tip {
+                padding-top: 370px;
+                height: 100%;
+                font-size: 18px;
+            }
+        }
+
+        button {
+            font-size: 14px;
+            padding: 3px 6px;
+        }
+
+        .tutorialNav {
+            padding: 10px 91px;
+        }
+    }
+
+    @media screen and (min-width: $scr-sm) and (max-width: $scr-md)  {
+        width: 88%;
+        height: 92%;
+        left: 6.5%;
+        top: 4.5%;
+
+        .title {
+            padding-left: 9px;
+            flex-direction: row;    
+    
+            p {
+                margin-left: 17px;
+                font-size: 12px;
+                margin-right: 0;        
+            }
+        }
+
+        .content {            
+            grid-template-columns: 1fr;
+            img {                
+                padding: 10px;
+                height: 400%;
+                width: 95%;
+                border-right: 0px solid;  
+                border-bottom: 1px solid;    
+            }
+    
+            .tip {
+                padding-top: 370px;
+                height: 100%;
+                font-size: 18px;
+            }
+        }
+
+        button {
+            font-size: 14px;
+            padding: 3px 6px;
+        }
+
+        .tutorialNav {
+            padding: 10px 91px;
+        }
+    }
+
+    @media screen and (min-width: $scr-md) and (max-width: $scr-lg)  {
+        width: 80%;
+        height: 80%;
+        left: 10%;
+        top: 10%;
+
+        .title {
+            padding-left: 9px;
+            flex-direction: row-reverse;    
+    
+            p {
+                font-size: 16px;
+                margin-right: 200px;        
+            }
+        }
+
+        .content {            
+            img {                
+                padding: 10px;
+                width: 95%;
+                height: 442px;
+                border-right: 1px solid;
+            }
+    
+            .tip {
+                padding-top: 90px;
+                height: 100%;
+                font-size: 20px;
+            }
+        }
+
+        button {
+            font-size: 12px;
+            padding: 3px 6px;
+        }
+
+        .tutorialNav {
+            padding: 10px 91px;
+        }
     }
 
 }
