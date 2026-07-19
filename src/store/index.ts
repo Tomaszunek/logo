@@ -1,25 +1,29 @@
 import { Store, createStore, applyMiddleware } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import { logger } from '../middleware';
-import { IRootState, rootReducer } from '../reducers';
+import { logger } from '../middleware/logger';   // your custom middleware
+import { rootReducer } from '../reducers';
+import type { IRootState } from '../reducers/state';
 
+/**
+ * Configure the Redux store.
+ *
+ * - In production we just apply the logger middleware.
+ * - In development we optionally add Redux DevTools if it is installed.
+ */
 export function configureStore(initialState?: IRootState): Store<IRootState> {
-  let middleware = applyMiddleware(logger);
+  const middleware = [logger];
+  let enhancer: any;
 
   if (process.env.NODE_ENV !== 'production') {
-    middleware = composeWithDevTools(middleware);
+    try {
+      // Dynamic import – Vite will ignore this in production builds
+      const { composeWithDevTools } = require('redux-devtools-extension');
+      enhancer = composeWithDevTools(applyMiddleware(...middleware));
+    } catch (_) {
+      enhancer = applyMiddleware(...middleware);
+    }
+  } else {
+    enhancer = applyMiddleware(...middleware);
   }
 
-  const store = createStore(rootReducer as any, initialState as any, middleware) as Store<
-    IRootState
-  >;
-
-  if (module.hot) {
-    module.hot.accept('../reducers', () => {
-      const nextReducer = require('../reducers');
-      store.replaceReducer(nextReducer);
-    });
-  }
-
-  return store;
+  return createStore(rootReducer as any, initialState as any, enhancer) as Store<IRootState>;
 }

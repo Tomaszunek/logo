@@ -1,0 +1,36 @@
+@import "./styles/commandTags.css";
+@import "./styles/popup.css";
+@import "./styles/helpers.css";
+
+.App {
+  text-align: center;
+  display: grid;
+  grid-template-columns: 8fr 5fr;
+}
+@media screen and (min-width: 320px) and (max-width: 768px) {
+  .App {
+    background-color: red;
+    grid-template-columns: 1fr;
+  }
+}
+@media screen and (min-width: 768px) and (max-width: 992px) {
+  .App {
+    background-color: green;
+    grid-template-columns: 1fr;
+  }
+}
+.App .editorLine {
+  background-color: gray;
+  position: relative;
+  min-width: 60%;
+}
+.App .editorLine .canvas {
+  background-color: white;
+  margin: 0px 10px;
+}
+.App .editorLine .canvas ::-webkit-scrollbar {
+  width: 0px;
+}
+.App .commandListLine {
+  background-color: rgb(95, 95, 95);
+}
