@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150">
+  <rect width="150" height="150" fill="#050816"/>
+  <defs>
+    <radialGradient id="black-hole-glow">
+      <stop offset="0" stop-color="#050816"/>
+      <stop offset=".55" stop-color="#050816"/>
+      <stop offset=".75" stop-color="#f15bb5" stop-opacity=".8"/>
+      <stop offset="1" stop-color="#00f5d4" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="75" cy="75" rx="69" ry="27" fill="url(#black-hole-glow)"/>
+  <g fill="none" stroke-linecap="round">
+    <ellipse cx="75" cy="75" rx="64" ry="20" stroke="#00f5d4" stroke-width="2" transform="rotate(-8 75 75)"/>
+    <ellipse cx="75" cy="75" rx="54" ry="15" stroke="#f15bb5" stroke-width="2.5" transform="rotate(6 75 75)"/>
+    <ellipse cx="75" cy="75" rx="43" ry="11" stroke="#fee440" stroke-width="1.5"/>
+    <path d="M8 83C40 48 110 49 142 72" stroke="#00f5d4" stroke-width="1.3"/>
+    <path d="M13 67C52 97 115 95 139 71" stroke="#f15bb5" stroke-width="1.3"/>
+  </g>
+  <circle cx="75" cy="75" r="15" fill="#000"/>
+</svg>

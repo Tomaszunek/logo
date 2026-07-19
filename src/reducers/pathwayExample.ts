@@ -1,6 +1,47 @@
 import { handleActions } from 'redux-actions';
 import { RootState } from './state';
-import { IPathwayExample } from '../models';
+import { ICommandModel, IPathwayExample } from '../models';
+
+interface IExampleCommand {
+  name: ICommandModel['name'];
+  value?: number;
+  color?: ICommandModel['color'];
+  commands?: IExampleCommand[];
+}
+
+const step = (name: ICommandModel['name'], value: number): IExampleCommand => ({ name, value });
+const stroke = (color: ICommandModel['color']): IExampleCommand => ({ name: 'setsc', color });
+const background = (color: ICommandModel['color']): IExampleCommand => ({ name: 'setbc', color });
+const loop = (value: number, ...commands: IExampleCommand[]): IExampleCommand => ({
+  name: 'repeat',
+  value,
+  commands
+});
+
+const buildExampleCommand = (source: IExampleCommand): ICommandModel => {
+  let nextId = 0;
+
+  const build = (command: IExampleCommand): ICommandModel => {
+    const result: ICommandModel = {
+      id: nextId++,
+      name: command.name
+    };
+
+    if (command.value !== undefined) {
+      result.value = command.value;
+    }
+    if (command.color !== undefined) {
+      result.color = command.color;
+    }
+    if (command.commands) {
+      result.commands = command.commands.map(build);
+    }
+
+    return result;
+  };
+
+  return build(source);
+};
 
 const initialState: RootState.PathwayExample = [
   {
@@ -2754,6 +2795,229 @@ const initialState: RootState.PathwayExample = [
    },
    image: "ccolor10.jpg",
    type: "color"
+ },
+ {
+   name: 'Five-point star',
+   path: 'repeat 5 [fd 220 tr 144]',
+   command: buildExampleCommand(loop(5,
+     step('fd', 220),
+     step('tr', 144)
+   )),
+   image: 'five-point-star.svg',
+   type: 'simple'
+ },
+ {
+   name: 'Square flower',
+   path: 'repeat 12 [repeat 4 [fd 120 tr 90] tr 30]',
+   command: buildExampleCommand(loop(12,
+     loop(4,
+       step('fd', 120),
+       step('tr', 90)
+     ),
+     step('tr', 30)
+   )),
+   image: 'square-flower.svg',
+   type: 'simple'
+ },
+ {
+   name: 'Crystal snowflake',
+   path: 'repeat 6 [fd 40 repeat 3 [fd 30 tr 45 fd 18 bk 18 tl 90 fd 18 bk 18 tr 45 fd 10] bk 160 tr 60]',
+   command: buildExampleCommand(loop(6,
+     step('fd', 40),
+     loop(3,
+       step('fd', 30),
+       step('tr', 45),
+       step('fd', 18),
+       step('bk', 18),
+       step('tl', 90),
+       step('fd', 18),
+       step('bk', 18),
+       step('tr', 45),
+       step('fd', 10)
+     ),
+     step('bk', 160),
+     step('tr', 60)
+   )),
+   image: 'crystal-snowflake.svg',
+   type: 'crazy'
+ },
+ {
+   name: 'Hexagon mandala',
+   path: 'repeat 36 [repeat 6 [fd 110 tr 60] tr 10 fd 8]',
+   command: buildExampleCommand(loop(36,
+     loop(6,
+       step('fd', 110),
+       step('tr', 60)
+     ),
+     step('tr', 10),
+     step('fd', 8)
+   )),
+   image: 'hexagon-mandala.svg',
+   type: 'crazy'
+ },
+ {
+   name: 'Rainbow rosette',
+   path: 'repeat 12 [setsc ff4d6d repeat 3 [fd 120 tr 120] tr 10 setsc ffb703 repeat 4 [fd 90 tr 90] tr 10 setsc 00b4d8 repeat 5 [fd 75 tr 72] tr 10]',
+   command: buildExampleCommand(loop(12,
+     stroke('#ff4d6d'),
+     loop(3, step('fd', 120), step('tr', 120)),
+     step('tr', 10),
+     stroke('#ffb703'),
+     loop(4, step('fd', 90), step('tr', 90)),
+     step('tr', 10),
+     stroke('#00b4d8'),
+     loop(5, step('fd', 75), step('tr', 72)),
+     step('tr', 10)
+   )),
+   image: 'rainbow-rosette.svg',
+   type: 'color'
+ },
+ {
+   name: 'Color pinwheel',
+   path: 'repeat 8 [setsc e63946 fd 150 bk 150 tr 15 setsc ffb703 fd 130 bk 130 tr 15 setsc 2a9d8f fd 110 bk 110 tr 15]',
+   command: buildExampleCommand(loop(8,
+     stroke('#e63946'),
+     step('fd', 150),
+     step('bk', 150),
+     step('tr', 15),
+     stroke('#ffb703'),
+     step('fd', 130),
+     step('bk', 130),
+     step('tr', 15),
+     stroke('#2a9d8f'),
+     step('fd', 110),
+     step('bk', 110),
+     step('tr', 15)
+   )),
+   image: 'color-pinwheel.svg',
+   type: 'color'
+ },
+ {
+   name: 'Hyperspace star tunnel',
+   path: 'repeat 72 [repeat 5 [fd 120 tr 144] tr 5 fd 3]',
+   command: buildExampleCommand(loop(72,
+     loop(5, step('fd', 120), step('tr', 144)),
+     step('tr', 5),
+     step('fd', 3)
+   )),
+   image: 'hyperspace-star-tunnel.svg',
+   type: 'crazy'
+ },
+ {
+   name: 'Quantum chrysanthemum',
+   path: 'repeat 45 [repeat 7 [fd 105 tr 154] tr 10]',
+   command: buildExampleCommand(loop(45,
+     loop(7, step('fd', 105), step('tr', 154)),
+     step('tr', 10)
+   )),
+   image: 'quantum-chrysanthemum.svg',
+   type: 'crazy'
+ },
+ {
+   name: 'Fractal lightning crown',
+   path: 'repeat 12 [fd 60 repeat 4 [fd 22 tr 45 fd 18 bk 18 tl 90 fd 18 bk 18 tr 45] bk 148 tr 30]',
+   command: buildExampleCommand(loop(12,
+     step('fd', 60),
+     loop(4,
+       step('fd', 22),
+       step('tr', 45),
+       step('fd', 18),
+       step('bk', 18),
+       step('tl', 90),
+       step('fd', 18),
+       step('bk', 18),
+       step('tr', 45)
+     ),
+     step('bk', 148),
+     step('tr', 30)
+   )),
+   image: 'fractal-lightning-crown.svg',
+   type: 'crazy'
+ },
+ {
+   name: 'Impossible woven cube',
+   path: 'repeat 3 [repeat 4 [fd 120 tr 90] tr 120 repeat 4 [fd 85 tr 90] tr 120]',
+   command: buildExampleCommand(loop(3,
+     loop(4, step('fd', 120), step('tr', 90)),
+     step('tr', 120),
+     loop(4, step('fd', 85), step('tr', 90)),
+     step('tr', 120)
+   )),
+   image: 'impossible-woven-cube.svg',
+   type: 'crazy'
+ },
+ {
+   name: 'Electric dreamcatcher',
+   path: 'repeat 24 [setsc ff006e repeat 3 [fd 135 tr 120] tr 5 setsc 8338ec repeat 4 [fd 100 tr 90] tr 5 setsc 3a86ff repeat 6 [fd 75 tr 60] tr 5]',
+   command: buildExampleCommand(loop(24,
+     stroke('#ff006e'),
+     loop(3, step('fd', 135), step('tr', 120)),
+     step('tr', 5),
+     stroke('#8338ec'),
+     loop(4, step('fd', 100), step('tr', 90)),
+     step('tr', 5),
+     stroke('#3a86ff'),
+     loop(6, step('fd', 75), step('tr', 60)),
+     step('tr', 5)
+   )),
+   image: 'electric-dreamcatcher.svg',
+   type: 'color'
+ },
+ {
+   name: 'Black-hole accretion disk',
+   path: 'repeat 1 [setbc 050816 repeat 72 [setsc 00f5d4 fd 170 bk 165 tr 5 setsc f15bb5 fd 130 bk 126]]',
+   command: buildExampleCommand(loop(1,
+     background('#050816'),
+     loop(72,
+       stroke('#00f5d4'),
+       step('fd', 170),
+       step('bk', 165),
+       step('tr', 5),
+       stroke('#f15bb5'),
+       step('fd', 130),
+       step('bk', 126)
+     )
+   )),
+   image: 'black-hole-accretion-disk.svg',
+   type: 'color'
+ },
+ {
+   name: 'Cybernetic iris',
+   path: 'repeat 1 [setbc 071013 repeat 36 [setsc 00ff9f setsw 3 repeat 4 [fd 100 tr 90] tr 10 setsc 00b8ff setsw 1 fd 150 bk 150]]',
+   command: buildExampleCommand(loop(1,
+     background('#071013'),
+     loop(36,
+       stroke('#00ff9f'),
+       step('setsw', 3),
+       loop(4, step('fd', 100), step('tr', 90)),
+       step('tr', 10),
+       stroke('#00b8ff'),
+       step('setsw', 1),
+       step('fd', 150),
+       step('bk', 150)
+     )
+   )),
+   image: 'cybernetic-iris.svg',
+   type: 'color'
+ },
+ {
+   name: 'Luminous spiral galaxy',
+   path: 'repeat 1 [setbc 03045e repeat 30 [setsc 90e0ef fd 140 bk 136 tr 6 setsc fff3b0 fd 95 bk 92 tr 6]]',
+   command: buildExampleCommand(loop(1,
+     background('#03045e'),
+     loop(30,
+       stroke('#90e0ef'),
+       step('fd', 140),
+       step('bk', 136),
+       step('tr', 6),
+       stroke('#fff3b0'),
+       step('fd', 95),
+       step('bk', 92),
+       step('tr', 6)
+     )
+   )),
+   image: 'luminous-spiral-galaxy.svg',
+   type: 'color'
  }
 ];
 

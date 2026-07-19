@@ -13,7 +13,7 @@ export default class PathwayExample extends React.Component<IProps, IState> {
     return (
         <div className="pathexample" onClick={(e) => this.setCommands(e)}>
             <p>{name}</p>
-            <img src={"./images/examples/" + image} alt=""/> 
+            <img src={"./images/examples/" + image} alt={name + " Logo drawing preview"}/>
             <p className="path">{path}</p>
         </div>
     );
