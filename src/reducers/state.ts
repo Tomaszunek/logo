@@ -1,16 +1,12 @@
 import { ICommandModel, IPathwayExample, ITutorialPage } from '../models';
 
 export interface IRootState {
-  commands: RootState.CommandState;
-  descriptions: RootState.CommandDescriptionState;
-  pathwayexpample: RootState.PathwayExample;
-  tutorialPages: RootState.TutorialPages;
+  commands: ICommandModel[];
+  descriptions: any;
+  pathwayexpample: IPathwayExample[];
+  tutorialPages: ITutorialPage[];
   router?: any;
 }
 
-export namespace RootState {
-  export type CommandState = Array<ICommandModel>;
-  export type CommandDescriptionState = any;
-  export type PathwayExample = Array<IPathwayExample>;
-  export type TutorialPages = Array<ITutorialPage>;
-}
+// Export the same shape for compatibility
+export type RootState = IRootState;

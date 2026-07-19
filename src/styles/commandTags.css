@@ -1,0 +1,219 @@
+.commandInput {
+  width: calc(100% - 25px);
+  font-size: 2em;
+  margin: 10px;
+  border-radius: 10px;
+  border: 2px solid snow;
+}
+
+.commandEditor {
+  width: 100%;
+}
+.commandEditor ul.editorCont {
+  margin: 10px 10px -5px 10px;
+  height: 150px;
+  padding: 10px;
+  background-color: azure;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: space-evenly;
+  list-style: none;
+  scroll-behavior: auto;
+  overflow: scroll;
+}
+.commandEditor ul.editorCont::-webkit-scrollbar {
+  width: 12px;
+}
+.commandEditor ul.editorCont::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+.commandEditor ul.editorCont::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+.commandEditor ul.editorCont li {
+  background-color: green;
+  padding: 4px 6px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  display: flex;
+  line-height: 1.2em;
+  font-size: 13px;
+  margin-bottom: 3px;
+}
+.commandEditor ul.editorCont li.fd {
+  background-color: red;
+}
+.commandEditor ul.editorCont li.bk {
+  background-color: red;
+}
+.commandEditor ul.editorCont li.tl {
+  background-color: blue;
+}
+.commandEditor ul.editorCont li.tr {
+  background-color: blue;
+}
+.commandEditor ul.editorCont li.repeat {
+  background-color: rgb(255, 0, 212);
+}
+.commandEditor ul.editorCont li.hideturtle {
+  background-color: rgb(22, 150, 155);
+}
+.commandEditor ul.editorCont li.showturtle {
+  background-color: rgb(22, 150, 155);
+}
+.commandEditor ul.editorCont li.penup {
+  background-color: rgb(217, 236, 40);
+}
+.commandEditor ul.editorCont li.pendown {
+  background-color: rgb(217, 236, 40);
+}
+.commandEditor ul.editorCont li.setpc {
+  background-color: rgb(102, 102, 102);
+}
+.commandEditor ul.editorCont li.setbc {
+  background-color: rgb(102, 102, 102);
+}
+.commandEditor ul.editorCont li.to {
+  background-color: rgb(166, 25, 179);
+}
+.commandEditor ul.editorCont li.save {
+  background-color: rgb(214, 107, 18);
+}
+.commandEditor ul.editorCont li.load {
+  background-color: rgb(214, 107, 18);
+}
+.commandEditor ul.editorCont li.home {
+  background-color: rgb(108, 186, 218);
+}
+.commandEditor ul.editorCont li.setpos {
+  background-color: rgb(108, 186, 218);
+}
+.commandEditor ul.editorCont li .removeButton {
+  padding: 3px 8px;
+  height: 18px;
+  margin-left: 3px;
+  border-radius: 5px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.commandEditor ul.editorCont li .removeButton:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+.commandEditor ul.editorCont li ul {
+  display: flex;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.commandEditor ul.editorCont li .tagName {
+  margin-top: 3px;
+  display: flex;
+  border-radius: 9px;
+  border: 2px solid rgba(128, 128, 128, 0.15);
+}
+
+.commendList {
+  margin: 10px;
+  margin-top: 30px;
+  color: white;
+}
+.commendList div.commandItem {
+  border: 1px solid rgba(128, 128, 128, 0.5);
+  margin-bottom: 5px;
+}
+.commendList div.commandItem.fd {
+  background-color: red;
+}
+.commendList div.commandItem.bk {
+  background-color: red;
+}
+.commendList div.commandItem.tl {
+  background-color: blue;
+}
+.commendList div.commandItem.tr {
+  background-color: blue;
+}
+.commendList div.commandItem.repeat {
+  background-color: rgb(255, 0, 212);
+}
+.commendList div.commandItem.repeat div {
+  margin-left: 15px;
+}
+.commendList div.commandItem.repeat .repeat {
+  background-color: rgba(238, 5, 199, 0.87);
+}
+.commendList div.commandItem.repeat .repeat .repeat {
+  background-color: rgba(238, 5, 199, 0.93);
+}
+.commendList div.commandItem.repeat .repeat .repeat .repeat {
+  background-color: rgba(238, 5, 199, 0.99);
+}
+.commendList div.commandItem.hideturtle {
+  background-color: rgb(22, 150, 155);
+}
+.commendList div.commandItem.showturtle {
+  background-color: rgb(22, 150, 155);
+}
+.commendList div.commandItem.penup {
+  background-color: rgb(217, 236, 40);
+}
+.commendList div.commandItem.pendown {
+  background-color: rgb(217, 236, 40);
+}
+.commendList div.commandItem.setpc {
+  background-color: rgb(102, 102, 102);
+}
+.commendList div.commandItem.setbc {
+  background-color: rgb(102, 102, 102);
+}
+.commendList div.commandItem.to {
+  background-color: rgb(166, 25, 179);
+}
+.commendList div.commandItem.save {
+  background-color: rgb(214, 107, 18);
+}
+.commendList div.commandItem.load {
+  background-color: rgb(214, 107, 18);
+}
+.commendList div.commandItem.home {
+  background-color: rgb(108, 186, 218);
+}
+.commendList div.commandItem.setpos {
+  background-color: rgb(108, 186, 218);
+}
+.commendList .heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  height: 36px;
+}
+.commendList .heading input {
+  height: 19px;
+  border-radius: 4px;
+  text-align: center;
+  width: 70px;
+}
+.commendList .heading button {
+  margin: 0 5px;
+  height: 30px;
+  width: 30px;
+  border-radius: 5px;
+}
+.commendList .heading button.remove {
+  background-color: red;
+}
+.commendList .description p {
+  height: 20px;
+  text-align: right;
+  margin: 0;
+  margin-top: -4px;
+  margin-right: 10px;
+  color: #eadfdf;
+  font-size: x-small;
+}

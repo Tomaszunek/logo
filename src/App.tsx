@@ -12,7 +12,7 @@ import { CommandActions } from './actions';
 import { CommandModel } from './models';
 import { IRootState, RootState } from './reducers';
 import { omit } from './utils';
-import './App.scss';
+import './App.css';
 
 const FILTER_VALUES = (Object.keys(CommandModel.Filter) as 
   (keyof typeof CommandModel.Filter)[]).map(

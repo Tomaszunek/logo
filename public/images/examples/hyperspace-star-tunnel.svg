@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150">
+  <rect width="150" height="150" fill="#fff"/>
+  <defs>
+    <path id="tunnel-star" d="M75 18 88.4 56.6 129.2 57.4 96.7 82 108.5 121 75 97.7 41.5 121 53.3 82 20.8 57.4 61.6 56.6Z"
+          fill="none" stroke="#151820" stroke-width="1.4"/>
+  </defs>
+  <use href="#tunnel-star"/>
+  <use href="#tunnel-star" transform="translate(4 -2) rotate(8 75 75) scale(.88)" transform-origin="75 75"/>
+  <use href="#tunnel-star" transform="translate(8 -4) rotate(16 75 75) scale(.76)" transform-origin="75 75"/>
+  <use href="#tunnel-star" transform="translate(12 -6) rotate(24 75 75) scale(.64)" transform-origin="75 75"/>
+  <use href="#tunnel-star" transform="translate(16 -8) rotate(32 75 75) scale(.52)" transform-origin="75 75"/>
+  <use href="#tunnel-star" transform="translate(20 -10) rotate(40 75 75) scale(.40)" transform-origin="75 75"/>
+  <use href="#tunnel-star" transform="translate(24 -12) rotate(48 75 75) scale(.28)" transform-origin="75 75"/>
+</svg>
