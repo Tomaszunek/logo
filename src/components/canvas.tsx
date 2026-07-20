@@ -47,27 +47,29 @@ class Canvas extends React.Component<IProps, IState> {
     this.turtle.drawTurtle();
   }
 
-  public componentWillReceiveProps(nextProps: IProps){
-    this.turtle.clearCanvas();
-    const { commands } = nextProps;
-    commands.forEach((command: ICommandModel) => {
-      if(command.name === 'repeat' && command.commands) {
-        this.caller[command.name](command)
-      } else if(command.name === 'setpos' && command.value && command.arg2) {
-        this.caller[command.name](command.value, command.arg2)                
-      } else if(command.name === 'setsc' || command.name === 'setbc' && command.color) {
-        this.caller[command.name](command.color)                
-      } else {
-        this.caller[command.name](command.value);
-      }
-    });
-    this.turtle.drawTurtle();  
+  public componentDidUpdate(prevProps: IProps){
+    if(prevProps.commands !== this.props.commands){
+      this.turtle.clearCanvas();
+      const { commands } = this.props;
+      commands.forEach((command: ICommandModel) => {
+        if(command.name === 'repeat' && command.commands) {
+          this.caller[command.name](command)
+        } else if(command.name === 'setpos' && command.value && command.arg2) {
+          this.caller[command.name](command.value, command.arg2)
+        } else if((command.name === 'setsc' || command.name === 'setbc') && command.color) {
+          this.caller[command.name](command.color)
+        } else {
+          this.caller[command.name](command.value);
+        }
+      });
+      this.turtle.drawTurtle();
+    }
   } 
 
   public render() {
     return (
       <div className="canvas">
-        <canvas ref={elem => this.canvas = elem} width={this.canvasX} height={this.canvasY}/>
+        <canvas ref={elem => this.canvas = elem} width={this.canvasX} height={this.canvasY} role="img" aria-label="Turtle drawing canvas"/>
       </div>
     );
   }

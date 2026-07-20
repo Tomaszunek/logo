@@ -12,14 +12,12 @@ export default class CommandEditor extends React.Component<IProps, IState> {
     return commands.map((item:ICommandModel) => {
       const { name, value, id } = item;
       return (
-        <li key={id} attr-n={id} className={name}>
+        <li key={id} attr-n={id} className={name} tabIndex="0">
           <div className="tagName" >
             {name} {value}
             {((item.commands) ? (<ul>{this.displayCommands(item.commands)}</ul>) : (null))}
           </div>
-          <div className="removeButton" onClick={(e) => this.removeCommand(e, id)}>
-            x
-          </div>                  
+          <button type="button" aria-label="Remove command" className="removeButton" onClick={(e) => this.removeCommand(e, id)}>x</button>                  
         </li>
       )    
     })
