@@ -1,34 +1,69 @@
-@import "./styles/commandTags.css";
-@import "./styles/popup.css";
-@import "./styles/helpers.css";
+/* Theme variables */
+:root {
+  --primary-color:#0055aa;
+  --secondary-color:#ffdd00;
+  --bg-light:#f8f9fa;
+  --text-dark:#222;
+  --border-radius:4px;
 
+  /* Spacing utilities */
+  --spacing-sm:0.5rem;
+  --spacing-md:1rem;
+  --spacing-lg:2rem;
+}
+
+/* Layout */
 .App {
-  text-align: center;
-  display: grid;
-  grid-template-columns: 8fr 5fr;
+  display:grid;
+  grid-template-rows:auto 1fr auto; /* header, main, footer */
+  grid-template-columns:1fr;
+  min-height:100vh;
+  background-color:var(--bg-light);
 }
-@media screen and (min-width: 320px) and (max-width: 768px) {
-  .App {
-    grid-template-columns: 1fr;
-  }
+.appHeader{
+  display:flex;
+  align-items:center;
+  padding:0.5rem 1rem;
+  background-color:white;
+  box-shadow:0 2px 4px rgba(0,0,0,.1);
 }
-@media screen and (min-width: 768px) and (max-width: 992px) {
-  .App {
-      grid-template-columns: 1fr;
-  }
+.appLogo{height:40px;margin-right:.8rem;}
+.appFooter{
+  text-align:center;
+  font-size:.9rem;
+  padding:0.5rem 0;
+  background-color:white;
+  box-shadow:0 -2px 4px rgba(0,0,0,.1);
 }
-.App .editorLine {
-  background-color: gray;
-  position: relative;
-  width: 100%;
+
+/* Main content container */
+.appMain{
+  display:flex;
+  flex-direction:column;
+  gap:var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
 }
-.App .editorLine .canvas {
-  background-color: white;
-  margin: 0px 10px;
+
+.editorContainer{
+  display:flex;
+  flex-wrap:nowrap;
+  gap:var(--spacing-lg);
 }
-.App .editorLine .canvas ::-webkit-scrollbar {
-  width: 0px;
+
+/* Editor section */
+.editorLine{
+  flex:2 1 0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:var(--spacing-sm);
+  padding:var(--spacing-md) var(--spacing-sm);
 }
-.App .commandListLine {
-  background-color: rgb(95, 95, 95);
-}
+.commandListLine{flex:1 1 0;background-color:#e9ecef;padding:var(--spacing-md);}
+
+/* Canvas container */canvas{width:100%;height:auto;max-width:800px;border:1px solid #ddd;border-radius:var(--border-radius);}
+
+/* Media queries */
+@media screen and (min-width:768px){.editorLine{flex-wrap:nowrap;}}
+
+/* Skip link */
+.skip-link{position:absolute;left:-9999px;top:0;background:white;color:black;padding:.5rem;z-index:1000;} .skip-link:focus{left:10px;}

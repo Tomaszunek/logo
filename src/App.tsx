@@ -66,21 +66,23 @@ export default class App extends React.Component<App.IProps> {
           actions={actions}
         />
         <TutorialPopup tutorialPages={tutorialPages} />
-        <div className="editorLine">
-          <CommandEditor commands={commands} actions={actions} />
-          <CommandInput
-            commands={commands}
-            actions={actions}
-            descriptions={descriptions}
-          />
-          <Canvas commands={commands} actions={actions} />
-        </div>
-        <div className="commandListLine">
-          <CommandList
-            commands={commands}
-            descriptions={descriptions}
-            actions={actions}
-          />
+        <div className="editorContainer">
+          <section className="editorLine">
+            <CommandEditor commands={commands} actions={actions} />
+            <CommandInput
+              commands={commands}
+              actions={actions}
+              descriptions={descriptions}
+            />
+            <Canvas commands={commands} actions={actions} />
+          </section>
+          <aside className="commandListLine">
+            <CommandList
+              commands={commands}
+              descriptions={descriptions}
+              actions={actions}
+            />
+          </aside>
         </div>
       </main>
     );
