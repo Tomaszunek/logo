@@ -3,48 +3,33 @@ import { IPathwayExample } from 'src/models';
 import HelperWindow from './helperWindow';
 import { CommandActions } from 'src/actions';
 
-export default class HelperLayer extends React.Component<IProps, IState> {  
-  constructor(props: any) {
-    super(props)
-    this.state = {
-      visible: false,
-      site: "left"
-    } 
-  };   
+interface HelperLayerProps {
+  examplePaths: Array<IPathwayExample>;
+  descriptions: any;
+  actions: CommandActions;
+  visible: boolean;
+  panel: 'tips' | 'examples';
+  onClose: () => void;
+}
 
-  public render() {
-    const display: React.CSSProperties = {
-      display: (this.state.visible ? "block" : "none")
-    }
+export default class HelperLayer extends React.Component<HelperLayerProps> {
+  render() {
+    const { visible, actions, descriptions, examplePaths, panel, onClose } = this.props;
+    if (!visible) return null;
+
+    const site = panel === 'tips' ? 'left' : 'right';
+
     return (
       <div className="helperLayer">
-        <div className="menuIcon left" onClick={(e) => this.openHelperModal(e, "left")}>
-            {">"}
-        </div>
-        <div className="menuIcon right" onClick={(e) => this.openHelperModal(e, "right")}>
-            {"<"}
-        </div>
-        <HelperWindow actions={this.props.actions} descriptions={this.props.descriptions} itemStyle={display} examplePaths={this.props.examplePaths} site={this.state.site}/>
-      </div>      
+        <HelperWindow
+          actions={actions}
+          descriptions={descriptions}
+          itemStyle={{ display: 'block' }}
+          examplePaths={examplePaths}
+          site={site}
+        />
+        <button aria-label="Close helper panel" onClick={onClose} style={{ position: 'absolute', top: 10, right: 10 }}>✖</button>
+      </div>
     );
   }
-  
-  private openHelperModal = (e: React.MouseEvent<HTMLDivElement>, site: string) => {
-    this.setState({
-      visible: !this.state.visible,
-      site
-    })
-  }
 }
-
-interface IProps {
-  examplePaths: Array<IPathwayExample>,
-  descriptions: any,
-  actions: CommandActions
-}
-
-interface IState {
-  visible: boolean,
-  site: string
-}
-

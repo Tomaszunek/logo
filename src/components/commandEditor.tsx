@@ -12,7 +12,7 @@ export default class CommandEditor extends React.Component<IProps, IState> {
     return commands.map((item:ICommandModel) => {
       const { name, value, id } = item;
       return (
-        <li key={id} attr-n={id} className={name} tabIndex="0">
+        <li key={id} data-id={id} role="listitem" tabIndex="0" className={name}>
           <div className="tagName" >
             {name} {value}
             {((item.commands) ? (<ul>{this.displayCommands(item.commands)}</ul>) : (null))}
