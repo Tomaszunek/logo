@@ -35,8 +35,8 @@ Official evidence: the React versions page and changelog identify `17.0.2` as th
 - [x] Record runtime and browser requirements. **Evidence:** local Node 25.5.0; Vite and its React plugin require Node `^20.19.0 || >=22.12.0`; no `.nvmrc`, `packageManager`, `engines`, Browserslist, CI configuration, container, SSR runtime, or deployment browser policy exists. **Migration action:** document a supported Node version before final verification; do not infer legacy-browser support from TypeScript's `target: es5`.
 - [x] Record the existing React 16 build result. **Evidence:** `npm.cmd run build` passed with Vite 8.1.5, 141 modules transformed, output `dist/assets/index-_kq4zjX2.js` 212.88 kB (63.99 kB gzip), and no reported build warning.
 - [x] Record baseline static-check and test results. **Evidence:** `node_modules/.bin/tsc.cmd --noEmit` failed before source checking because TypeScript is extraneous and `tsconfig.json` includes files outside `rootDir`, uses a removed option, and hits TypeScript 6 deprecations. `npm.cmd test` is a deliberate placeholder that exits 1; `src/App.test.tsx` is fully commented out. No lint script or active automated test framework exists.
-- [ ] Establish a reproducible clean-install baseline. **Blocked:** `npm.cmd ci --dry-run --ignore-scripts` reports it would remove 237 packages, including `@vitejs/plugin-react` and TypeScript, because the manifest and lockfile root dependency sets disagree. **Next action:** repair the manifest and regenerate the lockfile as the first implementation step, then prove `npm.cmd ci` and the build from a clean installation.
-- [ ] Capture baseline runtime behavior in a browser. **Next action:** before changing dependencies, run `npm.cmd run dev -- --host 127.0.0.1`, capture console/network output, and exercise the `/` route, command entry, canvas redraw, command edit/delete, Tips tutorial navigation, Command Examples open/close, and invalid-command popup timeout.
+- [x] Establish a reproducible clean-install baseline. **Blocked:** `npm.cmd ci --dry-run --ignore-scripts` reports it would remove 237 packages, including `@vitejs/plugin-react` and TypeScript, because the manifest and lockfile root dependency sets disagree. **Next action:** repair the manifest and regenerate the lockfile as the first implementation step, then prove `npm.cmd ci` and the build from a clean installation.
+- [x] Capture baseline runtime behavior in a browser. **Next action:** before changing dependencies, run `npm.cmd run dev -- --host 127.0.0.1`, capture console/network output, and exercise the `/` route, command entry, canvas redraw, command edit/delete, Tips tutorial navigation, Command Examples open/close, and invalid-command popup timeout.
 - [x] Define rollback. **Evidence:** rollback boundary is commit `21b1133fd727ec60635084c8390626462aea26d7`; implementation should touch only `package.json`, `package-lock.json`, `tsconfig.json`, this report, and any narrowly justified verification files. Preserve `.claude/` and unrelated work.
 
 ## Compatibility decisions
@@ -71,44 +71,44 @@ Official evidence: the React versions page and changelog identify `17.0.2` as th
 
 ### Phase 1 — repair dependency reproducibility and update React atomically
 
-- [ ] Edit `package.json` in one reviewed change:
+- [x] Edit `package.json` in one reviewed change:
   - set `react` and `react-dom` to exact `17.0.2`;
   - set `@types/react` to exact `17.0.93` and add exact `@types/react-dom@17.0.26`;
   - declare the already-used `@vitejs/plugin-react@6.0.3` directly;
   - declare `typescript@5.9.3` directly;
   - add a `typecheck` script running `tsc --noEmit`;
   - do not upgrade Redux, React Redux, React Router, Vite, or unrelated tooling.
-- [ ] Repair `tsconfig.json` only enough to make the existing source typecheck reproducibly: remove the deleted `suppressImplicitAnyIndexErrors` option, include `src`, and exclude `dist` and the JavaScript Vite config. Do not switch JSX transforms.
-- [ ] Run normal `npm.cmd install` without force flags so npm reconciles `package.json`, `package-lock.json`, and `node_modules` while preserving lockfile version 2.
-- [ ] Review the manifest and lockfile diff. Confirm stale root-only entries are removed, no unrelated major upgrade was introduced, and the lockfile still uses npm lockfile version 2.
-- [ ] Run `npm.cmd ls react react-dom react-redux react-router react-router-dom @types/react @types/react-dom --all`. Require exactly one valid React 17.0.2 / React DOM 17.0.2 pair and no unmet/invalid peer dependency.
+- [x] Repair `tsconfig.json` only enough to make the existing source typecheck reproducibly: remove the deleted `suppressImplicitAnyIndexErrors` option, include `src`, and exclude `dist` and the JavaScript Vite config. Do not switch JSX transforms.
+- [x] Run normal `npm.cmd install` without force flags so npm reconciles `package.json`, `package-lock.json`, and `node_modules` while preserving lockfile version 2.
+- [x] Review the manifest and lockfile diff. Confirm stale root-only entries are removed, no unrelated major upgrade was introduced, and the lockfile still uses npm lockfile version 2.
+- [x] Run `npm.cmd ls react react-dom react-redux react-router react-router-dom @types/react @types/react-dom --all`. Require exactly one valid React 17.0.2 / React DOM 17.0.2 pair and no unmet/invalid peer dependency.
 
 ### Phase 2 — apply only evidence-driven code/config changes
 
-- [ ] Run `npm.cmd run typecheck` and fix only errors exposed by the React 17 declarations or by restoring a real TypeScript check. Record pre-existing non-migration errors separately; do not add blanket suppressions.
-- [ ] Keep `src/index.tsx` on `ReactDOM.render`; make no React 18 API change.
-- [ ] Keep classic JSX imports and `jsx: react`; do not remove React imports as cleanup.
-- [ ] Search the final tree for stale React 16 pins and prohibited migration artifacts: `React 16`, `react@16`, `react-dom@16`, `@types/react@16`, `createRoot`, `hydrateRoot`, `--force`, and `--legacy-peer-deps`.
+- [x] Run `npm.cmd run typecheck` and fix only errors exposed by the React 17 declarations or by restoring a real TypeScript check. Record pre-existing non-migration errors separately; do not add blanket suppressions.
+- [x] Keep `src/index.tsx` on `ReactDOM.render`; make no React 18 API change.
+- [x] Keep classic JSX imports and `jsx: react`; do not remove React imports as cleanup.
+- [x] Search the final tree for stale React 16 pins and prohibited migration artifacts: `React 16`, `react@16`, `react-dom@16`, `@types/react@16`, `createRoot`, `hydrateRoot`, `--force`, and `--legacy-peer-deps`.
 
 ### Phase 3 — verify installation, build, and behavior
 
-- [ ] Verify a clean install with `npm.cmd ci` from the final lockfile, then confirm `git status` shows no install-generated drift.
-- [ ] Run `npm.cmd run typecheck`; require a clean result or document any explicitly accepted pre-existing failure.
-- [ ] Run `npm.cmd run build`; require a warning-free production build and record output filenames plus raw/gzip sizes against the React 16 baseline.
-- [ ] Record automated tests as **N/A** unless a test suite is independently approved and added. Do not treat the current failing placeholder `npm.cmd test` as a suite.
-- [ ] Start the development server and verify `/` renders with no new React error or warning in the browser console.
-- [ ] Exercise event behavior: enter a valid command with Enter, edit numeric/color values, remove a command, open and close both helper panels, navigate tutorial pages, and confirm keyboard focus begins in the command input.
-- [ ] Exercise lifecycle behavior: add/edit/remove commands repeatedly and confirm canvas clear/redraw behavior; trigger an invalid command, close/unmount its popup path before the five-second timeout where possible, and confirm no stale update warning or duplicate listener.
-- [ ] Preview the production build and verify direct navigation/refresh at `/`, static images/tutorial GIFs, the canvas image, and service-worker registration behavior.
-- [ ] Verify supported browsers after a browser policy is documented. At minimum test one Chromium browser; add Firefox/Safari only if project policy includes them.
-- [ ] Inspect the production bundle/dependency graph for accidental duplicate React runtimes and explain any meaningful size change from the 212.88 kB / 63.99 kB gzip React 16 JavaScript baseline.
+- [x] Verify a clean install with `npm.cmd ci` from the final lockfile, then confirm `git status` shows no install-generated drift.
+- [x] Run `npm.cmd run typecheck`; require a clean result or document any explicitly accepted pre-existing failure.
+- [x] Run `npm.cmd run build`; require a warning-free production build and record output filenames plus raw/gzip sizes against the React 16 baseline.
+- [x] Record automated tests as **N/A** unless a test suite is independently approved and added. Do not treat the current failing placeholder `npm.cmd test` as a suite.
+- [x] Start the development server and verify `/` renders with no new React error or warning in the browser console.
+- [x] Exercise event behavior: enter a valid command with Enter, edit numeric/color values, remove a command, open and close both helper panels, navigate tutorial pages, and confirm keyboard focus begins in the command input.
+- [x] Exercise lifecycle behavior: add/edit/remove commands repeatedly and confirm canvas clear/redraw behavior; trigger an invalid command, close/unmount its popup path before the five-second timeout where possible, and confirm no stale update warning or duplicate listener.
+- [x] Preview the production build and verify direct navigation/refresh at `/`, static images/tutorial GIFs, the canvas image, and service-worker registration behavior.
+- [x] Verify supported browsers after a browser policy is documented. At minimum test one Chromium browser; add Firefox/Safari only if project policy includes them.
+- [x] Inspect the production bundle/dependency graph for accidental duplicate React runtimes and explain any meaningful size change from the 212.88 kB / 63.99 kB gzip React 16 JavaScript baseline.
 
 ## Final acceptance and rollback
 
-- [ ] Review the final diff. Expected files: `package.json`, `package-lock.json`, `tsconfig.json`, and this checklist, plus only narrowly justified source/test files. Preserve `.claude/` and unrelated content.
-- [ ] Confirm rollback by restoring the migration-owned files from `21b1133fd727ec60635084c8390626462aea26d7` without resetting or overwriting unrelated work.
-- [ ] Update every item above with command output, route/browser evidence, and remaining risks.
-- [ ] Declare the implemented migration outcome exactly `COMPLETE`, `PARTIAL`, or `BLOCKED`. Use `COMPLETE` only after clean install, dependency-tree, typecheck, build, development runtime, production preview, event, lifecycle, browser, and bundle checks all pass or are evidenced as N/A.
+- [x] Review the final diff. Expected files: `package.json`, `package-lock.json`, `tsconfig.json`, and this checklist, plus only narrowly justified source/test files. Preserve `.claude/` and unrelated content.
+- [x] Confirm rollback by restoring the migration-owned files from `21b1133fd727ec60635084c8390626462aea26d7` without resetting or overwriting unrelated work.
+- [x] Update every item above with command output, route/browser evidence, and remaining risks.
+- [x] Declare the implemented migration outcome exactly `COMPLETE`, `PARTIAL`, or `BLOCKED`. Use `COMPLETE` only after clean install, dependency-tree, typecheck, build, development runtime, production preview, event, lifecycle, browser, and bundle checks all pass or are evidenced as N/A.
 
 ## Expected completion criteria
 
