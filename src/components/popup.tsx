@@ -8,7 +8,7 @@ export default class Popup extends React.Component<IProps, IState> {
 
   public render() {
     return (
-      <div className="popup">
+      <div className="popup" role="alert" aria-live="assertive">
         <div className="popupInner">
             <p>
                 {this.props.massage}

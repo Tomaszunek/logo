@@ -18,8 +18,8 @@ export default class CommandInput extends React.Component<IProps, IState> {
   public render() {
     return (      
       <>        
-        <input className="commandInput" autoFocus={true} 
-          ref={elem => this.input = elem} 
+        <input className="commandInput" placeholder="Enter a command" aria-label="Command input" autoFocus={true}
+          ref={elem => this.input = elem}
           onKeyPress={this.onInputChange}
         />        
         {this.state.showPopup ? 
