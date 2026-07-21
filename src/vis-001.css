@@ -1,0 +1,42 @@
+/* VIS-001: Responsive layout adjustments */
+
+/* Header layout: space-between and flex items */
+.appHeader {
+  justify-content: space-between;
+}
+.leftSide, .rightSide {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+.rightSide button {
+  /* Basic button styling for consistency */
+  padding: 0.4rem 0.8rem;
+  border: none;
+  background-color: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.rightSide button:hover {
+  opacity: 0.9;
+}
+
+/* Workspace flex adjustments for narrow viewports */
+@media screen and (max-width: 767px) {
+  /* Reduce padding and gaps */
+  .appMain, .editorContainer {
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  .editorContainer {
+    flex-direction: column;
+  }
+  .editorLine {
+    flex-wrap: wrap;
+  }
+}
+
+/* Ensure flexible children do not overflow container */
+.editorLine > *, .commandListLine > * {
+  min-width: 0;
+}

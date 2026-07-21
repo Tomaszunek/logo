@@ -10,7 +10,7 @@ const Header: React.FC<HeaderProps> = ({ onShowHelper }) => (
       <img src="./logoTurtle.png" alt="Logo" className="appLogo"/>
       <h1>Logo Playground</h1>
     </div>
-    <nav className="rightSide" style={{marginLeft: 'auto'}}>
+    <nav className="rightSide">
       <button type="button" onClick={() => onShowHelper('tips')}>Tips</button>
       <button type="button" onClick={() => onShowHelper('examples')}>Command Examples</button>
     </nav>

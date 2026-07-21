@@ -15,6 +15,7 @@ import { CommandModel } from "./models";
 import { IRootState, RootState } from "./reducers";
 import { omit } from "./utils";
 import "./App.css";
+import "./vis-001.css";
 
 interface IAppState {
   showHelper: boolean;
