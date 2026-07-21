@@ -1,11 +1,25 @@
-import { ICommandModel, IPathwayExample, ITutorialPage } from '../models';
+import { ICommandModel, IPathwayExample, ITutorialPage, ICommandDescription } from '../models';
 
 export interface IRootState {
   commands: ICommandModel[];
-  descriptions: any;
-  pathwayexpample: IPathwayExample[];
+  descriptions: Record<string, ICommandDescription>;
+  pathwayExample: IPathwayExample[];
   tutorialPages: ITutorialPage[];
   router?: any;
+}
+
+// Alias types for reducer state shapes
+export type CommandState = ICommandModel[];
+export type CommandDescriptionState = Record<string, ICommandDescription>;
+export type PathwayExample = IPathwayExample[];
+export type TutorialPages = ITutorialPage[];
+
+// Namespace for nested types used in reducers
+export namespace RootState {
+  export type CommandState = ICommandModel[];
+  export type CommandDescriptionState = Record<string, ICommandDescription>;
+  export type PathwayExample = IPathwayExample[];
+  export type TutorialPages = ITutorialPage[];
 }
 
 // Export the same shape for compatibility

@@ -38,30 +38,31 @@ export namespace App {
   }
 }
 
-@connect(
-  (
-    state: IRootState,
-    ownProps,
-  ): Pick<
-    App.IProps,
-    "commands" | "descriptions" | "pathwayExample" | "tutorialPages" | "filter"
-  > => {
-    const hash = ownProps.location && ownProps.location.hash.replace("#", "");
-    const filter =
-      FILTER_VALUES.find((value) => value === hash) ||
-      CommandModel.Filter.SHOW_ALL;
-    return {
-      commands: state.commands,
-      descriptions: state.descriptions,
-      pathwayExample: state.pathwayexpample,
-      tutorialPages: state.tutorialPages,
-      filter,
-    };
-  },
-  (dispatch: Dispatch): Pick<App.IProps, "actions"> => ({
-    actions: bindActionCreators(omit(CommandActions, "Type"), dispatch),
-  }),
-)
+// Map state and dispatch to props
+const mapStateToProps = (
+  state: IRootState,
+  ownProps: any
+): Pick<
+  App.IProps,
+  "commands" | "descriptions" | "pathwayExample" | "tutorialPages" | "filter"
+> => {
+  const hash = ownProps.location && ownProps.location.hash.replace("#", "");
+  const filter =
+    FILTER_VALUES.find((value) => value === hash) ||
+    CommandModel.Filter.SHOW_ALL;
+  return {
+    commands: state.commands,
+    descriptions: state.descriptions,
+    pathwayExample: state.pathwayExample,
+    tutorialPages: state.tutorialPages,
+    filter,
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch): Pick<App.IProps, "actions"> => ({
+  actions: bindActionCreators(omit(CommandActions, "Type"), dispatch),
+});
+
 export default class App extends React.Component<App.IProps, IAppState> {
   constructor(props: App.IProps) {
     super(props);
