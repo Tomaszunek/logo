@@ -1,96 +1,55 @@
 import * as React from 'react';
 import { ITutorialPage } from '../models'
+import { useState } from 'react';
 
-export default class TutorialPopup extends React.Component<IProps, IState> { 
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      siteNumber: 0,
-      visibility: true
-    }
-  };  
+const TutorialPopup: React.FC<IProps> = ({ tutorialPages }) => {
+  const [siteNumber, setSiteNumber] = useState(0);
+  const [visibility, setVisibility] = useState(true);
 
-  public render() {
-    const tutorialPage = this.props.tutorialPages[this.state.siteNumber];
-    const style = {
-      display: (this.state.visibility ? 'grid' : 'none')
+  const changeSite = (e: React.MouseEvent<HTMLButtonElement>, siteButton: 'left' | 'right') => {
+    if (siteButton === 'left') {
+      setSiteNumber(prev => prev - 1);
+    } else {
+      setSiteNumber(prev => prev + 1);
     }
-    const bbstyle = {
-      display: (this.state.siteNumber === 0 ? 'none' : 'block')
-    }
-    const brstyle = {
-      display: (this.state.siteNumber !== this.props.tutorialPages.length - 1 ? 'block' : 'none'),
-      // marginLeft: (this.state.siteNumber === 0 ? '676px' : '578px')
-    }
+  };
+
+  const displayContent = (tutorialPage: ITutorialPage) => {
+    if (!tutorialPage) return null;
+    const { title, content, image, name } = tutorialPage;
     return (
-      <div className="tutorialPopup" style={style}>
-        {this.displayContent(tutorialPage)}
-        <div className="tutorialNav">
-          <button style={bbstyle} onClick={(e) => this.changeSite(e, "left")}>{"< BACK"}</button>
-          <button style={brstyle} onClick={(e) => this.changeSite(e, "right")}>{"NEXT >"}</button>
+      <div>
+        <div className="title">
+          <button onClick={() => setVisibility(prev=>!prev)}>X</button>
+          <p>{siteNumber + 1}) {title} - {name}</p>
+        </div>
+        <div className="content">
+          <img src={`./images/tutorial/${image}`} alt={image}/>
+          <div className="tip">{content}</div>
         </div>
       </div>
     );
-  }
-  private changeSite = (e: React.MouseEvent<HTMLButtonElement>, siteButton: "left" | "right") => {
-    const counter = this.state.siteNumber;
-    switch (siteButton) {
-      case "left":
-        this.setState({
-          ...this.state,
-          siteNumber: counter - 1
-        })
-        break;
-      case "right":
-        this.setState({
-          ...this.state,
-          siteNumber: counter + 1
-        })
-        break;        
-      default:
-        break;
-    }
-  }
+  };
 
-  private displayContent = (tutorialPage: ITutorialPage) => {
-    if(tutorialPage) {
-      const { title, content, image, name } = tutorialPage;
-      return (
-        <div>
-          <div className="title">
-            <button onClick={(e) => this.closePopup(e)}>X</button>
-            <p>{this.state.siteNumber + 1 + ") " + title + " - " + name}</p>      
-          </div>
-          <div className="content">
-            <img src={"./images/tutorial/" + image} alt={image}/>
-            <div className="tip">
-              {content}
-            </div>            
-          </div>
-        </div>
-      ) 
-    } else {
-      return null;
-    }       
-  }
+  const style = { display: visibility ? 'grid' : 'none' };
+  const bbstyle = { display: siteNumber === 0 ? 'none' : 'block' };
+  const brstyle = {
+    display: siteNumber !== tutorialPages.length - 1 ? 'block' : 'none'
+  };
 
-  private closePopup = (e: React.MouseEvent<HTMLButtonElement>) => {
-     this.setState({
-       ...this.state,
-       visibility: !this.state.visibility
-     })    
-  }
-}
+  return (
+    <div className="tutorialPopup" style={style}>
+      {displayContent(tutorialPages[siteNumber])}
+      <div className="tutorialNav">
+        <button style={bbstyle} onClick={(e) => changeSite(e, 'left')}>{'< BACK'}</button>
+        <button style={brstyle} onClick={(e) => changeSite(e, 'right')}>{'NEXT >'}</button>
+      </div>
+    </div>
+  );
+};
+
+export default TutorialPopup;
 
 interface IProps {
-    tutorialPages: Array<ITutorialPage>,
+  tutorialPages: Array<ITutorialPage>;
 }
-interface IState {
-    siteNumber: number,
-    visibility: boolean
-}
-  
-  
-
-
-

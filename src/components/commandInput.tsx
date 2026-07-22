@@ -5,87 +5,69 @@ import { Parser } from 'src/utils/parser';
 import Popup from './popup';
 import { ErrorHandler } from 'src/utils/errorHandler';
 
-export default class CommandInput extends React.Component<IProps, IState> { 
-  public input: HTMLInputElement | null;
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      showPopup: false,
-      popupText: ''
-    }
-  };  
-
-  public render() {
-    return (      
-      <>        
-        <input className="commandInput" placeholder="Enter a command" aria-label="Command input" autoFocus={true}
-          ref={elem => this.input = elem}
-          onKeyPress={this.onInputChange}
-        />        
-        {this.state.showPopup ? 
-          <Popup
-            massage={this.state.popupText}
-            closePopup={this.togglePopup}
-          />
-          : null
-        }
-      </>
-    );
-  }  
-
-  private onError = (insideCommand: string, wrongCommand: string) => {
-    const errorHandler = new ErrorHandler({
-      fullCommand: (this.input) ? this.input.value : '',
-      insideCommand,
-      wrongCommand   
-    }, this.props.descriptions).handleError();
-    this.setState({
-      showPopup: true,
-      popupText: errorHandler
-    })
-    setTimeout(() => {
-      this.setState({
-        showPopup: false,
-        popupText: errorHandler
-      })
-    }, 5000);
-  }
-
-  private togglePopup = () => {
-    this.setState({
-      showPopup: !this.state.showPopup
-    });
-  }
-
-  private onInputChange = (e: React.KeyboardEvent) => {
-    if(e.key === 'Enter'){
-      const parser = new Parser((e.target as HTMLInputElement).value.trim()).parse(this.onError);
-      if(parser && parser.length > 0) {
-        for(const item of parser) {
-          this.props.actions.addCommand(item);
-        }
-        if(this.input === null) {return;}
-        this.input.value = '';
-      } else {
-        // 
-      } 
-    }   
-  }  
+interface IProps {
+  text?: string | null;
+  commands: Array<ICommandModel>;
+  actions: CommandActions;
+  descriptions: any;
 }
 
-interface IProps {
-    text?: string | null
-    commands: Array<ICommandModel>
-    actions: CommandActions
-    descriptions: any
-  }
-  
-  interface IState {
-    showPopup: boolean,
-    popupText: string
-  }
-  
-  
+const CommandInput: React.FC<IProps> = ({ text, commands, actions, descriptions }) => {
+  const [showPopup, setShowPopup] = React.useState(false);
+  const [popupText, setPopupText] = React.useState('');
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
+  const onError = (insideCommand: string, wrongCommand: string) => {
+    const errorHandler = new ErrorHandler(
+      {
+        fullCommand: inputRef.current ? inputRef.current.value : '',
+        insideCommand,
+        wrongCommand
+      },
+      descriptions
+    ).handleError();
 
+    setShowPopup(true);
+    setPopupText(errorHandler);
 
+    setTimeout(() => {
+      setShowPopup(false);
+      setPopupText(errorHandler);
+    }, 5000);
+  };
+
+  const togglePopup = () => setShowPopup(prev => !prev);
+
+  const onInputChange = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      const parser = new Parser((e.target as HTMLInputElement).value.trim()).parse(onError);
+      if (parser && parser.length > 0) {
+        for (const item of parser) {
+          actions.addCommand(item);
+        }
+        if (!inputRef.current) return;
+        inputRef.current.value = '';
+      } else {
+        // no valid commands
+      }
+    }
+  };
+
+  return (
+    <>
+      <input
+        className="commandInput"
+        placeholder="Enter a command"
+        aria-label="Command input"
+        autoFocus={true}
+        ref={inputRef}
+        onKeyPress={onInputChange}
+      />
+      {showPopup && (
+        <Popup massage={popupText} closePopup={togglePopup} />
+      )}
+    </>
+  );
+};
+
+export default CommandInput;
