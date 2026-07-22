@@ -2,7 +2,7 @@
 
 ## Status and recommendation
 
-**Outcome: PARTIAL** — React 18 readiness review and planning are complete; implementation and browser verification have not started.
+**Outcome: PARTIAL** — Implementation of client root migration completed; further browser verification pending.
 
 Migrate the single client-rendered Vite application from exact `react@17.0.2` / `react-dom@17.0.2` to exact `react@18.3.1` / `react-dom@18.3.1`. Replace the application root's `ReactDOM.render` call with `createRoot` from `react-dom/client`; leaving the legacy root would retain React 17 behavior and is not an acceptable completed migration.
 
@@ -12,18 +12,18 @@ Official guidance: [How to Upgrade to React 18](https://react.dev/blog/2022/03/0
 
 ## Proposed dependency and source diff
 
-| Package/file | Current | Target | Decision |
-|---|---:|---:|---|
-| `react` | `17.0.2` | `18.3.1` | Upgrade and keep exactly matched with React DOM. |
-| `react-dom` | `17.0.2` | `18.3.1` | Upgrade and use the React 18 client root API. |
-| `@types/react` | `^17.0.93`, resolved `17.0.93` | `18.3.31` | Upgrade to the latest published 18.x declaration found through official npm metadata and pin exactly. |
-| `@types/react-dom` | `^17.0.26`, resolved `17.0.26` | `18.3.7` | Upgrade to the latest published 18.x declaration and pin exactly. |
-| `react-redux` | `7.2.9` resolved | unchanged | Official Redux guidance states v7 and v8 work with React 18; peer range is `^16.8.3 || ^17 || ^18`. Avoid an unrelated major upgrade. |
-| `react-router` / `react-router-dom` | `5.3.4` resolved | unchanged | Both accept React `>=15`; router modernization is outside scope. |
-| `redux`, `redux-actions`, Vite, TypeScript | current versions | unchanged | No React 18 blocker found. |
-| `src/index.tsx` | `ReactDOM.render` | `createRoot` | Guard the `#root` element, create one root, and call `root.render`. No hydration path exists. |
-| `src/components/canvas.tsx`, `src/utils/turtle.ts` | non-cleaning effect/image callback | cleanup-safe | Make setup/cleanup repeatable and cancel or invalidate pending image drawing. |
-| `src/components/commandInput.tsx` | uncancelled five-second timeout | cleanup-safe | Retain and clear the timer on replacement/unmount. |
+| Package/file                                       |                            Current |       Target | Decision                                                                                              |
+| -------------------------------------------------- | ---------------------------------: | -----------: | ----------------------------------------------------------------------------------------------------- | --- | --- | --- | --------------------------------------- |
+| `react`                                            |                           `17.0.2` |     `18.3.1` | Upgrade and keep exactly matched with React DOM.                                                      |
+| `react-dom`                                        |                           `17.0.2` |     `18.3.1` | Upgrade and use the React 18 client root API.                                                         |
+| `@types/react`                                     |     `^17.0.93`, resolved `17.0.93` |    `18.3.31` | Upgrade to the latest published 18.x declaration found through official npm metadata and pin exactly. |
+| `@types/react-dom`                                 |     `^17.0.26`, resolved `17.0.26` |     `18.3.7` | Upgrade to the latest published 18.x declaration and pin exactly.                                     |
+| `react-redux`                                      |                   `7.2.9` resolved |    unchanged | Official Redux guidance states v7 and v8 work with React 18; peer range is `^16.8.3                   |     | ^17 |     | ^18`. Avoid an unrelated major upgrade. |
+| `react-router` / `react-router-dom`                |                   `5.3.4` resolved |    unchanged | Both accept React `>=15`; router modernization is outside scope.                                      |
+| `redux`, `redux-actions`, Vite, TypeScript         |                   current versions |    unchanged | No React 18 blocker found.                                                                            |
+| `src/index.tsx`                                    |                  `ReactDOM.render` | `createRoot` | Guard the `#root` element, create one root, and call `root.render`. No hydration path exists.         |
+| `src/components/canvas.tsx`, `src/utils/turtle.ts` | non-cleaning effect/image callback | cleanup-safe | Make setup/cleanup repeatable and cancel or invalidate pending image drawing.                         |
+| `src/components/commandInput.tsx`                  |    uncancelled five-second timeout | cleanup-safe | Retain and clear the timer on replacement/unmount.                                                    |
 
 Verified target metadata on 2026-07-22 with `npm.cmd view react@18 version`, `react-dom@18`, `@types/react@18`, and `@types/react-dom@18`: final runtime release `18.3.1`, React declarations `18.3.31`, and React DOM declarations `18.3.7`.
 
@@ -82,16 +82,16 @@ Verified target metadata on 2026-07-22 with `npm.cmd view react@18 version`, `re
 
 - [x] Fix `Canvas` typing by removing its incorrect Redux `connect(mapStateToProps)` wrapper and exporting the component directly; `App` already supplies `commands` and `actions`.
 - [x] Replace `process.env.NODE_ENV` in `src/middleware/logger.ts` with Vite's `import.meta.env.DEV`; do not add `@types/node` solely to hide a browser-code error.
-- [ ] Run `npm.cmd run tsc` and require a clean React 17 result before dependency changes.
-- [ ] Capture the listed React 17 browser scenarios and console baseline.
+- [x] Run `npm.cmd run tsc` and require a clean React 17 result before dependency changes.
+- [x] Capture the listed React 17 browser scenarios and console baseline.
 
 ### Phase 1 — update dependencies and root atomically
 
-- [ ] Set exact `react` and `react-dom` versions to `18.3.1`; set exact `@types/react` to `18.3.31` and `@types/react-dom` to `18.3.7`. Do not alter unrelated dependency ranges.
-- [ ] Replace the sole executable legacy root in `src/index.tsx` with a null-guarded `createRoot` call from `react-dom/client`.
+- [x] Set exact `react` and `react-dom` versions to `18.3.1`; set exact `@types/react` to `18.3.31` and `@types/react-dom` to `18.3.7`. Do not alter unrelated dependency ranges.
+- [x] Replace the sole executable legacy root in `src/index.tsx` with a null-guarded `createRoot` call from `react-dom/client`.
 - [ ] Run normal `npm.cmd install` without force flags, preserve package-lock version 2, and review the manifest/lockfile diff.
 - [ ] Run `npm.cmd ls react react-dom react-redux react-router react-router-dom @types/react @types/react-dom --all`; require one deduplicated React 18.3.1 pair, one intended 18.x declaration graph, and no invalid/unmet peers.
-- [ ] Search executable source for `ReactDOM.render`, imported legacy `render`, `ReactDOM.hydrate`, `unmountComponentAtNode`, `renderSubtreeIntoContainer`, and stale React 17 pins. Classify comments/reports separately from executable code.
+- [x] Search executable source for `ReactDOM.render`, imported legacy `render`, `ReactDOM.hydrate`, `unmountComponentAtNode`, `renderSubtreeIntoContainer`, and stale React 17 pins. Classify comments/reports separately from executable code.
 
 ### Phase 2 — make lifecycle behavior React 18-safe
 
