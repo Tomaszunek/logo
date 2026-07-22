@@ -20,7 +20,7 @@ export default class HelperWindow extends React.Component<IProps, IState> {
 
   private displayAll() {
     const { examplePaths } = this.props;
-    const groups = { };
+    const groups: Record<string, IPathwayExample[]> = {};
     examplePaths.forEach((item) => {
       const list = groups[item.type];
       if(list){
@@ -29,7 +29,7 @@ export default class HelperWindow extends React.Component<IProps, IState> {
           groups[item.type] = [item];
       }
     });
-    const renderedTypes = [];
+    const renderedTypes: React.ReactNode[] = [];
     for(const i in groups) {      
       if(groups[i]) {
         renderedTypes.push(
@@ -54,8 +54,8 @@ export default class HelperWindow extends React.Component<IProps, IState> {
 
   private displayCommands() {
     const { descriptions } = this.props;
-    const renderedTypesL = [];
-    const renderedTypesR = [];
+    const renderedTypesL: React.ReactNode[] = [];
+    const renderedTypesR: React.ReactNode[] = [];
     let index = 0;
     for(const i in descriptions) {      
       if(descriptions[i]) {

@@ -1,8 +1,8 @@
 import { handleActions } from 'redux-actions';
-import { RootState } from './state';
+import { TutorialPages } from './state';
 import { ITutorialPage } from '../models';
 
-const initialState: RootState.TutorialPages = [
+const initialState: TutorialPages = [
   {
     name: "Command input",
     image: "tutorial1.gif",
@@ -35,7 +35,7 @@ const initialState: RootState.TutorialPages = [
   }   
 ];
 
-export const tutorialPageReducer = handleActions<RootState.TutorialPages, ITutorialPage>(
+export const tutorialPageReducer = handleActions<TutorialPages, ITutorialPage>(
   {    
   },
   initialState

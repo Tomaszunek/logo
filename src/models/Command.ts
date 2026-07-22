@@ -1,12 +1,11 @@
 import { CommandTypes } from './CommandTypes';
-import { Color } from 'csstype';
 
 export interface ICommandModel {
     id: number;
     name: CommandTypes;
     value?: number;
     arg2?: number;
-    color?: Color;
+    color?: string;
     filename?: string;
     commands?: Array<ICommandModel>;
   }

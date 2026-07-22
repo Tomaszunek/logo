@@ -12,16 +12,21 @@ import { bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import { CommandActions } from "./actions";
 import { CommandModel } from "./models";
-import { IRootState, RootState } from "./reducers";
+import {
+  IRootState,
+  CommandState,
+  CommandDescriptionState,
+  PathwayExample,
+  TutorialPages,
+} from "./reducers";
 import { omit } from "./utils";
 import "./App.css";
 import "./vis-001.css";
 
 interface IAppState {
   showHelper: boolean;
-  activePanel: 'tips' | 'examples';
+  activePanel: "tips" | "examples";
 }
-
 
 const FILTER_VALUES = (
   Object.keys(CommandModel.Filter) as (keyof typeof CommandModel.Filter)[]
@@ -29,10 +34,10 @@ const FILTER_VALUES = (
 
 export namespace App {
   export interface IProps extends RouteComponentProps<void> {
-    commands: RootState.CommandState;
-    descriptions: RootState.CommandDescriptionState;
-    pathwayExample: RootState.PathwayExample;
-    tutorialPages: RootState.TutorialPages;
+    commands: CommandState;
+    descriptions: CommandDescriptionState;
+    pathwayExample: PathwayExample;
+    tutorialPages: TutorialPages;
     actions: CommandActions;
     filter: CommandModel.Filter;
   }
@@ -41,7 +46,7 @@ export namespace App {
 // Map state and dispatch to props
 const mapStateToProps = (
   state: IRootState,
-  ownProps: any
+  ownProps: any,
 ): Pick<
   App.IProps,
   "commands" | "descriptions" | "pathwayExample" | "tutorialPages" | "filter"
@@ -59,19 +64,21 @@ const mapStateToProps = (
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch): Pick<App.IProps, "actions"> => ({
+const mapDispatchToProps = (
+  dispatch: Dispatch,
+): Pick<App.IProps, "actions"> => ({
   actions: bindActionCreators(omit(CommandActions, "Type"), dispatch),
 });
 
-export default class App extends React.Component<App.IProps, IAppState> {
+export class App extends React.Component<App.IProps, IAppState> {
   constructor(props: App.IProps) {
     super(props);
-    this.state = { showHelper: false, activePanel: 'tips' };
+    this.state = { showHelper: false, activePanel: "tips" };
     // Bind event handler for header buttons
     this.handleShowHelper = this.handleShowHelper.bind(this);
   }
 
-  handleShowHelper(panel: 'tips' | 'examples') {
+  handleShowHelper(panel: "tips" | "examples") {
     this.setState({ showHelper: true, activePanel: panel });
   }
 
@@ -83,17 +90,17 @@ export default class App extends React.Component<App.IProps, IAppState> {
         <SkipLink />
         <Header onShowHelper={this.handleShowHelper} />
         <div className="appMain">
-          {this.state.showHelper && this.state.activePanel === 'examples' && (
+          {this.state.showHelper && this.state.activePanel === "examples" && (
             <HelperLayer
               visible={true}
-              panel="right"
+              panel="examples"
               onClose={() => this.setState({ showHelper: false })}
               examplePaths={pathwayExample}
               descriptions={descriptions}
               actions={actions}
             />
           )}
-          {this.state.showHelper && this.state.activePanel === 'tips' && (
+          {this.state.showHelper && this.state.activePanel === "tips" && (
             <TutorialPopup tutorialPages={tutorialPages} />
           )}
           <div className="editorContainer">
@@ -114,9 +121,11 @@ export default class App extends React.Component<App.IProps, IAppState> {
               />
             </aside>
           </div>
-        </div>     {/* close appMain */}
+        </div>
         <footer className="appFooter">© 2026 Logo Playground</footer>
       </main>
     );
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
