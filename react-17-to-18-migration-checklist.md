@@ -60,7 +60,7 @@ Verified target metadata on 2026-07-22 with `npm.cmd view react@18 version`, `re
 
 ## React 18 behavior audit
 
-- [ ] Migrate the client root. Replace `import * as ReactDOM from "react-dom"` with `import { createRoot } from "react-dom/client"`; obtain `document.getElementById("root")`, throw a clear startup error if absent, create exactly one root, and render the existing provider/router tree. **Verification:** no `ReactDOM.render` or legacy imported `render` remains in executable source.
+- [x] Migrate the client root. Replace `import * as ReactDOM from "react-dom"` with `import { createRoot } from "react-dom/client"`; obtain `document.getElementById("root")`, throw a clear startup error if absent, create exactly one root, and render the existing provider/router tree. **Verification:** no `ReactDOM.render` or legacy imported `render` remains in executable source.
 - [x] Migrate hydrated roots — **N/A. Evidence:** no SSR markup or `hydrate` use exists.
 - [x] Migrate root teardown/repeated rendering — **N/A for production. Evidence:** the application creates one page-lifetime root and has no executable unmount/rerender helper. The commented `App.test.tsx` legacy calls are documentation noise and should be removed or updated if tests are revived.
 - [x] Replace legacy render callbacks — **N/A. Evidence:** the current `ReactDOM.render` call has no callback argument.
