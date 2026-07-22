@@ -9,10 +9,11 @@ export namespace CommandActions {
     DELETE_COMMAND = 'DELETE_COMMAND'    
   }
 
-  export const addCommand = createAction<PartialPick<ICommandModel, 'name'>>(Type.ADD_COMMAND);
-  export const editCommand = createAction<PartialPick<ICommandModel, 'id'>>(Type.EDIT_COMMAND);
-  export const setCommand = createAction<PartialPick<ICommandModel, "id">>(Type.SET_COMMAND);
-  export const deleteCommand = createAction<ICommandModel['id']>(Type.DELETE_COMMAND);  
+  // Payload includes full command model for add/edit/set
+  export const addCommand = createAction<ICommandModel>(Type.ADD_COMMAND);
+  export const editCommand = createAction<ICommandModel>(Type.EDIT_COMMAND);
+  export const setCommand = createAction<ICommandModel>(Type.SET_COMMAND);
+  export const deleteCommand = createAction<number>(Type.DELETE_COMMAND);
 }
 
 export type CommandActions = Omit<typeof CommandActions, 'Type'>;

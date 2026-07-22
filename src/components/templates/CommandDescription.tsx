@@ -24,7 +24,7 @@ export default class CommandDescription extends React.Component<IProps, IState> 
   }
 
   private displayDescription = (desc: any) => {
-    const descArr = [];
+    const descArr: React.ReactNode[] = [];
     let args: any;
     let image = "";
     for(const key in desc) {

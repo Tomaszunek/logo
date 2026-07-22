@@ -1,13 +1,12 @@
 import { handleActions } from 'redux-actions';
-import { RootState } from './state';
+import { CommandState } from './state';
 import { CommandActions } from '../actions'
 import { ICommandModel } from '../models';
 
-const initialState: RootState.CommandState = [
-  
-];
+const initialState: CommandState = [];
 
-export const commandReducer = handleActions<RootState.CommandState, ICommandModel>(
+
+export const commandReducer = handleActions<CommandState, ICommandModel>(
   {
     [CommandActions.Type.ADD_COMMAND]: (state, action) => {      
       let id = 0;

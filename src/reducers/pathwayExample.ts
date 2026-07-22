@@ -1,5 +1,5 @@
 import { handleActions } from 'redux-actions';
-import { RootState } from './state';
+import { PathwayExample } from './state';
 import { ICommandModel, IPathwayExample } from '../models';
 
 interface IExampleCommand {
@@ -43,7 +43,7 @@ const buildExampleCommand = (source: IExampleCommand): ICommandModel => {
   return build(source);
 };
 
-const initialState: RootState.PathwayExample = [
+const initialState: PathwayExample = [
   {
     name: 'command1',
     path: "repeat 50 [repeat 159 [tr 44 fd 61] tr 591]",
@@ -3021,7 +3021,7 @@ const initialState: RootState.PathwayExample = [
  }
 ];
 
-export const pathwayExampleReducer = handleActions<RootState.PathwayExample, IPathwayExample>(
+export const pathwayExampleReducer = handleActions<PathwayExample, IPathwayExample>(
   {    
   },
   initialState

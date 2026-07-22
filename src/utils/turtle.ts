@@ -1,4 +1,3 @@
-import { Color } from 'csstype';
 import logoTurtle from '../logoTurtle.png';
 
 export class Turtle {
@@ -8,7 +7,7 @@ export class Turtle {
     public homeY: number;
     public dir: number;
 
-    public strokeColor: Color;
+    public strokeColor: string;
     public strokeWeight: number;
     public strokeWeightHome: number;
     public pen: boolean;
@@ -139,7 +138,7 @@ export interface ITurtleInstance {
     homeX: number,
     homeY: number,
     dir: number,
-    strokeColor: Color,
+    strokeColor: string,
     strokeWeight: number,
     pen: boolean,
     visible: boolean

@@ -91,7 +91,7 @@ export default class CommandList extends React.Component<IProps, IState> {
 interface IProps {
   text?: string | null
   commands: Array<ICommandModel>
-  descriptions: Array<ICommandDescription>
+  descriptions: Record<string, ICommandDescription>
   actions: CommandActions
 }
 

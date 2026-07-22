@@ -1,8 +1,8 @@
 import { handleActions } from 'redux-actions';
-import { RootState } from './state';
+import { CommandDescriptionState } from './state';
 import { ICommandDescription } from '../models';
 
-const initialState: RootState.CommandDescriptionState = {
+const initialState: CommandDescriptionState = {
   setpos: {
     short: "setpos",
     name: "Set position",
@@ -176,7 +176,7 @@ const initialState: RootState.CommandDescriptionState = {
   
 };
 
-export const commandDescriptionReducer = handleActions<RootState.CommandDescriptionState, ICommandDescription>(
+export const commandDescriptionReducer = handleActions<CommandDescriptionState, ICommandDescription>(
   {    
   },
   initialState

@@ -6,5 +6,6 @@ export interface ICommandDescription {
     args: Array<object>;
     color: string;
     image: string;
+    argCount: number;
 }
   
