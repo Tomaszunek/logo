@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { Application } from "./router";
 import { configureStore } from "./store";
 import registerServiceWorker from "./registerServiceWorker";
@@ -9,13 +9,17 @@ import "./index.css";
 
 const store = configureStore();
 
-ReactDOM.render(
+const rootEl = document.getElementById("root");
+if (!rootEl) {
+  throw new Error("Failed to find #root element for React root.");
+}
+const root = createRoot(rootEl!);
+root.render(
   <Provider store={store}>
     <BrowserRouter>
       <Application />
     </BrowserRouter>
-  </Provider>,
-  document.getElementById("root")
+  </Provider>
 );
 
 registerServiceWorker();
