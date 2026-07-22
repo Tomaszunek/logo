@@ -13,8 +13,12 @@ interface IProps {
 
 const Canvas: React.FC<IProps> = ({ commands }) => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const turtleRef = React.useRef<Turtle>(
-    new Turtle({
+  const turtleRef = React.useRef<Turtle>();
+  const callerRef = React.useRef<Caller>();
+
+  // Lazy initialization of Turtle and Caller
+  if (!turtleRef.current) {
+    turtleRef.current = new Turtle({
       canvas: null,
       homeX: 400,
       homeY: 400,
@@ -23,14 +27,16 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
       strokeWeight: 1,
       pen: true,
       visible: true,
-    })
-  );
-  const callerRef = React.useRef<Caller>(new Caller(turtleRef.current));
+    });
+  }
+  if (!callerRef.current) {
+    callerRef.current = new Caller(turtleRef.current);
+  }
 
   React.useEffect(() => {
     if (!canvasRef.current) return;
-    const turtle = turtleRef.current;
-    const caller = callerRef.current;
+    const turtle = turtleRef.current!;
+    const caller = callerRef.current!;
 
     // Attach canvas to the turtle instance
     turtle.canvas = canvasRef.current;
