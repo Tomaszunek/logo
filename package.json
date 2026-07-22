@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite serve",
-    "typecheck": "tsc --noEmit",
+    "tsc": "tsc --noEmit",
     "test": "echo 'Error: no test specified' && exit 1"
   },
   "repository": {
