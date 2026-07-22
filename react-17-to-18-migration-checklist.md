@@ -80,8 +80,8 @@ Verified target metadata on 2026-07-22 with `npm.cmd view react@18 version`, `re
 
 ### Phase 0 — make the React 17 baseline attributable
 
-- [ ] Fix `Canvas` typing by removing its incorrect Redux `connect(mapStateToProps)` wrapper and exporting the component directly; `App` already supplies `commands` and `actions`.
-- [ ] Replace `process.env.NODE_ENV` in `src/middleware/logger.ts` with Vite's `import.meta.env.DEV`; do not add `@types/node` solely to hide a browser-code error.
+- [x] Fix `Canvas` typing by removing its incorrect Redux `connect(mapStateToProps)` wrapper and exporting the component directly; `App` already supplies `commands` and `actions`.
+- [x] Replace `process.env.NODE_ENV` in `src/middleware/logger.ts` with Vite's `import.meta.env.DEV`; do not add `@types/node` solely to hide a browser-code error.
 - [ ] Run `npm.cmd run tsc` and require a clean React 17 result before dependency changes.
 - [ ] Capture the listed React 17 browser scenarios and console baseline.
 

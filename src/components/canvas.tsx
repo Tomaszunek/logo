@@ -59,6 +59,13 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
     });
 
     turtle.drawTurtle();
+
+    return () => {
+      if (turtle.canvas) {
+        turtle.clearCanvas();
+        turtle.canvas = null;
+      }
+    };
   }, [commands]);
 
   return (
