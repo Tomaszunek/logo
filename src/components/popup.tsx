@@ -1,35 +1,22 @@
 import * as React from 'react';
 
-export default class Popup extends React.Component<IProps, IState> { 
-  public input: HTMLInputElement | null;
-  constructor(props: IProps) {
-    super(props);
-  };  
-
-  public render() {
-    return (
-      <div className="popup" role="alert" aria-live="assertive">
-        <div className="popupInner">
-            <p>
-                {this.props.massage}
-            </p> 
-        </div>       
+const Popup: React.FC<IProps> = ({ massage, closePopup }) => {
+  return (
+    <div className="popup" role="alert" aria-live="assertive">
+      <div className="popupInner">
+        <p>{massage}</p>
       </div>
-    );
-  }  
+    </div>
+  );
+};
 
-  
-
-  
-}
+export default Popup;
 
 interface IProps {
-    massage: string,
-    closePopup: any
+  massage: string;
+  closePopup: any;
 }
-interface IState {
-    showPopup: boolean
-}
+
   
   
 

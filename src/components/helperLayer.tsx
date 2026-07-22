@@ -12,24 +12,21 @@ interface HelperLayerProps {
   onClose: () => void;
 }
 
-export default class HelperLayer extends React.Component<HelperLayerProps> {
-  render() {
-    const { visible, actions, descriptions, examplePaths, panel, onClose } = this.props;
-    if (!visible) return null;
+const HelperLayer: React.FC<HelperLayerProps> = ({ examplePaths, descriptions, actions, visible, panel, onClose }) => {
+  if (!visible) return null;
+  const site = panel === 'tips' ? 'left' : 'right';
+  return (
+    <div className="helperLayer">
+      <HelperWindow
+        actions={actions}
+        descriptions={descriptions}
+        itemStyle={{ display: 'block' }}
+        examplePaths={examplePaths}
+        site={site}
+      />
+      <button aria-label="Close helper panel" onClick={onClose} style={{ position: "absolute", top: 10, right: 10 }}>✖</button>
+    </div>
+  );
+};
 
-    const site = panel === 'tips' ? 'left' : 'right';
-
-    return (
-      <div className="helperLayer">
-        <HelperWindow
-          actions={actions}
-          descriptions={descriptions}
-          itemStyle={{ display: 'block' }}
-          examplePaths={examplePaths}
-          site={site}
-        />
-        <button aria-label="Close helper panel" onClick={onClose} style={{ position: 'absolute', top: 10, right: 10 }}>✖</button>
-      </div>
-    );
-  }
-}
+export default HelperLayer;
