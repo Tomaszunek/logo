@@ -5,89 +5,71 @@ import { CommandActions } from 'src/actions';
 import { Turtle } from '../utils/turtle';
 import { Caller } from 'src/utils/caller';
 
+interface IProps {
+  text?: string | null;
+  commands: Array<ICommandModel>;
+  actions: CommandActions;
+}
 
-class Canvas extends React.Component<IProps, IState> {
-  public canvas: HTMLCanvasElement | null;
-  public caller: Caller;
-  public turtle: Turtle;
-  private canvasX: number;
-  private canvasY: number;
-  constructor(props: any) {
-    super(props);
-    this.canvasX = 800;
-    this.canvasY = 800;
-    this.turtle = new Turtle({
+const Canvas: React.FC<IProps> = ({ commands }) => {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const turtleRef = React.useRef<Turtle>(
+    new Turtle({
       canvas: null,
-      homeX: this.canvasX / 2,
-      homeY: this.canvasY / 2,
+      homeX: 400,
+      homeY: 400,
       dir: 0,
       strokeColor: '#000000',
       strokeWeight: 1,
       pen: true,
-      visible: true
+      visible: true,
     })
-    this.caller = new Caller(this.turtle);
-  };
-  
+  );
+  const callerRef = React.useRef<Caller>(new Caller(turtleRef.current));
 
-  public componentDidMount() {
-    this.turtle.canvas = this.canvas;
-    const { commands } = this.props;
+  React.useEffect(() => {
+    if (!canvasRef.current) return;
+    const turtle = turtleRef.current;
+    const caller = callerRef.current;
+
+    // Attach canvas to the turtle instance
+    turtle.canvas = canvasRef.current;
+
+    // Clear any existing drawing before applying new commands
+    turtle.clearCanvas();
+
     commands.forEach((command: ICommandModel) => {
-      if(command.name === 'repeat' && command.commands) {
-        this.caller[command.name](command)
-      } else if(command.name === 'setpos' && command.value && command.arg2) {
-        this.caller[command.name](command.value, command.arg2)                
-      } else if(command.name === 'setsc' || command.name === 'setbc' && command.color) {
-        this.caller[command.name](command.color)                
+      if (command.name === 'repeat' && command.commands) {
+        // @ts-ignore
+        caller[command.name](command);
+      } else if (
+        command.name === 'setpos' &&
+        command.value !== undefined &&
+        command.arg2 !== undefined
+      ) {
+        // @ts-ignore
+        caller[command.name](command.value, command.arg2);
+      } else if ((command.name === 'setsc' || command.name === 'setbc') && command.color) {
+        // @ts-ignore
+        caller[command.name](command.color);
       } else {
-        this.caller[command.name](command.value);
+        // @ts-ignore
+        caller[command.name](command.value);
       }
     });
-    this.turtle.drawTurtle();
-  }
 
-  public componentDidUpdate(prevProps: IProps){
-    if(prevProps.commands !== this.props.commands){
-      this.turtle.clearCanvas();
-      const { commands } = this.props;
-      commands.forEach((command: ICommandModel) => {
-        if(command.name === 'repeat' && command.commands) {
-          this.caller[command.name](command)
-        } else if(command.name === 'setpos' && command.value && command.arg2) {
-          this.caller[command.name](command.value, command.arg2)
-        } else if((command.name === 'setsc' || command.name === 'setbc') && command.color) {
-          this.caller[command.name](command.color)
-        } else {
-          this.caller[command.name](command.value);
-        }
-      });
-      this.turtle.drawTurtle();
-    }
-  } 
+    turtle.drawTurtle();
+  }, [commands]);
 
-  public render() {
-    return (
-      <div className="canvas">
-        <canvas ref={elem => this.canvas = elem} width={this.canvasX} height={this.canvasY} role="img" aria-label="Turtle drawing canvas"/>
-      </div>
-    );
-  }
-}
+  return (
+    <div className="canvas">
+      <canvas ref={canvasRef} width={800} height={800} role="img" aria-label="Turtle drawing canvas" />
+    </div>
+  );
+};
 
-function mapStateToProps(props: IProps){
+function mapStateToProps(props: IProps) {
   return props;
 }
 
 export default connect(mapStateToProps)(Canvas);
-
-interface IProps {
-  text?: string | null
-  commands: Array<ICommandModel>
-  actions: CommandActions
-}
-
-interface IState {
-  html: string
-}
-

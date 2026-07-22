@@ -1,0 +1,4 @@
+Never repeat a failed Edit unchanged. Before Edit, reread the target lines.
+Use the shortest unique old_string without line numbers.
+Never call Edit when old_string equals new_string.
+After one failure, reread and retry once. After two failures, stop and explain.

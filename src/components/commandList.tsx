@@ -2,15 +2,17 @@ import * as React from 'react';
 import { ICommandModel, ICommandDescription, CommandTypes } from 'src/models';
 import { CommandActions } from 'src/actions';
 
-export default class CommandList extends React.Component<IProps, IState> {
+interface IProps {
+  text?: string | null;
+  commands: Array<ICommandModel>;
+  descriptions: Record<string, ICommandDescription>;
+  actions: CommandActions;
+}
 
-  constructor(props: any) {
-    super(props)
-  };
-
-  public displayCommands = (items: Array<ICommandModel>) => {
+const CommandList: React.FC<IProps> = ({ text, commands, descriptions, actions }) => {
+  const displayCommands = (items: Array<ICommandModel>) => {
     return items.map((item: ICommandModel) => {
-      const itemDesc = this.props.descriptions[item.name];
+      const itemDesc = descriptions[item.name];
       const { short, name, long, args } = itemDesc;
       return (
         <div className={"commandItem " + item.name} key={item.id}>
@@ -18,85 +20,58 @@ export default class CommandList extends React.Component<IProps, IState> {
             <p>
               {short} | {name}
             </p>
-              <div>
-                {
-                  ((item.value) ?
-                  <input value={item.value} type="number" name="value" onChange={ e => this.onChangeInput(e, item, item.name) }/> :
-                  null)              
-                }
-                {
-                  ((item.arg2) ?
-                  <input value={item.arg2} type="number" name="arg2" onChange={ e => this.onChangeInput(e, item, item.name) }/> :
-                  null)              
-                }
-                {
-                  ((item.color) ?
-                  <input type="color" value={item.color} onChange={ e => this.onChangeInput(e, item, item.name) }/> :
-                  null)              
-                }
-                <button className="remove" onClick={(e) => this.removeCommand(e, item.id)}>X</button>
-              </div>
-            </div>            
+            <div>
+              {(item.value) ?
+                <input value={item.value} type="number" name="value" onChange={e => onChangeInput(e, item, item.name)} /> :
+                null}
+              {(item.arg2) ?
+                <input value={item.arg2} type="number" name="arg2" onChange={e => onChangeInput(e, item, item.name)} /> :
+                null}
+              {(item.color) ?
+                <input type="color" value={item.color} onChange={e => onChangeInput(e, item, item.name)} /> :
+                null}
+              <button className="remove" onClick={(e) => removeCommand(e, item.id)}>X</button>
+            </div>
+          </div>
           <div className="description">
             <p>
               {long}
               {args.map((argument: any) => {
-                return (
-                  '(' + argument.name + ' type of ' + argument.type + ')'
-                )                
+                return '(' + argument.name + ' type of ' + argument.type + ')';
               })}
-              
             </p>
           </div>
-          {
-            (((item.commands)) ? this.displayCommands(item.commands) : null)
-          }          
+          {(item.commands ? displayCommands(item.commands) : null)}
         </div>
-      )
+      );
     });
-  }  
-  
-  public render() {
-    return (
-      <div className="commendList">
-        {this.displayCommands(this.props.commands)}
-      </div>
-    );
-  }
+  };
 
-  private onChangeInput = (e: React.ChangeEvent<HTMLInputElement>, item: ICommandModel, type: CommandTypes) => {
-    const command = item;
-    if(type === "setbc" || type === "setsc") {
-      command.color = e.target.value
+  const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>, item: ICommandModel, type: CommandTypes) => {
+    const command = { ...item };
+    if (type === "setbc" || type === "setsc") {
+      command.color = e.target.value;
     } else if (type === "setpos") {
-      if(e.target.getAttribute("name") === "value") {
-        command.value = Number(e.target.value)
+      if (e.target.getAttribute("name") === "value") {
+        command.value = Number(e.target.value);
       } else {
-        command.arg2 = Number(e.target.value)
+        command.arg2 = Number(e.target.value);
       }
     } else {
-      command.value = Number(e.target.value)
+      command.value = Number(e.target.value);
     }
-    this.props.actions.editCommand({
-      ...command
-    });
-  }
+    actions.editCommand({ ...command });
+  };
 
-  private removeCommand = (e: React.MouseEvent<HTMLButtonElement>, id: number) => {
-    this.props.actions.deleteCommand(id);
-  }
-}
+  const removeCommand = (e: React.MouseEvent<HTMLButtonElement>, id: number) => {
+    actions.deleteCommand(id);
+  };
 
+  return (
+    <div className="commendList">
+      {displayCommands(commands)}
+    </div>
+  );
+};
 
-interface IProps {
-  text?: string | null
-  commands: Array<ICommandModel>
-  descriptions: Record<string, ICommandDescription>
-  actions: CommandActions
-}
-
-interface IState {
-  html: string
-}
-
-
+export default CommandList;

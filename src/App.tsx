@@ -6,8 +6,8 @@ import CommandInput from "./components/commandInput";
 import HelperLayer from "./components/helperLayer";
 import TutorialPopup from "./components/tutorialPopup";
 import Header from "./components/header";
-import { RouteComponentProps } from "react-router";
 import SkipLink from "./components/skipLink";
+import { RouteComponentProps } from "react-router";
 import { bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import { CommandActions } from "./actions";
@@ -70,62 +70,57 @@ const mapDispatchToProps = (
   actions: bindActionCreators(omit(CommandActions, "Type"), dispatch),
 });
 
-export class App extends React.Component<App.IProps, IAppState> {
-  constructor(props: App.IProps) {
-    super(props);
-    this.state = { showHelper: false, activePanel: "tips" };
-    // Bind event handler for header buttons
-    this.handleShowHelper = this.handleShowHelper.bind(this);
-  }
+const App: React.FC<App.IProps> = (props) => {
+  const [showHelper, setShowHelper] = React.useState(false);
+  const [activePanel, setActivePanel] = React.useState<"tips" | "examples">("tips");
 
-  handleShowHelper(panel: "tips" | "examples") {
-    this.setState({ showHelper: true, activePanel: panel });
-  }
+  const handleShowHelper = (panel: "tips" | "examples") => {
+    setShowHelper(true);
+    setActivePanel(panel);
+  };
 
-  public render() {
-    const { descriptions, commands, pathwayExample, tutorialPages, actions } =
-      this.props;
-    return (
-      <main id="main" className="App">
-        <SkipLink />
-        <Header onShowHelper={this.handleShowHelper} />
-        <div className="appMain">
-          {this.state.showHelper && this.state.activePanel === "examples" && (
-            <HelperLayer
-              visible={true}
-              panel="examples"
-              onClose={() => this.setState({ showHelper: false })}
-              examplePaths={pathwayExample}
+  const { descriptions, commands, pathwayExample, tutorialPages, actions } = props;
+
+  return (
+    <main id="main" className="App">
+      <SkipLink />
+      <Header onShowHelper={handleShowHelper} />
+      <div className="appMain">
+        {showHelper && activePanel === "examples" && (
+          <HelperLayer
+            visible={true}
+            panel="examples"
+            onClose={() => setShowHelper(false)}
+            examplePaths={pathwayExample}
+            descriptions={descriptions}
+            actions={actions}
+          />
+        )}
+        {showHelper && activePanel === "tips" && (
+          <TutorialPopup tutorialPages={tutorialPages} />
+        )}
+        <div className="editorContainer">
+          <section className="editorLine">
+            <CommandEditor commands={commands} actions={actions} />
+            <CommandInput
+              commands={commands}
+              actions={actions}
+              descriptions={descriptions}
+            />
+            <Canvas commands={commands} actions={actions} />
+          </section>
+          <aside className="commandListLine">
+            <CommandList
+              commands={commands}
               descriptions={descriptions}
               actions={actions}
             />
-          )}
-          {this.state.showHelper && this.state.activePanel === "tips" && (
-            <TutorialPopup tutorialPages={tutorialPages} />
-          )}
-          <div className="editorContainer">
-            <section className="editorLine">
-              <CommandEditor commands={commands} actions={actions} />
-              <CommandInput
-                commands={commands}
-                actions={actions}
-                descriptions={descriptions}
-              />
-              <Canvas commands={commands} actions={actions} />
-            </section>
-            <aside className="commandListLine">
-              <CommandList
-                commands={commands}
-                descriptions={descriptions}
-                actions={actions}
-              />
-            </aside>
-          </div>
+          </aside>
         </div>
-        <footer className="appFooter">© 2026 Logo Playground</footer>
-      </main>
-    );
-  }
-}
+      </div>
+      <footer className="appFooter">© 2026 Logo Playground</footer>
+    </main>
+  );
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
