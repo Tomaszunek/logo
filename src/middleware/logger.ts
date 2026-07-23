@@ -1,7 +1,7 @@
 import { Middleware } from 'redux';
 
 export const logger: Middleware = (store) => (next) => (action) => {
-  if (process.env.NODE_ENV !== 'production') {
+  if (import.meta.env.DEV) {
     console.log(action);
   }
   return next(action);

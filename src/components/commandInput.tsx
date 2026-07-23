@@ -13,6 +13,17 @@ interface IProps {
 }
 
 const CommandInput: React.FC<IProps> = ({ text, commands, actions, descriptions }) => {
+  const timeoutRef = React.useRef<number | null>(null);
+
+  // Cleanup any pending error popup timer on unmount
+  React.useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
+  }, []);
   const [showPopup, setShowPopup] = React.useState(false);
   const [popupText, setPopupText] = React.useState('');
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -30,9 +41,14 @@ const CommandInput: React.FC<IProps> = ({ text, commands, actions, descriptions 
     setShowPopup(true);
     setPopupText(errorHandler);
 
-    setTimeout(() => {
+    // Clear any existing timer before setting a new one
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = window.setTimeout(() => {
       setShowPopup(false);
       setPopupText(errorHandler);
+      timeoutRef.current = null;
     }, 5000);
   };
 

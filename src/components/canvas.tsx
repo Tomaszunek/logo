@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
+// Removed react-redux connect import; Canvas is now a plain component receiving props directly.
 import { ICommandModel } from 'src/models';
 import { CommandActions } from 'src/actions';
 import { Turtle } from '../utils/turtle';
@@ -13,8 +13,12 @@ interface IProps {
 
 const Canvas: React.FC<IProps> = ({ commands }) => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const turtleRef = React.useRef<Turtle>(
-    new Turtle({
+  const turtleRef = React.useRef<Turtle>();
+  const callerRef = React.useRef<Caller>();
+
+  // Lazy initialization of Turtle and Caller
+  if (!turtleRef.current) {
+    turtleRef.current = new Turtle({
       canvas: null,
       homeX: 400,
       homeY: 400,
@@ -23,20 +27,24 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
       strokeWeight: 1,
       pen: true,
       visible: true,
-    })
-  );
-  const callerRef = React.useRef<Caller>(new Caller(turtleRef.current));
+    });
+  }
+  if (!callerRef.current) {
+    callerRef.current = new Caller(turtleRef.current);
+  }
 
   React.useEffect(() => {
     if (!canvasRef.current) return;
-    const turtle = turtleRef.current;
-    const caller = callerRef.current;
+    const turtle = turtleRef.current!;
+    const caller = callerRef.current!;
 
     // Attach canvas to the turtle instance
     turtle.canvas = canvasRef.current;
 
     // Clear any existing drawing before applying new commands
     turtle.clearCanvas();
+
+    const imageRef = React.useRef<HTMLImageElement | null>(null);
 
     commands.forEach((command: ICommandModel) => {
       if (command.name === 'repeat' && command.commands) {
@@ -59,6 +67,16 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
     });
 
     turtle.drawTurtle();
+
+    return () => {
+      if (turtle.canvas) {
+        turtle.clearCanvas();
+        turtle.canvas = null;
+      }
+      if (imageRef.current) {
+        imageRef.current.onload = null; // cancel pending onload if any
+      }
+    };
   }, [commands]);
 
   return (
@@ -68,8 +86,4 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
   );
 };
 
-function mapStateToProps(props: IProps) {
-  return props;
-}
-
-export default connect(mapStateToProps)(Canvas);
+export default Canvas;
