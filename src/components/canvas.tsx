@@ -44,6 +44,8 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
     // Clear any existing drawing before applying new commands
     turtle.clearCanvas();
 
+    const imageRef = React.useRef<HTMLImageElement | null>(null);
+
     commands.forEach((command: ICommandModel) => {
       if (command.name === 'repeat' && command.commands) {
         // @ts-ignore
@@ -70,6 +72,9 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
       if (turtle.canvas) {
         turtle.clearCanvas();
         turtle.canvas = null;
+      }
+      if (imageRef.current) {
+        imageRef.current.onload = null; // cancel pending onload if any
       }
     };
   }, [commands]);

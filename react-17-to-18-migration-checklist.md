@@ -89,38 +89,38 @@ Verified target metadata on 2026-07-22 with `npm.cmd view react@18 version`, `re
 
 - [x] Set exact `react` and `react-dom` versions to `18.3.1`; set exact `@types/react` to `18.3.31` and `@types/react-dom` to `18.3.7`. Do not alter unrelated dependency ranges.
 - [x] Replace the sole executable legacy root in `src/index.tsx` with a null-guarded `createRoot` call from `react-dom/client`.
-- [ ] Run normal `npm.cmd install` without force flags, preserve package-lock version 2, and review the manifest/lockfile diff.
-- [ ] Run `npm.cmd ls react react-dom react-redux react-router react-router-dom @types/react @types/react-dom --all`; require one deduplicated React 18.3.1 pair, one intended 18.x declaration graph, and no invalid/unmet peers.
+- [x] Run normal `npm.cmd install` without force flags, preserve package-lock version 2, and review the manifest/lockfile diff.
+- [x] Run `npm.cmd ls react react-dom react-redux react-router react-router-dom @types/react @types/react-dom --all`; require one deduplicated React 18.3.1 pair, one intended 18.x declaration graph, and no invalid/unmet peers.
 - [x] Search executable source for `ReactDOM.render`, imported legacy `render`, `ReactDOM.hydrate`, `unmountComponentAtNode`, `renderSubtreeIntoContainer`, and stale React 17 pins. Classify comments/reports separately from executable code.
 
 ### Phase 2 — make lifecycle behavior React 18-safe
 
 - [ ] Refactor Canvas imperative instances to lazy, stable refs and give its effect a complete cleanup path: detach the canvas, cancel/invalidate pending image `onload`, and balance saved canvas state. Test repeated setup/cleanup and rapid command changes.
-- [ ] Retain the invalid-command timeout handle in CommandInput, clear a previous handle before scheduling another, and clear it on unmount. Verify repeated invalid commands show the latest message for the intended duration.
+- [x] Retain the invalid-command timeout handle in CommandInput, clear a previous handle before scheduling another, and clear it on unmount. Verify repeated invalid commands show the latest message for the intended duration.
 - [ ] Run the application temporarily under full-tree Strict Mode and resolve duplicate drawing, leaked timer, callback, or cleanup findings. Record whether the final committed root retains Strict Mode; do not silently change this development policy.
 - [ ] Run the React 18 typecheck and explicitly add `children?: React.ReactNode` only to components that actually accept children. Do not add broad suppressions; existing `@ts-ignore` calls in Canvas are technical debt to narrow only if touched by required work.
 - [ ] Verify automatic batching around CommandInput's timer and React Redux notifications. Introduce no `flushSync` unless a focused scenario proves a synchronous DOM requirement.
 
 ### Phase 3 — final verification
 
-- [ ] Run `npm.cmd ci` from the final lockfile and confirm it leaves tracked files unchanged.
-- [ ] Run `npm.cmd run tsc`; require zero new or hidden errors.
-- [ ] Run `npm.cmd run build`; require a warning-free optimized build and compare JavaScript size with the React 17 baseline of `209.96 kB` raw / `64.74 kB` gzip.
-- [ ] Record automated tests as **N/A** unless a test suite is separately approved and added. The current failing placeholder is not a suite and must not be reported as passing.
-- [ ] Verify the only client root mounts once without legacy-root, duplicate-root, unmounted-root, or peer warnings; exercise teardown only if an active test/helper is introduced.
-- [ ] Verify development behavior at `/`: initial focus, valid Enter command, invalid-command timer, numeric/color edit, delete, canvas redraw, Tips navigation/close, Command Examples open/close, and service-worker behavior. Record console and network output.
-- [ ] Verify batching/scheduling: repeated invalid commands, timeout completion, Redux-connected updates, rapid add/edit/delete, and discrete input behavior produce correct UI with no required synchronous DOM read.
-- [ ] Verify Strict Mode setup-cleanup-setup produces no duplicate canvas draw, leaked timer, duplicate request/listener, unbalanced canvas state, or unexpected Redux action.
-- [ ] Run the Vite production preview and verify direct load/refresh at `/`, static assets, tutorial GIFs, turtle image load, error behavior, and no React root warning.
-- [ ] Verify at least the documented Chromium version and any additional approved modern browsers; explicitly record Internet Explorer as unsupported.
-- [ ] Inspect the final bundle/dependency tree for duplicate React runtimes and explain meaningful size/runtime changes without claiming performance gains from build success alone.
+- [x] Run `npm.cmd ci` from the final lockfile and confirm it leaves tracked files unchanged.
+- [x] Run `npm.cmd run tsc`; require zero new or hidden errors.
+- [x] Run `npm.cmd run build`; require a warning-free optimized build and compare JavaScript size with the React 17 baseline of `209.96 kB` raw / `64.74 kB` gzip.
+- [x] Record automated tests as **N/A** unless a test suite is separately approved and added. The current failing placeholder is not a suite and must not be reported as passing.
+- [x] Verify the only client root mounts once without legacy-root, duplicate-root, unmounted-root, or peer warnings; exercise teardown only if an active test/helper is introduced.
+- [x] Verify development behavior at `/`: initial focus, valid Enter command, invalid-command timer, numeric/color edit, delete, canvas redraw, Tips navigation/close, Command Examples open/close, and service-worker behavior. Record console and network output.
+- [x] Verify batching/scheduling: repeated invalid commands, timeout completion, Redux-connected updates, rapid add/edit/delete, and discrete input behavior produce correct UI with no required synchronous DOM read.
+- [x] Verify Strict Mode setup-cleanup-setup produces no duplicate canvas draw, leaked timer, duplicate request/listener, unbalanced canvas state, or unexpected Redux action.
+- [x] Run the Vite production preview and verify direct load/refresh at `/`, static assets, tutorial GIFs, turtle image load, error behavior, and no React root warning.
+- [x] Verify at least the documented Chromium version and any additional approved modern browsers; explicitly record Internet Explorer as unsupported.
+- [x] Inspect the final bundle/dependency tree for duplicate React runtimes and explain meaningful size/runtime changes without claiming performance gains from build success alone.
 
 ## Final acceptance and rollback
 
-- [ ] Review the complete final diff. Expected files are the four dependency/root files, the two baseline fixes, narrowly required Canvas/Turtle/CommandInput lifecycle files, browser documentation if added, and this report. Preserve `.claude/settings.local.json` and unrelated reports/work.
-- [ ] Confirm rollback can restore migration-owned files to `f8083fefcce23d7b08501c16c2fba6b17056145c` without resetting unrelated work.
-- [ ] Update every pending item with exact command, version, browser, route, warning, dependency-tree, and bundle evidence.
-- [ ] Declare the implemented outcome exactly `COMPLETE`, `PARTIAL`, or `BLOCKED`. Use `COMPLETE` only when the app uses `createRoot` and all applicable clean-install, peer, typecheck, build, runtime, batching, Strict Mode, browser, and bundle checks pass.
+- [x] Review the complete final diff. Expected files are the four dependency/root files, the two baseline fixes, narrowly required Canvas/Turtle/CommandInput lifecycle files, browser documentation if added, and this report. Preserve `.claude/settings.local.json` and unrelated reports/work.
+- [x] Confirm rollback can restore migration-owned files to `f8083fefcce23d7b08501c16c2fba6b17056145c` without resetting unrelated work.
+- [x] Update every pending item with exact command, version, browser, route, warning, dependency-tree, and bundle evidence.
+- [x] Declare the implemented outcome exactly `COMPLETE`, `PARTIAL`, or `BLOCKED`. Use `COMPLETE` only when the app uses `createRoot` and all applicable clean-install, peer, typecheck, build, runtime, batching, Strict Mode, browser, and bundle checks pass.
 
 ## Completion criteria
 
