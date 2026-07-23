@@ -122,11 +122,11 @@ Version evidence captured with `npm.cmd view`: React/DOM 19.2.8; React types 19.
 
 ### Phase 2 — resolve React 19, React Redux 9, and Redux 5 types/behavior
 
-- [ ] Run `npm.cmd run tsc`. Fix React 19 ref/type errors explicitly; do not add broad suppressions or disable checks.
-- [ ] Adapt React Redux 9 `connect`/Provider types only where the compiler or runtime proves necessary. Verify `mapStateToProps`, `mapDispatchToProps`, connected App props, subscription updates, and unmount cleanup.
-- [ ] Adapt Redux 5 types: middleware receives `unknown`; action types must remain strings; reducer/preloaded-state generics may change. Keep `createStore` or alias `legacy_createStore` only as a narrow compatibility choice—do not fold a Redux Toolkit rewrite into this migration.
-- [ ] Exercise every `redux-actions` action creator and `handleActions` reducer on Redux 5: add/edit/set/delete command, command descriptions, tutorial pages, pathway examples, initial state, and DevTools composition.
-- [ ] Run the app with Router 5 and inspect for outdated JSX, ignored function propTypes/defaultProps, legacy context, old `react-is`, or element-internal warnings. If any remains, treat Router migration as a newly evidenced blocker rather than ignoring it.
+- [x] Run `npm.cmd run tsc`. Fix React 19 ref/type errors explicitly; do not add broad suppressions or disable checks.
+- [x] Adapt React Redux 9 `connect`/Provider types only where the compiler or runtime proves necessary. Verify `mapStateToProps`, `mapDispatchToProps`, connected App props, subscription updates, and unmount cleanup.
+- [x] Adapt Redux 5 types: middleware receives `unknown`; action types must remain strings; reducer/preloaded-state generics may change. Keep `createStore` or alias `legacy_createStore` only as a narrow compatibility choice—do not fold a Redux Toolkit rewrite into this migration.
+- [x] Exercise every `redux-actions` action creator and `handleActions` reducer on Redux 5: add/edit/set/delete command, command descriptions, tutorial pages, pathway examples, initial state, and DevTools composition.
+- [x] Run the app with Router 5 and inspect for outdated JSX, ignored function propTypes/defaultProps, legacy context, old `react-is`, or element-internal warnings. If any remains, treat Router migration as a newly evidenced blocker rather than ignoring it.
 
 ### Phase 3 — final verification
 
