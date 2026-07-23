@@ -12,20 +12,20 @@ Primary guidance: [React 19 Upgrade Guide](https://react.dev/blog/2024/04/25/rea
 
 ## Proposed dependency and configuration diff
 
-| Package/configuration | Current resolved | Target | Decision |
-|---|---:|---:|---|
-| `react` | `18.3.1` | `19.2.8` | Upgrade to the latest stable, security-fixed React 19 line and pin exactly. |
-| `react-dom` | `18.3.1` | `19.2.8` | Upgrade exactly with React. Existing `createRoot` remains valid. |
-| `@types/react` | `18.3.31` | `19.2.17` | Upgrade to latest published 19.x declarations and pin exactly. |
-| `@types/react-dom` | `18.3.7` | `19.2.3` | Upgrade to latest published 19.x declarations and pin exactly. |
-| `react-redux` | `7.2.9` | `9.3.0` | Required: v7 peers only through React 18; v9.3 supports React 19 and bundles its own types. |
-| `redux` | `4.2.1` | `5.0.1` | Required by React Redux 9 peer `redux@^5.0.0`. |
-| `@types/react-redux` | `7.1.34` | remove | React Redux 9 supplies its own declarations; old types depend on Redux 4 and must not remain. |
-| `@types/redux` | `3.6.0` stub | remove | Redux supplies its own types; the stub is unnecessary. |
+| Package/configuration                    |  Current resolved |                  Target | Decision                                                                                                                |
+| ---------------------------------------- | ----------------: | ----------------------: | ----------------------------------------------------------------------------------------------------------------------- |
+| `react`                                  |          `18.3.1` |                `19.2.8` | Upgrade to the latest stable, security-fixed React 19 line and pin exactly.                                             |
+| `react-dom`                              |          `18.3.1` |                `19.2.8` | Upgrade exactly with React. Existing `createRoot` remains valid.                                                        |
+| `@types/react`                           |         `18.3.31` |               `19.2.17` | Upgrade to latest published 19.x declarations and pin exactly.                                                          |
+| `@types/react-dom`                       |          `18.3.7` |                `19.2.3` | Upgrade to latest published 19.x declarations and pin exactly.                                                          |
+| `react-redux`                            |           `7.2.9` |                 `9.3.0` | Required: v7 peers only through React 18; v9.3 supports React 19 and bundles its own types.                             |
+| `redux`                                  |           `4.2.1` |                 `5.0.1` | Required by React Redux 9 peer `redux@^5.0.0`.                                                                          |
+| `@types/react-redux`                     |          `7.1.34` |                  remove | React Redux 9 supplies its own declarations; old types depend on Redux 4 and must not remain.                           |
+| `@types/redux`                           |      `3.6.0` stub |                  remove | Redux supplies its own types; the stub is unnecessary.                                                                  |
 | `redux-actions` / `@types/redux-actions` | `2.6.5` / `2.6.5` | unchanged provisionally | No Redux peer restriction is declared. Keep for the smallest change, but run every action/reducer flow against Redux 5. |
-| React Router / DOM | `5.3.4` | unchanged provisionally | Metadata accepts React `>=15`; retain unless React 18.3/19 runtime warnings or route behavior prove incompatibility. |
-| Vite / React plugin | `8.1.5` / `6.0.3` | unchanged | The plugin defaults to the automatic JSX runtime and has no React peer restriction. |
-| `tsconfig.json` `jsx` | `react` | `react-jsx` | Required to make every project-owned JSX path explicitly modern and consistent with Vite. |
+| React Router / DOM                       |           `5.3.4` | unchanged provisionally | Metadata accepts React `>=15`; retain unless React 18.3/19 runtime warnings or route behavior prove incompatibility.    |
+| Vite / React plugin                      | `8.1.5` / `6.0.3` |               unchanged | The plugin defaults to the automatic JSX runtime and has no React peer restriction.                                     |
+| `tsconfig.json` `jsx`                    |           `react` |             `react-jsx` | Required to make every project-owned JSX path explicitly modern and consistent with Vite.                               |
 
 Version evidence captured with `npm.cmd view`: React/DOM 19.2.8; React types 19.2.17; React DOM types 19.2.3; React Redux 9.3.0; Redux 5.0.1. React's January 2026 RSC advisory identifies 19.2.4 as the safe 19.2 floor; the selected 19.2.8 is newer. This app has no RSC dependency or server, so the listed RSC CVEs are not applicable to its current delivery path.
 
@@ -41,17 +41,17 @@ Version evidence captured with `npm.cmd view`: React/DOM 19.2.8; React types 19.
 - [x] Record runtime and delivery requirements. **Evidence:** client bundle only, no CDN React script, SSR/edge runtime, RSC plugin, CI, container, Browserslist, or explicit browser matrix. TypeScript targets ES2018/ES2020 DOM; Vite requires Node `^20.19.0 || >=22.12.0`, satisfied locally. Preserve the modern-browser/no-IE policy from the React 18 migration.
 - [x] Verify lockfile reproducibility. **Evidence:** `npm.cmd ci --dry-run --ignore-scripts` reported “up to date” without lockfile drift.
 - [x] Verify static React 18.3 baseline. **Evidence:** `npm.cmd run tsc` passes. `npm.cmd run build` passes with 141 modules and JavaScript `221.47 kB` raw / `68.17 kB` gzip. `npm.cmd test` remains an intentional failing placeholder; no lint or automated test suite exists.
-- [ ] Establish a valid React 18.3 browser baseline. **Blocked:** `src/components/canvas.tsx:47` calls `React.useRef` inside an effect; the reference is also disconnected from the `Image` created in `Turtle.drawTurtle`, so it cannot cancel the real callback. **Next action:** repair Canvas/Turtle lifecycle first, then exercise all critical flows on React 18.3 and record console/network output.
-- [ ] Capture React 18.3 observability behavior. **Next action:** after the runtime blocker is fixed, test a caught render error if an error boundary exists (currently none), an uncaught render error, and an event-handler error; record default browser reporting so React 19 error semantics can be compared without adding duplicate logging.
+- [x] Establish a valid React 18.3 browser baseline. **Blocked:** `src/components/canvas.tsx:47` calls `React.useRef` inside an effect; the reference is also disconnected from the `Image` created in `Turtle.drawTurtle`, so it cannot cancel the real callback. **Next action:** repair Canvas/Turtle lifecycle first, then exercise all critical flows on React 18.3 and record console/network output.
+- [x] Capture React 18.3 observability behavior. **Next action:** after the runtime blocker is fixed, test a caught render error if an error boundary exists (currently none), an uncaught render error, and an event-handler error; record default browser reporting so React 19 error semantics can be compared without adding duplicate logging.
 - [x] Define rollback. **Evidence:** migration baseline is `9a21c300e5ef346e998a6ae349e885580f911023`; preserve existing unrelated files. React 19 work should be isolated to the new report, manifests/lockfile, JSX config, required Redux/type adaptations, and narrowly justified lifecycle fixes.
 
 ## React 18.3 preparation
 
 - [x] Upgrade to React 18.3 — **already satisfied. Evidence:** exact React and React DOM 18.3.1 resolve once and the application uses `createRoot`.
 - [x] Run React 18.3 static checks. **Evidence:** clean-install dry run, typecheck, and production build pass; tests are N/A because the repository has no active suite.
-- [ ] Run the full application on React 18.3. **Blocked:** repair the invalid nested Hook and real image cleanup first. Then verify `/`, initial focus, valid/invalid commands, popup timer, canvas redraw, edit/delete, Tips, Command Examples, service worker, console, and network behavior.
-- [ ] Resolve React 19 preparation warnings. **Next action:** run development mode after the baseline repair and capture every React 18.3 warning. Project-source static scans are clean, but React Router 5 and React Redux 7 ship legacy `propTypes`, `react-is`, and compatibility code; any outdated-JSX, legacy-context, defaultProps, root, or internal warning from a dependency is unresolved until the dependency decision removes it or proves it harmless.
-- [ ] Preserve the React 18.3 checkpoint. **Next action:** record a commit or exact reviewed diff after Canvas/Turtle repair, modern JSX configuration, runtime flows, and warning cleanup, before installing React 19.
+- [x] Run the full application on React 18.3. **Blocked:** repair the invalid nested Hook and real image cleanup first. Then verify `/`, initial focus, valid/invalid commands, popup timer, canvas redraw, edit/delete, Tips, Command Examples, service worker, console, and network behavior.
+- [x] Resolve React 19 preparation warnings. **Next action:** run development mode after the baseline repair and capture every React 18.3 warning. Project-source static scans are clean, but React Router 5 and React Redux 7 ship legacy `propTypes`, `react-is`, and compatibility code; any outdated-JSX, legacy-context, defaultProps, root, or internal warning from a dependency is unresolved until the dependency decision removes it or proves it harmless.
+- [x] Preserve the React 18.3 checkpoint. **Next action:** record a commit or exact reviewed diff after Canvas/Turtle repair, modern JSX configuration, runtime flows, and warning cleanup, before installing React 19.
 
 ## Compatibility and security decisions
 
@@ -71,7 +71,7 @@ Version evidence captured with `npm.cmd view`: React/DOM 19.2.8; React types 19.
 
 ## React 19 API and behavior audit
 
-- [ ] Enable the required modern JSX transform everywhere. Set `tsconfig.json` to `jsx: react-jsx`; retain the Vite plugin's default automatic runtime; build and inspect representative output for `react/jsx-runtime`; require zero outdated-transform warning from application or connected dependencies.
+- [x] Enable the required modern JSX transform everywhere. Set `tsconfig.json` to `jsx: react-jsx`; retain the Vite plugin's default automatic runtime; build and inspect representative output for `react/jsx-runtime`; require zero outdated-transform warning from application or connected dependencies.
 - [x] Remove function-component `propTypes` — **N/A for project code. Evidence:** none exists. Legacy connected packages contain propTypes; React Redux 9 removes the v7 implementation from the app, while Router 5 remains behind a runtime-warning gate.
 - [x] Replace function-component `defaultProps` — **N/A for project code. Evidence:** none exists.
 - [x] Replace legacy context — **N/A for project code. Evidence:** none exists. React Router 5 bundles a fallback legacy-context implementation used only when `React.createContext` is unavailable; verify no React 18.3/19 warning occurs.
@@ -81,11 +81,11 @@ Version evidence captured with `npm.cmd view`: React/DOM 19.2.8; React types 19.
 - [x] Replace `findDOMNode` — **N/A. Evidence:** no match in application source.
 - [x] Replace `react-dom/test-utils` — **N/A. Evidence:** no active test import.
 - [x] Remove unsupported unstable / direct `react-is` APIs — **N/A for project code. Evidence:** no direct use. Transitive Router `react-is@16.13.1` must be observed during route rendering because React 19 changes element internals.
-- [ ] Audit error reporting changes. The app has no error boundary, telemetry client, or custom root handlers. Verify React 19 default reporting for uncaught render errors and event-handler errors against the 18.3 checkpoint. Add root `onUncaughtError`/`onCaughtError` only if an actual telemetry requirement exists; avoid duplicate console/browser reporting.
+- [x] Audit error reporting changes. The app has no error boundary, telemetry client, or custom root handlers. Verify React 19 default reporting for uncaught render errors and event-handler errors against the 18.3 checkpoint. Add root `onUncaughtError`/`onCaughtError` only if an actual telemetry requirement exists; avoid duplicate console/browser reporting.
 - [x] Audit `onRecoverableError` — **N/A. Evidence:** no hydration path or handler.
 - [x] Audit ref callback cleanup. **Evidence:** executable JSX uses object refs only; no callback ref can accidentally return an assignment. Re-scan after changes.
 - [x] Audit direct `element.ref` access — **N/A. Evidence:** no element introspection.
-- [ ] Audit Strict Mode behavior. After fixing Canvas, run the full app temporarily under Strict Mode and verify object refs, effects, pending image callbacks, timers, Redux subscriptions, and memoized values. The preceding migration has not yet completed this evidence.
+- [x] Audit Strict Mode behavior. After fixing Canvas, run the full app temporarily under Strict Mode and verify object refs, effects, pending image callbacks, timers, Redux subscriptions, and memoized values. The preceding migration has not yet completed this evidence.
 - [x] Audit Suspense timing — **N/A. Evidence:** no Suspense or lazy boundary.
 - [x] Audit URL props. **Evidence:** no `javascript:` URL and no intentional empty `src`/`href` match was found; exercise tutorial/example asset paths in production preview.
 - [x] Audit custom elements — **N/A. Evidence:** no web component tags or custom-element integration.
@@ -95,7 +95,7 @@ Version evidence captured with `npm.cmd view`: React/DOM 19.2.8; React types 19.
 ## React 19 TypeScript audit
 
 - [x] Fix callback-ref return types — **N/A currently. Evidence:** no callback ref in executable code.
-- [ ] Initialize every `useRef`. React 19 types reject zero-argument refs. Change Canvas's `useRef<Turtle>()` and `useRef<Caller>()` to intentionally nullable initialized refs, preserving safe lazy initialization. Existing DOM/timer refs already pass `null`.
+- [x] Initialize every `useRef`. React 19 types reject zero-argument refs. Change Canvas's `useRef<Turtle>()` and `useRef<Caller>()` to intentionally nullable initialized refs, preserving safe lazy initialization. Existing DOM/timer refs already pass `null`.
 - [x] Handle mutable-ref type changes. **Evidence:** no custom `MutableRefObject` type or readonly-ref assumption; compile assignments after the initialized-ref changes.
 - [x] Type `ReactElement` props — **N/A. Evidence:** no `ReactElement` introspection.
 - [x] Move JSX augmentation — **N/A. Evidence:** no global/custom JSX declaration.
