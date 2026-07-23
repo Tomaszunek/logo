@@ -13,16 +13,16 @@
 
 ## State inventory and decisions
 
-| Domain | Current owner | Main consumers | Persistence/side effects | Decision | Reason |
-| --- | --- | --- | --- | --- | --- |
-| Command tree | `commandReducer` plus `CommandActions` | `Canvas`, `CommandEditor`, `CommandInput`, `CommandList`, example picker | Redraws the canvas; development action logging; no persistence | Move | This is the only mutable state shared across unrelated components. |
-| Command descriptions | `commandDescriptionReducer` with a static initial object | Error handling, command list, helper panel | None | Keep outside Zustand | Immutable reference data does not need subscriptions or actions. |
-| Pathway examples | `pathwayExampleReducer` with a static initial array | Example helper panel | Selecting an example replaces the command tree | Keep catalog outside Zustand | The catalog is immutable; only its selection action belongs to the command store. |
-| Tutorial pages | `tutorialPageReducer` with a static initial array | `TutorialPopup` | None | Keep outside Zustand | The page list is immutable and popup navigation is already local React state. |
-| Helper visibility and active panel | `App` local React state | `App`, `HelperLayer` | None | Keep local | The state has one component owner and no unrelated consumer. |
-| Tutorial index and visibility | `TutorialPopup` local React state | `TutorialPopup` | None | Keep local | The state is isolated to the popup lifecycle. |
-| URL hash filter | React Router location in `mapStateToProps` | `App` prop type only; no rendered consumer found | Browser URL | Keep in router or remove if still unused | URL state should not move to Zustand, and the current `filter` prop is not read by the component. |
-| Optional `router` field | `IRootState` type only | No reducer or consumer | None | Remove | It has no runtime owner. |
+| Domain                             | Current owner                                            | Main consumers                                                           | Persistence/side effects                                       | Decision                                 | Reason                                                                                            |
+| ---------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Command tree                       | `commandReducer` plus `CommandActions`                   | `Canvas`, `CommandEditor`, `CommandInput`, `CommandList`, example picker | Redraws the canvas; development action logging; no persistence | Move                                     | This is the only mutable state shared across unrelated components.                                |
+| Command descriptions               | `commandDescriptionReducer` with a static initial object | Error handling, command list, helper panel                               | None                                                           | Keep outside Zustand                     | Immutable reference data does not need subscriptions or actions.                                  |
+| Pathway examples                   | `pathwayExampleReducer` with a static initial array      | Example helper panel                                                     | Selecting an example replaces the command tree                 | Keep catalog outside Zustand             | The catalog is immutable; only its selection action belongs to the command store.                 |
+| Tutorial pages                     | `tutorialPageReducer` with a static initial array        | `TutorialPopup`                                                          | None                                                           | Keep outside Zustand                     | The page list is immutable and popup navigation is already local React state.                     |
+| Helper visibility and active panel | `App` local React state                                  | `App`, `HelperLayer`                                                     | None                                                           | Keep local                               | The state has one component owner and no unrelated consumer.                                      |
+| Tutorial index and visibility      | `TutorialPopup` local React state                        | `TutorialPopup`                                                          | None                                                           | Keep local                               | The state is isolated to the popup lifecycle.                                                     |
+| URL hash filter                    | React Router location in `mapStateToProps`               | `App` prop type only; no rendered consumer found                         | Browser URL                                                    | Keep in router or remove if still unused | URL state should not move to Zustand, and the current `filter` prop is not read by the component. |
+| Optional `router` field            | `IRootState` type only                                   | No reducer or consumer                                                   | None                                                           | Remove                                   | It has no runtime owner.                                                                          |
 
 ## Target Zustand design
 
@@ -37,19 +37,20 @@
 
 ## Task ownership map
 
-| Ownership key | Unique outcome | Owned artifacts and checks | Depends on |
-| --- | --- | --- | --- |
-| `static-catalog-extraction` | Immutable catalogs are plain typed data and Redux owns only commands. | `src/data/*`, static reducer contents, `App` catalog imports, static state aliases, catalog rendering checks | Baseline |
-| `command-store-migration` | All mutable command reads and writes use one typed Zustand store. | Zustand dependency addition, command store, command selectors/actions, connected `App`, Provider removal, command runtime scenarios | `static-catalog-extraction` |
-| `redux-retirement` | No obsolete Redux implementation, dependency, configuration, or documentation remains. | Legacy directories/files, package and lockfile removals, Vite optimization entry, stale-reference search, dependency tree | `command-store-migration` |
-| `integrated-proof` | The final dependency state typechecks, builds, and preserves all critical UI flows. | Final typecheck, production build, integrated browser regression, diff review, final status | `redux-retirement` |
+| Ownership key               | Unique outcome                                                                         | Owned artifacts and checks                                                                                                          | Depends on                  |
+| --------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| `static-catalog-extraction` | Immutable catalogs are plain typed data and Redux owns only commands.                  | `src/data/*`, static reducer contents, `App` catalog imports, static state aliases, catalog rendering checks                        | Baseline                    |
+| `command-store-migration`   | All mutable command reads and writes use one typed Zustand store.                      | Zustand dependency addition, command store, command selectors/actions, connected `App`, Provider removal, command runtime scenarios | `static-catalog-extraction` |
+| `redux-retirement`          | No obsolete Redux implementation, dependency, configuration, or documentation remains. | Legacy directories/files, package and lockfile removals, Vite optimization entry, stale-reference search, dependency tree           | `command-store-migration`   |
+| `integrated-proof`          | The final dependency state typechecks, builds, and preserves all critical UI flows.    | Final typecheck, production build, integrated browser regression, diff review, final status                                         | `redux-retirement`          |
 
 ## Migration tasks
 
 - [ ] 1. Extract immutable catalogs from Redux
+
   - Ownership key: `static-catalog-extraction`
   - Goal: represent descriptions, examples, and tutorials as typed data modules while leaving Redux responsible only for the mutable command tree.
-  - Scope: `src/reducers/commandDescription.ts`, `src/reducers/pathwayExample.ts`, `src/reducers/tutorialPageReducer.ts`, `src/reducers/index.ts`, `src/reducers/state.ts`, `src/App.tsx`, and new modules under `src/data`.
+  - Scope: `src/reducers/commandDescription.ts`, `src/reducers/pathwayExample.ts`, `src/reducers/tutorialPageReducer.ts`, `src/reducers/index.ts`, `src/reducers/state.ts`, `src/App.tsx`, the helper/tutorial catalog prop types, and new modules under `src/data`.
   - Current behavior: all three reducers return large static initial values and have no action handlers. `App` receives their values through `connect` and passes them to helper, tutorial, input, and list components.
   - Typed design: export `Readonly<Record<string, ICommandDescription>>`, `readonly IPathwayExample[]`, and `readonly ITutorialPage[]` constants. Keep existing model types and data-building helpers, and copy only at an API boundary if a consumer truly requires a mutable array.
   - Steps:
@@ -57,8 +58,9 @@
     2. Relocate the pathway-example builders and array into `src/data/pathwayExamples.ts` without changing paths, command shapes, images, or grouping types.
     3. Transfer the tutorial-page array into `src/data/tutorialPages.ts` while preserving order and displayed text.
     4. Add a single `src/data/index.ts` export surface and import the catalogs in `App` instead of selecting them from Redux.
-    5. Narrow `IRootState`, `rootReducer`, and their aliases to the command domain, removing the unused `router` field and the three static reducers.
-    6. Inspect the helper panel, tutorial popup, error popup, and command descriptions in the browser for unchanged content and ordering.
+    5. Change catalog consumer props to readonly collection types so the data modules cannot be mutated through React boundaries.
+    6. Narrow `IRootState`, `rootReducer`, and their aliases to the command domain, removing the unused `router` field and the three static reducers.
+    7. Inspect the helper panel, tutorial popup, error popup, and command descriptions in the browser for unchanged content and ordering.
   - Legacy removal: remove the three static reducer exports and their state aliases here. Keep the command reducer, Redux store, Provider, middleware, and dependencies until their owner tasks.
   - Expected result: static content renders from typed modules, and Redux state contains only `commands`.
   - Verification: compare representative description entries, simple/color/crazy example groups, and all five tutorial pages before and after the edit; confirm `rootReducer` has one key.
@@ -66,27 +68,17 @@
   - Rollback boundary: `src/data`, the three former static reducer modules, `src/reducers/index.ts`, `src/reducers/state.ts`, and static-data changes in `src/App.tsx`.
 
 - [ ] 2. Replace the command Redux domain with a typed Zustand store
+
   - Ownership key: `command-store-migration`
-  - Goal: make Zustand the sole runtime owner of the command tree and route every command mutation through typed store actions.
-  - Scope: `package.json`, `package-lock.json`, a new `src/store/commandStore.ts`, `src/App.tsx`, `src/index.tsx`, `Canvas`, `CommandEditor`, `CommandInput`, `CommandList`, `HelperLayer`, `HelperWindow`, and `templates/pathwayExample`.
-  - Current behavior: Redux starts with an empty command array; add allocates IDs and recursively indexes repeats; edit recursively replaces a matching command; delete recursively filters an ID; selecting an example replaces the array; every dispatched action is logged in development; command changes redraw the canvas.
-  - Typed design: use `create<CommandStore>()(devtools(...))`, named action records, immutable recursive helpers, and atomic selectors. Do not expose raw `set`, action envelopes, `Dispatch`, `any`, or non-null assertions in the store API.
-  - Steps:
-    1. Install `zustand@^5.0.11` through npm so the manifest and lockfile change together.
-    2. Record add, nested repeat, edit, delete, and example-replacement outputs from the current reducer as migration fixtures or concise evidence.
-    3. Implement the bound command store with immutable helpers and development-only named action observation.
-    4. Subscribe each command-aware leaf component to only the state fields and mutations it consumes, deleting unused command and action props along the way.
-    5. Convert the example tile from dispatching `setCommand` with a wrapper object to calling `replaceCommands` with the selected example command.
-    6. Simplify `App` to an unconnected component and remove `mapStateToProps`, `mapDispatchToProps`, Redux-derived prop types, the unused hash filter, and the `omit` call.
-    7. Delete the React Redux `Provider` and `configureStore()` bootstrapping from `src/index.tsx` so the router renders directly under Strict Mode.
-    8. Exercise command entry, nested rendering, numeric and color edits, deletion at multiple depths, example selection, and canvas redraw against the captured outcomes.
-  - Legacy removal: remove live imports of `react-redux`, `redux`, `redux-actions`, `CommandActions`, reducers, and the Redux store. Leave now-unreachable files and package removals to `redux-retirement`.
-  - Expected result: the application has one active command owner, no dual writes, no Provider, and user interactions produce the same command tree and drawing.
-  - Verification: inspect Zustand selector usage for narrow subscriptions and compare each runtime scenario with the recorded reducer outcome, including development action names.
-  - Completion evidence: all command consumers use `useCommandStore`, the React root has no state provider, legacy Redux modules are unreachable, and command behavior matches the migration evidence.
-  - Rollback boundary: Zustand dependency additions, `src/store/commandStore.ts`, component subscription changes, `src/App.tsx`, and `src/index.tsx`.
+    - Goal: make Zustand the sole runtime owner of the command tree and route every command mutation through typed store actions.
+      - Scope: `package.json`, `package-lock.json`, a new `src/store/commandStore.ts`, `src/App.tsx`, `src/index.tsx`, `Canvas`, `CommandEditor`, `CommandInput`, `CommandList`, `HelperLayer`, `HelperWindow`, and `templates/pathwayExample`.
+        - Current behavior: Redux starts with an empty command array; add allocates IDs and recursively indexes repeats; edit recursively replaces a matching command; delete recursively filters an ID; selecting an example replaces the array; every dispatched action is logged in development; command changes redraw the canvas.
+          - Typed design: use `create<CommandStore>()(devtools(...))`, named action records, immutable recursive helpers, and atomic selectors. Do not expose raw `set`, action envelopes, `Dispatch`, `any`, or non-null assertions in the store API.
+            - Steps:
+              1. Install `zustand@^5.0.11` through npm so the manifest and lockfile change together. 2. Record add, nested repeat, edit, delete, and example-replacement outputs from the current reducer as migration fixtures or concise evidence. 3. Implement the bound command store with immutable helpers and development-only named action observation. 4. Subscribe each command-aware leaf component to only the state fields and mutations it consumes, deleting unused command and action props along the way. 5. Convert the example tile from dispatching `setCommand` with a wrapper object to calling `replaceCommands` with the selected example command. 6. Simplify `App` to an unconnected component and remove `mapStateToProps`, `mapDispatchToProps`, Redux-derived prop types, the unused hash filter, and the `omit` call. 7. Delete the React Redux `Provider` and `configureStore()` bootstrapping from `src/index.tsx` so the router renders directly under Strict Mode. 8. Exercise command entry, nested rendering, numeric and color edits, deletion at multiple depths, example selection, and canvas redraw against the captured outcomes. - Legacy removal: remove live imports of `react-redux`, `redux`, `redux-actions`, `CommandActions`, reducers, and the Redux store. Leave now-unreachable files and package removals to `redux-retirement`. - Expected result: the application has one active command owner, no dual writes, no Provider, and user interactions produce the same command tree and drawing. - Verification: inspect Zustand selector usage for narrow subscriptions and compare each runtime scenario with the recorded reducer outcome, including development action names. - Completion evidence: all command consumers use `useCommandStore`, the React root has no state provider, legacy Redux modules are unreachable, and command behavior matches the migration evidence. - Rollback boundary: Zustand dependency additions, `src/store/commandStore.ts`, component subscription changes, `src/App.tsx`, and `src/index.tsx`.
 
 - [ ] 3. Retire the unreachable Redux system and configuration
+
   - Ownership key: `redux-retirement`
   - Goal: remove every leftover artifact whose only responsibility was the replaced Redux implementation.
   - Scope: `src/actions`, residual `src/reducers`, `src/store/index.ts`, `src/middleware/logger.ts`, `src/utils/index.ts`, `package.json`, `package-lock.json`, `vite.config.js`, `README.md`, and the package description.
@@ -127,17 +119,17 @@
 
 ## Removal ledger
 
-| Legacy element | Replacement or reason to remove | Removal task | Final result |
-| --- | --- | --- | --- |
-| Static description reducer | Typed `commandDescriptions` data module | `static-catalog-extraction` | Pending |
-| Static pathway reducer | Typed `pathwayExamples` data module | `static-catalog-extraction` | Pending |
-| Static tutorial reducer | Typed `tutorialPages` data module | `static-catalog-extraction` | Pending |
-| React Redux `connect` and Provider | Direct Zustand selectors and bound store | `command-store-migration` | Pending |
-| Redux action namespace and command reducer | Typed Zustand actions and immutable helpers | `redux-retirement` | Pending |
-| Redux store, root reducer, state aliases, and logger | Zustand bound store with development action names | `redux-retirement` | Pending |
-| `react-redux`, `redux`, `redux-actions`, `@types/redux-actions` | Superseded dependencies | `redux-retirement` | Pending |
-| Redux Vite prebundle entry and documentation references | Final Zustand configuration and descriptions | `redux-retirement` | Pending |
-| Redux-only `omit` helper | No longer needed after dispatch binding removal | `redux-retirement` | Pending |
+| Legacy element                                                  | Replacement or reason to remove                   | Removal task                | Final result |
+| --------------------------------------------------------------- | ------------------------------------------------- | --------------------------- | ------------ |
+| Static description reducer                                      | Typed `commandDescriptions` data module           | `static-catalog-extraction` | Pending      |
+| Static pathway reducer                                          | Typed `pathwayExamples` data module               | `static-catalog-extraction` | Pending      |
+| Static tutorial reducer                                         | Typed `tutorialPages` data module                 | `static-catalog-extraction` | Pending      |
+| React Redux `connect` and Provider                              | Direct Zustand selectors and bound store          | `command-store-migration`   | Pending      |
+| Redux action namespace and command reducer                      | Typed Zustand actions and immutable helpers       | `redux-retirement`          | Pending      |
+| Redux store, root reducer, state aliases, and logger            | Zustand bound store with development action names | `redux-retirement`          | Pending      |
+| `react-redux`, `redux`, `redux-actions`, `@types/redux-actions` | Superseded dependencies                           | `redux-retirement`          | Pending      |
+| Redux Vite prebundle entry and documentation references         | Final Zustand configuration and descriptions      | `redux-retirement`          | Pending      |
+| Redux-only `omit` helper                                        | No longer needed after dispatch binding removal   | `redux-retirement`          | Pending      |
 
 ## Risks and blockers
 

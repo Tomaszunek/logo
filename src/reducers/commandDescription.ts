@@ -3,6 +3,10 @@ import { CommandDescriptionState } from './state';
 import { ICommandDescription } from '../models';
 
 const initialState: CommandDescriptionState = {
+
+// Export the catalog for static data usage:
+export const commandDescriptions = initialState;
+
   setpos: {
     short: "setpos",
     name: "Set position",

@@ -12,13 +12,10 @@ import { bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import { CommandActions } from "./actions";
 import { CommandModel } from "./models";
-import {
-  IRootState,
-  CommandState,
-  CommandDescriptionState,
-  PathwayExample,
-  TutorialPages,
-} from "./reducers";
+import { IRootState, CommandState } from "./reducers";
+import { commandDescriptions } from "./data/commandDescriptions";
+import { pathwayExamples } from "./data/pathwayExamples";
+import { tutorialPages } from "./data/tutorialPages";
 import { omit } from "./utils";
 import "./App.css";
 import "./vis-001.css";

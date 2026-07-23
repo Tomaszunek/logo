@@ -2,10 +2,11 @@ import * as React from 'react';
 import { IPathwayExample } from 'src/models';
 import HelperWindow from './helperWindow';
 import { CommandActions } from 'src/actions';
+import { ICommandDescription } from 'src/models';
 
 interface HelperLayerProps {
   examplePaths: Array<IPathwayExample>;
-  descriptions: any;
+  descriptions: Readonly<Record<string, ICommandDescription>>;
   actions: CommandActions;
   visible: boolean;
   panel: 'tips' | 'examples';

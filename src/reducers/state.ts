@@ -7,10 +7,6 @@ import {
 
 export interface IRootState {
   commands: ICommandModel[];
-  descriptions: Record<string, ICommandDescription>;
-  pathwayExample: IPathwayExample[];
-  tutorialPages: ITutorialPage[];
-  router?: any;
 }
 
 // Alias types for reducer state shapes
