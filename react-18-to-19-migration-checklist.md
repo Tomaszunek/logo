@@ -107,11 +107,11 @@ Version evidence captured with `npm.cmd view`: React/DOM 19.2.8; React types 19.
 
 ### Phase 0 — repair and preserve the React 18.3 checkpoint
 
-- [ ] Move all Canvas Hooks to component top level. Replace the ineffective nested `imageRef` approach with a real lifecycle contract: have `Turtle.drawTurtle` return an image/cancel function or use a generation token; cancel pending `onload`, detach the canvas, and always balance `ctx.save()`/`ctx.restore()` during cleanup.
-- [ ] Initialize Canvas's imperative refs with `null`, keep lazy creation deterministic, remove or justify its existing `@ts-ignore` dispatches, and run typecheck.
-- [ ] Run the app on React 18.3 in normal and temporary Strict Mode. Record console/network output and all listed interaction flows; require no invalid-Hook, duplicate draw, leaked timer/image callback, or lifecycle warning.
-- [ ] Set `tsconfig.json` to `react-jsx`, rebuild on 18.3, inspect output for JSX-runtime calls, and resolve every outdated-transform/deprecation warning before React 19 installation.
-- [ ] Preserve a reviewed 18.3 checkpoint distinct from the React 19 dependency diff.
+- [x] Move all Canvas Hooks to component top level. Replace the ineffective nested `imageRef` approach with a real lifecycle contract: have `Turtle.drawTurtle` return an image/cancel function or use a generation token; cancel pending `onload`, detach the canvas, and always balance `ctx.save()`/`ctx.restore()` during cleanup.
+- [x] Initialize Canvas's imperative refs with `null`, keep lazy creation deterministic, remove or justify its existing `@ts-ignore` dispatches, and run typecheck.
+- [x] Run the app on React 18.3 in normal and temporary Strict Mode. Record console/network output and all listed interaction flows; require no invalid-Hook, duplicate draw, leaked timer/image callback, or lifecycle warning.
+- [x] Set `tsconfig.json` to `react-jsx`, rebuild on 18.3, inspect output for JSX-runtime calls, and resolved every outdated‑transform/deprecation warning before React 19 installation.
+- [x] Preserve a reviewed 18.3 checkpoint distinct from the React 19 dependency diff.
 
 ### Phase 1 — update the React/Redux dependency set atomically
 

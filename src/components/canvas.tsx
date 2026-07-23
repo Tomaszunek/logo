@@ -46,7 +46,7 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
 
         commands.forEach((command: ICommandModel) => {
       if (command.name === 'repeat' && command.commands) {
-        // @ts-ignore
+        // @ts-ignore – dynamic method name on Caller; type cannot be inferred
         caller[command.name](command);
       } else if (
         command.name === 'setpos' &&
@@ -71,6 +71,8 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
         turtle.clearCanvas();
         turtle.canvas = null;
       }
+      // Cancel any pending image load
+      turtle.cancelImageLoading();
     };
   }, [commands]);
 

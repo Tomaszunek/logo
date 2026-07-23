@@ -14,6 +14,7 @@ export class Turtle {
     public visible: boolean;
 
     public canvas: HTMLCanvasElement | null;
+    private currentImage: HTMLImageElement | null = null;
     constructor(turtle: ITurtleInstance) {        
         this.x = turtle.homeX;
         this.y = turtle.homeY;
@@ -53,14 +54,23 @@ export class Turtle {
     }
 
     public drawTurtle = () => {
-        if(this.canvas === null) {return};    
+        if(this.canvas === null) {return};
         const ctx = this.canvas.getContext("2d");
         if(ctx === null) {return};
         if(this.visible === false) {return;}
         const baseImage = new Image();
-        baseImage.src = logoTurtle;  
+        // Store reference for potential cancellation
+        this.currentImage = baseImage;
+        baseImage.src = logoTurtle;
         ctx.save();
         this.drawImageCenter(baseImage, this.x, this.y, 12, 16, 1, this.dir * Math.PI / 180 + Math.PI/2)
+    }
+
+    public cancelImageLoading = () => {
+        if(this.currentImage) {
+            this.currentImage.onload = null;
+            this.currentImage = null;
+        }
     }
 
     public rotate = (dir:number) => {
