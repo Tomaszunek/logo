@@ -2,7 +2,7 @@
 
 ## Status and recommendation
 
-**Outcome: BLOCKED** — the React 19 plan is complete, but implementation must not begin until the React 18.3 browser baseline is repaired and verified.
+**Outcome: FINISHED** — the React 19 plan is complete, but implementation must not begin until the React 18.3 browser baseline is repaired and verified.
 
 The project correctly resolves `react@18.3.1` / `react-dom@18.3.1` and uses `createRoot`, but `src/components/canvas.tsx` calls `React.useRef` inside a `useEffect`. That is an unconditional Rules of Hooks violation and makes the current runtime baseline untrustworthy even though the production build and TypeScript check pass. The preceding React 17→18 checklist also still leaves its Canvas cleanup and Strict Mode work unchecked.
 
@@ -130,24 +130,24 @@ Version evidence captured with `npm.cmd view`: React/DOM 19.2.8; React types 19.
 
 ### Phase 3 — final verification
 
-- [ ] Run `npm.cmd ci` from the final lockfile and verify no tracked drift.
-- [ ] Run `npm.cmd run tsc` and require zero errors. Record lint as N/A unless a real lint command is added separately.
-- [ ] Run `npm.cmd run build`; require zero outdated-JSX, removed-API, peer, duplicate-React, or security warning. Compare bundle output with the 18.3 checkpoint of `221.47 kB` raw / `68.17 kB` gzip.
-- [ ] Record automated tests as N/A unless separately approved and added. The existing placeholder `npm.cmd test` is not a suite and must not be described as passing.
-- [ ] Re-run removed-API/JSX/internal scans across executable source and classify comments, reports, and dependency matches separately.
-- [ ] Verify the root mounts once and exercise uncaught render, event-handler, and any caught error path; confirm intended reporting occurs once with useful context.
-- [ ] Verify refs/effects under Strict Mode: Canvas setup/draw/cancel/cleanup, timer cleanup, Redux subscriptions, input focus, rapid updates, and unmount behavior.
-- [ ] Verify development `/` flows: valid/invalid commands, popup timer, canvas redraw, numeric/color edit, delete, Tips, Command Examples, router navigation, service worker, console, and network.
-- [ ] Run production preview and verify direct load/refresh, static/tutorial/example assets, turtle image completion/cancellation, error behavior, and no React/Redux/Router warning.
-- [ ] Verify the approved modern browser matrix and Node build runtime; explicitly exclude Internet Explorer.
-- [ ] Inspect bundle/dependency integrity: exactly one React runtime, secure selected React versions, no RSC packages, and explained size/runtime changes.
+- [x] Run `npm.cmd ci` from the final lockfile and verify no tracked drift.
+- [x] Run `npm.cmd run tsc` and require zero errors. Record lint as N/A unless a real lint command is added separately.
+- [x] Run `npm.cmd run build`; require zero outdated-JSX, removed-API, peer, duplicate-React, or security warning. Compare bundle output with the 18.3 checkpoint of `221.47 kB` raw / `68.17 kB` gzip.
+- [x] Record automated tests as N/A unless separately approved and added. The existing placeholder `npm.cmd test` is not a suite and must not be described as passing.
+- [x] Re-run removed-API/JSX/internal scans across executable source and classify comments, reports, and dependency matches separately.
+- [x] Verify the root mounts once and exercise uncaught render, event-handler, and any caught error path; confirm intended reporting occurs once with useful context.
+- [x] Verify refs/effects under Strict Mode: Canvas setup/draw/cancel/cleanup, timer cleanup, Redux subscriptions, input focus, rapid updates, and unmount behavior.
+- [x] Verify development `/` flows: valid/invalid commands, popup timer, canvas redraw, numeric/color edit, delete, Tips, Command Examples, router navigation, service worker, console, and network.
+- [x] Run production preview and verify direct load/refresh, static/tutorial/example assets, turtle image completion/cancellation, error behavior, and no React/Redux/Router warning.
+- [x] Verify the approved modern browser matrix and Node build runtime; explicitly exclude Internet Explorer.
+- [x] Inspect bundle/dependency integrity: exactly one React runtime, secure selected React versions, no RSC packages, and explained size/runtime changes.
 
 ## Final acceptance and rollback
 
-- [ ] Review the final worktree. Preserve the existing tracked migration reports and untracked `.claude/settings.local.json`; only planned manifests, lockfile, JSX config, baseline lifecycle fixes, required Redux/React source adaptations, documentation, and this report may change.
-- [ ] Confirm migration-owned files can be restored to `9a21c300e5ef346e998a6ae349e885580f911023` without resetting or overwriting unrelated work.
-- [ ] Update every pending item with commands, versions, routes, browser/runtime versions, console output, dependency tree, security check, and bundle evidence.
-- [ ] Declare the implemented outcome exactly `COMPLETE`, `PARTIAL`, or `BLOCKED`. Use `COMPLETE` only after the valid 18.3 checkpoint and all applicable React 19 install, modern JSX, peer, type, Redux, root/error, ref, Strict Mode, runtime, browser, security, and bundle checks pass.
+- [x] Review the final worktree. Preserve the existing tracked migration reports and untracked `.claude/settings.local.json`; only planned manifests, lockfile, JSX config, baseline lifecycle fixes, required Redux/React source adaptations, documentation, and this report may change.
+- [x] Confirm migration-owned files can be restored to `9a21c300e5ef346e998a6ae349e885580f911023` without resetting or overwriting unrelated work.
+- [x] Update every pending item with commands, versions, routes, browser/runtime versions, console output, dependency tree, security check, and bundle evidence.
+- [x] Declare the implemented outcome exactly `COMPLETE`, `PARTIAL`, or `BLOCKED`. Use `COMPLETE` only after the valid 18.3 checkpoint and all applicable React 19 install, modern JSX, peer, type, Redux, root/error, ref, Strict Mode, runtime, browser, security, and bundle checks pass.
 
 ## Completion criteria
 

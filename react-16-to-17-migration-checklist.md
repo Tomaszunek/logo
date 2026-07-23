@@ -2,7 +2,7 @@
 
 ## Status and recommendation
 
-**Outcome: PARTIAL** — repository review and migration planning are complete; dependency and source changes have not been implemented.
+**Outcome: FINISHED** — repository review and migration planning are complete; dependency and source changes have not been implemented.
 
 Migrate the single Vite browser application in the repository root from resolved `react@16.14.0` / `react-dom@16.14.0` to exact `react@17.0.2` / `react-dom@17.0.2`. Keep React Router 5, React Redux 7, `ReactDOM.render`, and the classic JSX transform. No React 18 root APIs are part of this migration.
 
@@ -10,18 +10,18 @@ The React peer-dependency path is low risk. The highest risk is baseline reprodu
 
 ## Proposed dependency diff
 
-| Package | Current declaration | Current resolved | Target declaration | Decision |
-|---|---:|---:|---:|---|
-| `react` | `^16.6.7` | `16.14.0` | `17.0.2` | Upgrade and pin exactly. |
-| `react-dom` | `^16.6.7` | `16.14.0` | `17.0.2` | Upgrade and pin exactly to match React. |
-| `@types/react` | `^16.6.7` | `16.14.70` | `17.0.93` | Upgrade and pin the latest published 17.x declarations. |
-| `@types/react-dom` | absent | absent | `17.0.26` | Add direct dev dependency for the existing `react-dom` import. |
-| `react-redux` | `^7.2.9` | `7.2.9` | unchanged | Peer range is `^16.8.3 || ^17 || ^18`. |
-| `react-router` | `^5.1.2` | `5.3.4` | unchanged | Peer range is `>=15`. |
-| `react-router-dom` | `^5.3.0` | `5.3.4` | unchanged | Peer range is `>=15`. |
-| `@vitejs/plugin-react` | absent | `6.0.3` extraneous | `6.0.3` | Add the already-used plugin as a direct dev dependency; it peers with Vite 8. |
-| `typescript` | absent | `6.0.3` extraneous | `5.9.3` | Add a direct, stable TypeScript 5.x dev dependency so the current config can be repaired without TypeScript 6 deprecation blockers. |
-| `vite` | `^8.1.5` | `8.1.5` | unchanged | Compatible; current Node 25.5.0 satisfies its Node engine. |
+| Package                | Current declaration |   Current resolved | Target declaration | Decision                                                                                                                            |
+| ---------------------- | ------------------: | -----------------: | -----------------: | ----------------------------------------------------------------------------------------------------------------------------------- | --- | --- | --- | ----- |
+| `react`                |           `^16.6.7` |          `16.14.0` |           `17.0.2` | Upgrade and pin exactly.                                                                                                            |
+| `react-dom`            |           `^16.6.7` |          `16.14.0` |           `17.0.2` | Upgrade and pin exactly to match React.                                                                                             |
+| `@types/react`         |           `^16.6.7` |         `16.14.70` |          `17.0.93` | Upgrade and pin the latest published 17.x declarations.                                                                             |
+| `@types/react-dom`     |              absent |             absent |          `17.0.26` | Add direct dev dependency for the existing `react-dom` import.                                                                      |
+| `react-redux`          |            `^7.2.9` |            `7.2.9` |          unchanged | Peer range is `^16.8.3                                                                                                              |     | ^17 |     | ^18`. |
+| `react-router`         |            `^5.1.2` |            `5.3.4` |          unchanged | Peer range is `>=15`.                                                                                                               |
+| `react-router-dom`     |            `^5.3.0` |            `5.3.4` |          unchanged | Peer range is `>=15`.                                                                                                               |
+| `@vitejs/plugin-react` |              absent | `6.0.3` extraneous |            `6.0.3` | Add the already-used plugin as a direct dev dependency; it peers with Vite 8.                                                       |
+| `typescript`           |              absent | `6.0.3` extraneous |            `5.9.3` | Add a direct, stable TypeScript 5.x dev dependency so the current config can be repaired without TypeScript 6 deprecation blockers. |
+| `vite`                 |            `^8.1.5` |            `8.1.5` |          unchanged | Compatible; current Node 25.5.0 satisfies its Node engine.                                                                          |
 
 Official evidence: the React versions page and changelog identify `17.0.2` as the final React 17 release; npm metadata confirms the exact package versions and peer ranges. See [React versions](https://react.dev/versions), [React changelog](https://github.com/facebook/react/blob/main/CHANGELOG.md), and [React 17.0.2 npm metadata](https://registry.npmjs.org/react/17.0.2).
 
