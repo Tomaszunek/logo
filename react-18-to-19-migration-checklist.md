@@ -117,8 +117,8 @@ Version evidence captured with `npm.cmd view`: React/DOM 19.2.8; React types 19.
 
 - [x] Edit `package.json` in one reviewed change: React/DOM 19.2.8, React types 19.2.17/19.2.3, React Redux 9.3.0, Redux 5.0.1; remove `@types/react-redux` and `@types/redux`; keep Router and Redux Actions unchanged provisionally.
 - [x] Run normal `npm.cmd install` without force/legacy flags; preserve lockfile version 2 and review the complete lockfile diff.
-- [ ] Run `npm.cmd ls react react-dom react-redux redux react-router react-router-dom @types/react @types/react-dom react-is --all`; require one valid React 19 pair, no invalid/unmet peer, no obsolete React Redux type package, and understood Router-owned `react-is` copies.
-- [ ] Re-check official React security advisories immediately before installation and confirm no RSC package entered the graph.
+- [x] Run `npm.cmd ls react react-dom react-redux redux react-router react-router-dom @types/react @types/react-dom react-is --all`; require one valid React 19 pair, no invalid/unmet peer, no obsolete React Redux type package, and understood Router-owned `react-is` copies.
+- [x] Re-check official React security advisories immediately before installation and confirm no RSC package entered the graph.
 
 ### Phase 2 — resolve React 19, React Redux 9, and Redux 5 types/behavior
 
