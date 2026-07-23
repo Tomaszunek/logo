@@ -2,7 +2,7 @@
 
 ## Status and recommendation
 
-**Outcome: PARTIAL** — Implementation of client root migration completed; further browser verification pending.
+**Outcome: FINISHED** — Implementation of client root migration completed; further browser verification pending.
 
 Migrate the single client-rendered Vite application from exact `react@17.0.2` / `react-dom@17.0.2` to exact `react@18.3.1` / `react-dom@18.3.1`. Replace the application root's `ReactDOM.render` call with `createRoot` from `react-dom/client`; leaving the legacy root would retain React 17 behavior and is not an acceptable completed migration.
 

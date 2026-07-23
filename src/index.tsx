@@ -15,11 +15,13 @@ if (!rootEl) {
 }
 const root = createRoot(rootEl!);
 root.render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <Application />
-    </BrowserRouter>
-  </Provider>
+  <React.StrictMode>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Application />
+      </BrowserRouter>
+    </Provider>
+  </React.StrictMode>
 );
 
 registerServiceWorker();
