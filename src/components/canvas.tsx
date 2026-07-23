@@ -13,8 +13,8 @@ interface IProps {
 
 const Canvas: React.FC<IProps> = ({ commands }) => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const turtleRef = React.useRef<Turtle>();
-  const callerRef = React.useRef<Caller>();
+  const turtleRef = React.useRef<Turtle | null>(null);
+  const callerRef = React.useRef<Caller | null>(null);
 
   // Lazy initialization of Turtle and Caller
   if (!turtleRef.current) {
@@ -44,9 +44,7 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
     // Clear any existing drawing before applying new commands
     turtle.clearCanvas();
 
-    const imageRef = React.useRef<HTMLImageElement | null>(null);
-
-    commands.forEach((command: ICommandModel) => {
+        commands.forEach((command: ICommandModel) => {
       if (command.name === 'repeat' && command.commands) {
         // @ts-ignore
         caller[command.name](command);
@@ -72,9 +70,6 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
       if (turtle.canvas) {
         turtle.clearCanvas();
         turtle.canvas = null;
-      }
-      if (imageRef.current) {
-        imageRef.current.onload = null; // cancel pending onload if any
       }
     };
   }, [commands]);
