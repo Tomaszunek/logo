@@ -1,8 +1,7 @@
-import * as React from 'react';
-// Removed react-redux connect import; Canvas is now a plain component receiving props directly.
-import { ICommandModel } from 'src/models';
-import { Turtle } from '../utils/turtle';
-import { Caller } from 'src/utils/caller';
+import * as React from "react";
+import { ICommandModel } from "src/models";
+import { Turtle } from "../utils/turtle";
+import { Caller } from "src/utils/caller";
 
 interface IProps {
   text?: string | null;
@@ -21,7 +20,7 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
       homeX: 400,
       homeY: 400,
       dir: 0,
-      strokeColor: '#000000',
+      strokeColor: "#000000",
       strokeWeight: 1,
       pen: true,
       visible: true,
@@ -42,18 +41,21 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
     // Clear any existing drawing before applying new commands
     turtle.clearCanvas();
 
-        commands.forEach((command: ICommandModel) => {
-      if (command.name === 'repeat' && command.commands) {
+    commands.forEach((command: ICommandModel) => {
+      if (command.name === "repeat" && command.commands) {
         // @ts-ignore – dynamic method name on Caller; type cannot be inferred
         caller[command.name](command);
       } else if (
-        command.name === 'setpos' &&
+        command.name === "setpos" &&
         command.value !== undefined &&
         command.arg2 !== undefined
       ) {
         // @ts-ignore
         caller[command.name](command.value, command.arg2);
-      } else if ((command.name === 'setsc' || command.name === 'setbc') && command.color) {
+      } else if (
+        (command.name === "setsc" || command.name === "setbc") &&
+        command.color
+      ) {
         // @ts-ignore
         caller[command.name](command.color);
       } else {
@@ -76,7 +78,13 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
 
   return (
     <div className="canvas">
-      <canvas ref={canvasRef} width={800} height={800} role="img" aria-label="Turtle drawing canvas" />
+      <canvas
+        ref={canvasRef}
+        width={800}
+        height={800}
+        role="img"
+        aria-label="Turtle drawing canvas"
+      />
     </div>
   );
 };

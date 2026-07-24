@@ -3,8 +3,7 @@ import { createRoot } from "react-dom/client";
 import { Application } from "./router";
 // import { configureStore } from "./store";
 import registerServiceWorker from "./registerServiceWorker";
-// import { Provider } from "react-redux";
-// import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 
 
@@ -14,9 +13,9 @@ if (!rootEl) {
 }
 const root = createRoot(rootEl!);
 root.render(
-  <React.StrictMode>
-      <Application />
-  </React.StrictMode>
+<BrowserRouter>
+    <Application />
+</BrowserRouter>
 );
 
 registerServiceWorker();

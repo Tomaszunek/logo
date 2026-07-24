@@ -25,9 +25,9 @@ export const App: React.FC = () => {
   const addCommand = useCommandStore(state => state.addCommand);
   const editCommand = useCommandStore(state => state.editCommand);
   const deleteCommand = useCommandStore(state => state.deleteCommand);
-  const setCommand = useCommandStore(state => state.setCommand);
+  const replaceCommands = useCommandStore(state => state.replaceCommands);
 
-  const actions: any = { addCommand, editCommand, deleteCommand, setCommand };
+  const actions: any = { addCommand, editCommand, deleteCommand, replaceCommands };
 
   const handleShowHelper = (panel: "tips" | "examples") => {
     setShowHelper(true);

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ICommandModel, ICommandDescription, CommandTypes } from 'src/models';
-// import { CommandActions } from 'src/actions'; // not used
-
+// 
 interface IProps {
   text?: string | null;
   commands: Array<ICommandModel>;

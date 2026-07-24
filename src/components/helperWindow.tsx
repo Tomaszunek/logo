@@ -1,19 +1,23 @@
-import * as React from 'react';
-import { IPathwayExample } from 'src/models';
-import PathwayExample from './templates/pathwayExample';
-import CommandDescription from './templates/CommandDescription';
-// No Redux action types needed; use simple actions object
+import * as React from "react";
+import { IPathwayExample } from "src/models";
+import PathwayExample from "./templates/pathwayExample";
+import CommandDescription from "./templates/CommandDescription";
 
 interface IProps {
-  examplePaths: Array<IPathwayExample>,
-  descriptions: any,
-  itemStyle: React.CSSProperties,
-  site: string,
-  actions: any // use actions from Zustand store
+  examplePaths: Array<IPathwayExample>;
+  descriptions: any;
+  itemStyle: React.CSSProperties;
+  site: string;
+  actions: any; // use actions from Zustand store
 }
 
-const HelperWindow: React.FC<IProps> = ({ examplePaths, descriptions, itemStyle, site, actions }) => {
-
+const HelperWindow: React.FC<IProps> = ({
+  examplePaths,
+  descriptions,
+  itemStyle,
+  site,
+  actions,
+}) => {
   const displayAll = () => {
     const groups: Record<string, IPathwayExample[]> = {};
 
@@ -28,14 +32,21 @@ const HelperWindow: React.FC<IProps> = ({ examplePaths, descriptions, itemStyle,
 
     return Object.entries(groups).map(([type, examples]) => (
       <div key={type}>
-        <div className={`commandType ${type}`}> {displayExample(examples)} </div>
+        <div className={`commandType ${type}`}>
+          {" "}
+          {displayExample(examples)}{" "}
+        </div>
       </div>
     ));
   };
 
   const displayExample = (examples: Array<IPathwayExample>) =>
     examples.map((example) => (
-      <PathwayExample actions={actions} key={example.name} examplePath={example}/>
+      <PathwayExample
+        actions={actions}
+        key={example.name}
+        examplePath={example}
+      />
     ));
 
   const displayCommands = () => {
@@ -47,11 +58,11 @@ const HelperWindow: React.FC<IProps> = ({ examplePaths, descriptions, itemStyle,
       if (descriptions[i]) {
         if (index % 2 === 0) {
           renderedTypesL.push(
-            <CommandDescription key={i} description={descriptions[i]}/>
+            <CommandDescription key={i} description={descriptions[i]} />,
           );
         } else {
           renderedTypesR.push(
-            <CommandDescription key={i} description={descriptions[i]}/>
+            <CommandDescription key={i} description={descriptions[i]} />,
           );
         }
         index++;
@@ -67,7 +78,10 @@ const HelperWindow: React.FC<IProps> = ({ examplePaths, descriptions, itemStyle,
   };
 
   return (
-    <div style={itemStyle} className={`helperWindow ${site}`}> {site === 'right' ? displayAll() : displayCommands()} </div>
+    <div style={itemStyle} className={`helperWindow ${site}`}>
+      {" "}
+      {site === "right" ? displayAll() : displayCommands()}{" "}
+    </div>
   );
 };
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ICommandModel } from 'src/models';
+import { ICommandModel, ICommandDescription } from 'src/models';
 // actions removed; use Zustand store instead
 
 import { Parser } from 'src/utils/parser';
@@ -10,7 +10,7 @@ interface IProps {
   text?: string | null;
   commands: Array<ICommandModel>;
   actions: any; // use actions from Zustand store
-  descriptions: any;
+  descriptions: Readonly<Record<string,ICommandDescription>>;
 }
 
 const CommandInput: React.FC<IProps> = ({ text, commands, actions, descriptions }) => {

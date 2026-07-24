@@ -67,8 +67,7 @@ interface CommandState {
   addCommand: (item: ICommandModel) => void;
   deleteCommand: (id: number) => void;
   editCommand: (item: ICommandModel) => void;
-  setCommand: (payload: ICommandModel) => void;
-  setAll: (commands: Array<ICommandModel>) => void;
+  replaceCommands: (commands: Array<ICommandModel>) => void;
 }
 
 export const useCommandStore = create<CommandState>((set, get) => ({
@@ -110,9 +109,7 @@ export const useCommandStore = create<CommandState>((set, get) => ({
     const updated = findElementById(currentCommands, item);
     set({ commands: updated });
   },
-  setCommand: (payload) => {
-    if (payload && payload.commands) {
-      set({ commands: payload.commands });
-    }
+  replaceCommands: (commands: Array<ICommandModel>) => {
+    set({ commands });
   },
 }));

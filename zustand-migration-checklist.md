@@ -48,7 +48,7 @@
 
 ## Migration tasks
 
-- [ ] 1. Extract immutable catalogs from Redux
+- [x] 1. Extract immutable catalogs from Redux
 
   - Ownership key: `static-catalog-extraction`
   - Goal: represent descriptions, examples, and tutorials as typed data modules while leaving Redux responsible only for the mutable command tree.
