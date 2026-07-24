@@ -51,8 +51,6 @@ const CommandInput: React.FC<IProps> = ({ descriptions }) => {
     }, 5000);
   };
 
-  const togglePopup = () => setShowPopup(prev => !prev);
-
   const onInputChange = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       const parser = new Parser((e.target as HTMLInputElement).value.trim()).parse(onError);
@@ -79,7 +77,7 @@ const CommandInput: React.FC<IProps> = ({ descriptions }) => {
         onKeyPress={onInputChange}
       />
       {showPopup && (
-        <Popup massage={popupText} closePopup={togglePopup} />
+        <Popup massage={popupText} />
       )}
     </>
   );

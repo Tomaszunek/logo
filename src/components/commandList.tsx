@@ -35,7 +35,7 @@ const CommandList: React.FC<IProps> = ({ descriptions }) => {
                 type="button"
                 className="remove"
                 aria-label={`Remove ${item.name} command`}
-                onClick={(e) => removeCommand(e, item.id)}
+                onClick={() => removeCommand(item.id)}
               >
                 X
               </button>
@@ -71,7 +71,7 @@ const CommandList: React.FC<IProps> = ({ descriptions }) => {
     editCommand(command);
   };
 
-  const removeCommand = (e: React.MouseEvent<HTMLButtonElement>, id: number) => {
+  const removeCommand = (id: number) => {
     deleteCommand(id);
   };
 

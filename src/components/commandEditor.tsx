@@ -17,7 +17,7 @@ const CommandEditor: React.FC = () => {
           </div>
           <button
             type="button"
-            aria-label="Remove command"
+            aria-label={`Remove ${name} command`}
             className="removeButton"
             onClick={() => deleteCommand(id)}
           >

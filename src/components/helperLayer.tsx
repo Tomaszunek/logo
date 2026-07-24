@@ -22,7 +22,14 @@ const HelperLayer: React.FC<HelperLayerProps> = ({ examplePaths, descriptions, v
         examplePaths={examplePaths}
         site={site}
       />
-      <button aria-label="Close helper panel" onClick={onClose} style={{ position: "absolute", top: 10, right: 10 }}>✖</button>
+      <button
+        type="button"
+        aria-label="Close helper panel"
+        onClick={onClose}
+        style={{ position: "absolute", top: 10, right: 10 }}
+      >
+        &times;
+      </button>
     </div>
   );
 };

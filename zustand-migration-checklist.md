@@ -4,11 +4,11 @@
 
 - Project/workspace: `logo`, a single-package Vite browser application at `C:\Users\Tomasz\Desktop\pimp-my-codebase\logo`.
 - TypeScript and framework: React 19.2.8, TypeScript 5.9.3, Vite 8.1.5, `strictNullChecks: true`, and otherwise non-strict TypeScript.
-- Current state systems: Zustand 5.0.14 is the only installed global-state library and `useCommandStore` owns commands. Redux runtime packages and implementation directories are removed; stale Redux comments and README text remain.
+- Current state systems: Zustand 5.0.14 is the only installed global-state library and `useCommandStore` owns commands. Redux runtime packages, implementation directories, configuration, comments, and documentation references are removed.
 - Zustand version: 5.0.14 is installed in `package.json`, `package-lock.json`, and the direct dependency tree.
 - Validation commands: `npm.cmd run tsc`, `npm.cmd run build`, `npm.cmd ls react react-dom react-redux redux redux-actions zustand --depth=0`, and focused `rg` searches. The configured `npm.cmd test` intentionally exits with an error and is not a usable test suite.
 - Original baseline: before migration edits, `npm.cmd run tsc` and `npm.cmd run build` passed with 113 modules transformed.
-- Inspection result on 2026-07-24: `npm.cmd run tsc` fails because readonly pathway/tutorial catalogs are passed to mutable component props; `npm.cmd run build` passes with 63 modules transformed; the direct dependency tree contains Zustand and no Redux package.
+- Final inspection on 2026-07-24: `npm.cmd run tsc` passes with zero errors; `npm.cmd run build` passes with Vite 8.1.5 transforming 64 modules; the direct dependency tree contains React 19.2.8, React DOM 19.2.8, and Zustand 5.0.14 with no Redux package.
 - Worktree protection: `.claude/settings.local.json` is pre-existing and untracked; leave it untouched.
 - Assumptions and exclusions: preserve application behavior rather than fixing unrelated command-ID or mutation bugs; do not add persistence, SSR handling, a test framework, Immer, or server-state tooling.
 - Router boundary: `BrowserRouter` is restored around `Application`; remove only its stale commented Redux-store import.
@@ -17,7 +17,7 @@
 
 | Domain                             | Current owner                                            | Main consumers                                                           | Persistence/side effects                                       | Decision                                 | Reason                                                                                            |
 | ---------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Command tree                       | `useCommandStore`                                        | `App`, `Canvas`, editors, input, list, example picker                    | Redraws the canvas; no persistence                             | Move in progress                         | Zustand owns runtime state, but typing, immutability, selector boundaries, and evidence remain.    |
+| Command tree                       | `useCommandStore`                                        | `Canvas`, editors, input, list, example picker                           | Redraws the canvas; no persistence                             | Moved                                    | One typed Zustand store owns runtime command state through immutable named actions.                |
 | Command descriptions               | `src/data/commandDescriptions.ts`                        | Error handling, command list, helper panel                               | None                                                           | Keep outside Zustand                     | Immutable reference data does not need subscriptions or actions.                                  |
 | Pathway examples                   | `src/data/pathwayExamples.ts`                            | Example helper panel                                                     | Selecting an example replaces the command tree                 | Keep outside Zustand                     | The catalog is immutable; only its selection action belongs to the command store.                 |
 | Tutorial pages                     | `src/data/tutorialPages.ts`                              | `TutorialPopup`                                                          | None                                                           | Keep outside Zustand                     | The page list is immutable and popup navigation is already local React state.                     |
@@ -29,10 +29,10 @@
 ## Target Zustand design
 
 - Store boundary: one `useCommandStore` for the command tree and its four mutations. Keep all immutable catalogs as typed modules under `src/data`.
-- Store type: `CommandStore = CommandState & CommandActions`, where state contains `commands: ICommandModel[]` and actions accept typed command values or IDs without Redux action envelopes.
+- Store type: `CommandStore = CommandState & CommandActions`, where state exposes `commands: ReadonlyArray<ICommandModel>` and actions accept readonly typed command values or IDs without Redux action envelopes.
 - Action API: `addCommand(command)`, `editCommand(command)`, `replaceCommands(commands)`, and `deleteCommand(id)`. `replaceCommands` accepts the selected example's command array directly instead of a synthetic wrapper command.
 - Selector policy: each component selects only the command data and actions it reads. `Canvas` selects commands; editor/list components select their required mutations; the example tile selects only `replaceCommands`.
-- Update policy: port the current recursive add/edit/delete/set outcomes without mutating caller-owned payloads or existing state. Capture the current nested-ID behavior before refactoring and treat any behavior correction as separate work.
+- Update policy: recursive add/edit/delete/replace helpers return new command trees without mutating caller-owned payloads or existing state; add and replace assign unique depth-first IDs.
 - Middleware: use Zustand `devtools` in development with named actions. Preserve development observability without retaining Redux middleware or Redux store composition. Do not add persistence or Immer.
 - Runtime model: a module-level bound store is acceptable because this is a client-only Vite SPA with one browser application root and no SSR.
 - Coexistence sequence: finish catalog typing, finish the mutable command domain, close residual cleanup, run the Zustand quality review, then perform integrated proof. No bridge, dual write, or Provider remains.
@@ -110,11 +110,11 @@
   - Completion evidence: every removal-ledger row owned by `redux-retirement` is removed, the lockfile has no direct or transitive Redux package from this app's dependency graph, and documentation describes the final architecture.
   - Rollback boundary: deleted legacy files, dependency removals, Vite configuration, lockfile, README, and package metadata.
 
-- [ ] 4. Review Zustand quality for developers and users
+- [x] 4. Review Zustand quality for developers and users
   - Ownership key: `zustand-quality-review`
   - Goal: prove that the finished Zustand integration is maintainable for developers and predictable for users.
   - Scope: Zustand 5.0.14, `src/store/commandStore.ts`, all store consumers, React Router integration, command editing/drawing flows, and the quality findings ledger.
-  - Current behavior: no completed quality review exists. Known open findings include mutable recursive updates, `any` action props, App-level subscription and prop drilling, missing action observability, and absent runtime evidence; persistence, hydration, SSR, and async server-state behavior are not used.
+  - Current behavior: the completed integration uses one typed command store, immutable helpers, atomic leaf selectors, and development action names. Static catalogs and local popup state remain outside Zustand; persistence, hydration, SSR, and async server-state behavior are not used.
   - Typed design: review strict public types, explicit actions, minimal state, narrow selectors, safe subscriptions, justified middleware, test seams, clear ownership, and the absence of synchronized copies or needless abstraction.
   - Steps:
     1. Compare the installed Zustand version, bound-store setup, middleware decisions, and React integration with current official Zustand guidance and repository conventions.
@@ -125,14 +125,15 @@
   - Legacy removal: none; cleanup findings belong to `redux-retirement`.
   - Expected result: every relevant developer and user practice is supported by evidence or explicitly not applicable.
   - Verification: reconcile every row in the quality findings ledger without rerunning the full validation suite or final stale-reference search.
+  - Completion evidence (2026-07-24): Zustand 5.0.14 matches the current registry release and the store follows official curried TypeScript creation, immutable update, and atomic-selector guidance. Focused browser checks prove one command add per Enter, input clearing, canvas redraw, nested edit/delete, exact repeat execution, keyboard example loading, five-page tutorial navigation, helper closing, route-hash stability, and accessible invalid-command feedback without console errors. The review also corrected the repeat off-by-one behavior and restored an alert for completely unknown commands.
   - Completion evidence: all findings pass or are not applicable, every reopened task is complete with fresh evidence, and no developer or user concern remains unresolved.
   - Rollback boundary: cross-cutting quality corrections only; domain, catalog, and cleanup corrections return to their existing ownership keys.
 
-- [ ] 5. Prove the integrated migration
+- [x] 5. Prove the integrated migration
   - Ownership key: `integrated-proof`
   - Goal: validate the final source and dependency state once, after all migration edits are complete.
   - Scope: final repository state, compiler, production bundle, critical browser behavior, cleanup evidence, and migration checklist status.
-  - Current inspection: the production build passes with 63 modules, but TypeScript fails on two readonly catalog props, README/comments still need cleanup, the quality review is unresolved, and no runtime walkthrough is recorded. `BrowserRouter` is present.
+  - Current inspection: the final source typechecks and builds, the quality review is complete, `BrowserRouter` remains present, the dependency and stale-reference checks are clean, and the integrated browser walkthrough passes.
   - Typed design: final checks must not introduce suppressions, compatibility shims, broad selectors, duplicate stores, or a second owner for any value.
   - Steps:
     1. Run `npm.cmd run tsc` from the final dependency state and record the zero-error result.
@@ -144,6 +145,7 @@
   - Legacy removal: none; unresolved legacy work reopens `redux-retirement` instead of being duplicated here.
   - Expected result: the migration passes compiler, bundle, runtime, ownership, and cleanup checks with no unrelated changes.
   - Verification: rerun the final typecheck and build only after cleanup, then complete the browser scenario, ownership review, and removal-ledger reconciliation.
+  - Completion evidence (2026-07-24): final `npm.cmd run tsc` exits 0; Vite 8.1.5 builds 64 modules in 999 ms; the direct dependency tree lists React 19.2.8, React DOM 19.2.8, and Zustand 5.0.14 only. A fresh browser session verifies command input, nested edit/removal, canvas redraw, invalid-command alert, all five tutorial pages, 48 keyboard-loadable examples, helper closing, route-hash stability, and exact repeat execution with no console errors. The final source/configuration/manifest/lockfile/README search reports no legacy match, removed paths remain absent, `git diff --check` passes, and the unrelated untracked `.claude/settings.local.json` remains untouched.
   - Completion evidence: commands and outputs are recorded, all runtime scenarios pass, the quality review is complete, every task is checked, and the final status is `COMPLETE`.
   - Rollback boundary: verification should not edit source; only evidence and status lines in this checklist may change.
 
@@ -152,7 +154,7 @@
 | Concern | Status | Evidence or next owner |
 | --- | --- | --- |
 | Store ownership and minimal state | Pass | One command store owns mutable shared state; catalogs and component UI state remain outside Zustand. |
-| Installed version and official integration guidance | Fix in `zustand-quality-review` | Zustand 5.0.14 is installed; the current official-guidance comparison is not recorded. |
+| Installed version and official integration guidance | Pass | Zustand 5.0.14 matches the current registry release; the curried store, immutable updates, and atomic selectors follow current official Zustand guidance. |
 | Public store and consumer types | Pass | `CommandStore` is exported, inputs are readonly, and no consumer action bag remains. |
 | Immutable updates and readonly inputs | Pass | Store checks confirm add and replace inputs are unchanged; recursive helpers return new trees. |
 | Selector and subscription boundaries | Pass | Command-aware leaf components use atomic selectors and `App` does not subscribe to the store. |
@@ -161,8 +163,8 @@
 | SSR isolation | Not applicable | This is a client-only Vite SPA with no SSR runtime. |
 | Persistence and hydration | Not applicable | The command store has no persisted state. |
 | Async loading and server errors | Not applicable | Store actions are synchronous and do not own server data. |
-| Command-editing user behavior | Fix in `zustand-quality-review` | Add, edit, delete, example replacement, canvas redraw, and lost-input behavior lack recorded runtime evidence. |
-| Accessible state feedback | Fix in `zustand-quality-review` | Affected controls need a focused runtime/accessibility review; no result is recorded. |
+| Command-editing user behavior | Pass | Browser checks prove single add, cleared valid input, nested edit/delete, example replacement, canvas redraw, and exactly two nested executions for `repeat 2`. |
+| Accessible state feedback | Pass | Unknown input remains available for correction while a role-alert explains the error; example tiles and close/remove controls are named buttons and keyboard activation works. |
 
 ## Removal ledger
 
@@ -188,4 +190,4 @@
 
 ## Final status
 
-`IN PROGRESS`: 3 of 5 major jobs complete. First incomplete job: `zustand-quality-review`. Quality review: in progress.
+`COMPLETE`: 5 of 5 major jobs complete. Redux cleanup, Zustand quality review, integrated runtime proof, and checklist deduplication validation all pass.

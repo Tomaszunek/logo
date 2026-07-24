@@ -6,6 +6,46 @@ export class Caller {
     constructor(turtle: Turtle) {
         this.turtle = turtle;
     }
+    public execute = (command: ICommandModel) => {
+        switch (command.name) {
+            case 'repeat':
+                this.repeat(command);
+                break;
+            case 'setpos':
+                if (command.value !== undefined && command.arg2 !== undefined) {
+                    this.setpos(command.value, command.arg2);
+                }
+                break;
+            case 'setsc':
+                this.setsc(command.color);
+                break;
+            case 'setbc':
+                this.setbc(command.color);
+                break;
+            case 'fd':
+            case 'bk':
+            case 'tl':
+            case 'tr':
+            case 'setsw':
+                this[command.name](command.value ?? 0);
+                break;
+            case 'hideturtle':
+            case 'showturtle':
+            case 'home':
+            case 'penup':
+            case 'pendown':
+                this[command.name]();
+                break;
+            case 'load':
+                this.load(command.filename);
+                break;
+            case 'save':
+                this.save(command.filename);
+                break;
+            default:
+                break;
+        }
+    }
     public fd = (dist: number) => {
         this.turtle.drawLine(dist);
     }
@@ -21,19 +61,9 @@ export class Caller {
     public repeat = (command: ICommandModel) => {
         const caller = new Caller(this.turtle);
         if(command && command.value) {
-            for(let i = 0; i <= command.value; i++) {
+            for(let i = 0; i < command.value; i++) {
                 if(command.commands) {
-                    command.commands.forEach(newCommand => {
-                        if(command.name === 'repeat' && newCommand.commands) {
-                            caller[newCommand.name](newCommand)
-                          } else if(newCommand.name === 'setpos' && newCommand.value && newCommand.arg2) {
-                            caller[newCommand.name](newCommand.value, newCommand.arg2)                
-                          } else if(newCommand.name === 'setsc' || newCommand.name === 'setbc' && newCommand.color) {
-                            caller[newCommand.name](newCommand.color)                
-                          } else {
-                            caller[newCommand.name](newCommand.value);
-                          }
-                    });
+                    command.commands.forEach((newCommand) => caller.execute(newCommand));
                 }
             }
         }
@@ -70,10 +100,10 @@ export class Caller {
     public setsw = (weight: number) => {
         this.turtle.setStrokeWeight(weight);               
     }
-    public load = (dir: number) => {
+    public load = (_filename?: string) => {
         this.turtle.setPen(true);
     }
-    public save = (dir: number) => {
+    public save = (_filename?: string) => {
         this.turtle.setPen(true);
     }
-} 
+}

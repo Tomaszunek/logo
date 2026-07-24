@@ -38,28 +38,7 @@ const Canvas: React.FC = () => {
     // Clear any existing drawing before applying new commands
     turtle.clearCanvas();
 
-    commands.forEach((command: ICommandModel) => {
-      if (command.name === "repeat" && command.commands) {
-        // @ts-ignore – dynamic method name on Caller; type cannot be inferred
-        caller[command.name](command);
-      } else if (
-        command.name === "setpos" &&
-        command.value !== undefined &&
-        command.arg2 !== undefined
-      ) {
-        // @ts-ignore
-        caller[command.name](command.value, command.arg2);
-      } else if (
-        (command.name === "setsc" || command.name === "setbc") &&
-        command.color
-      ) {
-        // @ts-ignore
-        caller[command.name](command.color);
-      } else {
-        // @ts-ignore
-        caller[command.name](command.value);
-      }
-    });
+    commands.forEach((command: ICommandModel) => caller.execute(command));
 
     turtle.drawTurtle();
 
