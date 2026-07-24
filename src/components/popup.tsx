@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-const Popup: React.FC<IProps> = ({ massage, closePopup }) => {
+const Popup: React.FC<IProps> = ({ massage }) => {
   return (
     <div className="popup" role="alert" aria-live="assertive">
       <div className="popupInner">
@@ -14,7 +14,6 @@ export default Popup;
 
 interface IProps {
   massage: string;
-  closePopup: any;
 }
 
   

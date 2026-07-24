@@ -1,1 +1,1 @@
-Its Logo implementation using React and Redux manage global state.
+Logo playground implemented with React and Zustand-managed command state.

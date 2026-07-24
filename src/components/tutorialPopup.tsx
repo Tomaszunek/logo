@@ -20,7 +20,13 @@ const TutorialPopup: React.FC<IProps> = ({ tutorialPages }) => {
     return (
       <div>
         <div className="title">
-          <button onClick={() => setVisibility(prev=>!prev)}>X</button>
+          <button
+            type="button"
+            aria-label="Close tutorial"
+            onClick={() => setVisibility(prev=>!prev)}
+          >
+            X
+          </button>
           <p>{siteNumber + 1}) {title} - {name}</p>
         </div>
         <div className="content">
@@ -41,8 +47,8 @@ const TutorialPopup: React.FC<IProps> = ({ tutorialPages }) => {
     <div className="tutorialPopup" style={style}>
       {displayContent(tutorialPages[siteNumber])}
       <div className="tutorialNav">
-        <button style={bbstyle} onClick={(e) => changeSite(e, 'left')}>{'< BACK'}</button>
-        <button style={brstyle} onClick={(e) => changeSite(e, 'right')}>{'NEXT >'}</button>
+        <button type="button" style={bbstyle} onClick={(e) => changeSite(e, 'left')}>{'< BACK'}</button>
+        <button type="button" style={brstyle} onClick={(e) => changeSite(e, 'right')}>{'NEXT >'}</button>
       </div>
     </div>
   );
@@ -51,5 +57,5 @@ const TutorialPopup: React.FC<IProps> = ({ tutorialPages }) => {
 export default TutorialPopup;
 
 interface IProps {
-  tutorialPages: Array<ITutorialPage>;
+  tutorialPages: ReadonlyArray<ITutorialPage>;
 }

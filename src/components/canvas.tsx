@@ -1,17 +1,11 @@
-import * as React from 'react';
-// Removed react-redux connect import; Canvas is now a plain component receiving props directly.
-import { ICommandModel } from 'src/models';
-import { CommandActions } from 'src/actions';
-import { Turtle } from '../utils/turtle';
-import { Caller } from 'src/utils/caller';
+import * as React from "react";
+import { ICommandModel } from "src/models";
+import { useCommandStore } from "src/store/commandStore";
+import { Turtle } from "../utils/turtle";
+import { Caller } from "src/utils/caller";
 
-interface IProps {
-  text?: string | null;
-  commands: Array<ICommandModel>;
-  actions: CommandActions;
-}
-
-const Canvas: React.FC<IProps> = ({ commands }) => {
+const Canvas: React.FC = () => {
+  const commands = useCommandStore((state) => state.commands);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const turtleRef = React.useRef<Turtle | null>(null);
   const callerRef = React.useRef<Caller | null>(null);
@@ -23,7 +17,7 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
       homeX: 400,
       homeY: 400,
       dir: 0,
-      strokeColor: '#000000',
+      strokeColor: "#000000",
       strokeWeight: 1,
       pen: true,
       visible: true,
@@ -44,25 +38,7 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
     // Clear any existing drawing before applying new commands
     turtle.clearCanvas();
 
-        commands.forEach((command: ICommandModel) => {
-      if (command.name === 'repeat' && command.commands) {
-        // @ts-ignore – dynamic method name on Caller; type cannot be inferred
-        caller[command.name](command);
-      } else if (
-        command.name === 'setpos' &&
-        command.value !== undefined &&
-        command.arg2 !== undefined
-      ) {
-        // @ts-ignore
-        caller[command.name](command.value, command.arg2);
-      } else if ((command.name === 'setsc' || command.name === 'setbc') && command.color) {
-        // @ts-ignore
-        caller[command.name](command.color);
-      } else {
-        // @ts-ignore
-        caller[command.name](command.value);
-      }
-    });
+    commands.forEach((command: ICommandModel) => caller.execute(command));
 
     turtle.drawTurtle();
 
@@ -78,7 +54,13 @@ const Canvas: React.FC<IProps> = ({ commands }) => {
 
   return (
     <div className="canvas">
-      <canvas ref={canvasRef} width={800} height={800} role="img" aria-label="Turtle drawing canvas" />
+      <canvas
+        ref={canvasRef}
+        width={800}
+        height={800}
+        role="img"
+        aria-label="Turtle drawing canvas"
+      />
     </div>
   );
 };

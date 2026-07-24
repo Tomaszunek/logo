@@ -1,19 +1,21 @@
-import * as React from 'react';
-import { IPathwayExample } from 'src/models';
-import PathwayExample from './templates/pathwayExample';
-import CommandDescription from './templates/CommandDescription';
-import { CommandActions } from 'src/actions';
+import * as React from "react";
+import { ICommandDescription, IPathwayExample } from "src/models";
+import PathwayExample from "./templates/pathwayExample";
+import CommandDescription from "./templates/CommandDescription";
 
 interface IProps {
-  examplePaths: Array<IPathwayExample>,
-  descriptions: any,
-  itemStyle: React.CSSProperties,
-  site: string,
-  actions: CommandActions
+  examplePaths: ReadonlyArray<IPathwayExample>;
+  descriptions: Readonly<Record<string, ICommandDescription>>;
+  itemStyle: React.CSSProperties;
+  site: string;
 }
 
-const HelperWindow: React.FC<IProps> = ({ examplePaths, descriptions, itemStyle, site, actions }) => {
-
+const HelperWindow: React.FC<IProps> = ({
+  examplePaths,
+  descriptions,
+  itemStyle,
+  site,
+}) => {
   const displayAll = () => {
     const groups: Record<string, IPathwayExample[]> = {};
 
@@ -28,14 +30,20 @@ const HelperWindow: React.FC<IProps> = ({ examplePaths, descriptions, itemStyle,
 
     return Object.entries(groups).map(([type, examples]) => (
       <div key={type}>
-        <div className={`commandType ${type}`}> {displayExample(examples)} </div>
+        <div className={`commandType ${type}`}>
+          {" "}
+          {displayExample(examples)}{" "}
+        </div>
       </div>
     ));
   };
 
-  const displayExample = (examples: Array<IPathwayExample>) =>
+  const displayExample = (examples: ReadonlyArray<IPathwayExample>) =>
     examples.map((example) => (
-      <PathwayExample actions={actions} key={example.name} examplePath={example}/>
+      <PathwayExample
+        key={example.name}
+        examplePath={example}
+      />
     ));
 
   const displayCommands = () => {
@@ -47,11 +55,11 @@ const HelperWindow: React.FC<IProps> = ({ examplePaths, descriptions, itemStyle,
       if (descriptions[i]) {
         if (index % 2 === 0) {
           renderedTypesL.push(
-            <CommandDescription key={i} description={descriptions[i]}/>
+            <CommandDescription key={i} description={descriptions[i]} />,
           );
         } else {
           renderedTypesR.push(
-            <CommandDescription key={i} description={descriptions[i]}/>
+            <CommandDescription key={i} description={descriptions[i]} />,
           );
         }
         index++;
@@ -67,7 +75,10 @@ const HelperWindow: React.FC<IProps> = ({ examplePaths, descriptions, itemStyle,
   };
 
   return (
-    <div style={itemStyle} className={`helperWindow ${site}`}> {site === 'right' ? displayAll() : displayCommands()} </div>
+    <div style={itemStyle} className={`helperWindow ${site}`}>
+      {" "}
+      {site === "right" ? displayAll() : displayCommands()}{" "}
+    </div>
   );
 };
 

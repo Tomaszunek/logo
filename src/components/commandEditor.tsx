@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { ICommandModel } from 'src/models';
-import { CommandActions } from 'src/actions';
+import { useCommandStore } from 'src/store/commandStore';
 
-interface IProps {
-  text?: string | null;
-  commands: Array<ICommandModel>;
-  actions: CommandActions;
-}
+const CommandEditor: React.FC = () => {
+  const commands = useCommandStore((state) => state.commands);
+  const deleteCommand = useCommandStore((state) => state.deleteCommand);
 
-const CommandEditor: React.FC<IProps> = ({ commands, actions }) => {
-  const displayCommands = (cmds: Array<ICommandModel>) =>
+  const displayCommands = (cmds: ReadonlyArray<ICommandModel>) =>
     cmds.map((item) => {
       const { name, value, id } = item;
       return (
@@ -20,9 +17,9 @@ const CommandEditor: React.FC<IProps> = ({ commands, actions }) => {
           </div>
           <button
             type="button"
-            aria-label="Remove command"
+            aria-label={`Remove ${name} command`}
             className="removeButton"
-            onClick={() => actions.deleteCommand(id)}
+            onClick={() => deleteCommand(id)}
           >
             x
           </button>

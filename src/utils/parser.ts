@@ -62,10 +62,8 @@ export class Parser {
                 }
                 commandArray.push(commandElem);
             }
-        } else {            
-            if(regexArray) {                
-                cb(this.text, regexArray.join(' '));
-            }            
+        } else {
+            cb(this.text, regexArray ? regexArray.join(' ') : '');
         }
         return commandArray;
     }

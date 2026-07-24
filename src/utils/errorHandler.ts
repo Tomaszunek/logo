@@ -1,7 +1,12 @@
+import { ICommandDescription } from 'src/models';
+
 export class ErrorHandler {
     private errorTexts: IErrorText;
-    private commandDescription: any;
-    constructor(errorHandlerTexts: IErrorText, commandDescription: any) {        
+    private commandDescription: Readonly<Record<string, ICommandDescription>>;
+    constructor(
+        errorHandlerTexts: IErrorText,
+        commandDescription: Readonly<Record<string, ICommandDescription>>,
+    ) {
        this.errorTexts = errorHandlerTexts;
        this.commandDescription = commandDescription;
     }

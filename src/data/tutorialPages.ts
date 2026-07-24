@@ -1,8 +1,6 @@
-import { handleActions } from 'redux-actions';
-import { TutorialPages } from './state';
 import { ITutorialPage } from '../models';
 
-const initialState: TutorialPages = [
+export const tutorialPages: ReadonlyArray<ITutorialPage> = [
   {
     name: "Command input",
     image: "tutorial1.gif",
@@ -32,11 +30,5 @@ const initialState: TutorialPages = [
     image: "tutorial5.gif",
     title: "Check list of examples",
     content: "Clicking in right arrow check our examples in turtle system"
-  }   
+  }
 ];
-
-export const tutorialPageReducer = handleActions<TutorialPages, ITutorialPage>(
-  {    
-  },
-  initialState
-);

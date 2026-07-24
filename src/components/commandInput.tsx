@@ -1,18 +1,17 @@
 import * as React from 'react';
-import { ICommandModel } from 'src/models';
-import { CommandActions } from 'src/actions';
+import { ICommandDescription } from 'src/models';
+import { useCommandStore } from 'src/store/commandStore';
+
 import { Parser } from 'src/utils/parser';
 import Popup from './popup';
 import { ErrorHandler } from 'src/utils/errorHandler';
 
 interface IProps {
-  text?: string | null;
-  commands: Array<ICommandModel>;
-  actions: CommandActions;
-  descriptions: any;
+  descriptions: Readonly<Record<string,ICommandDescription>>;
 }
 
-const CommandInput: React.FC<IProps> = ({ text, commands, actions, descriptions }) => {
+const CommandInput: React.FC<IProps> = ({ descriptions }) => {
+  const addCommand = useCommandStore((state) => state.addCommand);
   const timeoutRef = React.useRef<number | null>(null);
 
   // Cleanup any pending error popup timer on unmount
@@ -52,14 +51,12 @@ const CommandInput: React.FC<IProps> = ({ text, commands, actions, descriptions 
     }, 5000);
   };
 
-  const togglePopup = () => setShowPopup(prev => !prev);
-
   const onInputChange = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       const parser = new Parser((e.target as HTMLInputElement).value.trim()).parse(onError);
       if (parser && parser.length > 0) {
         for (const item of parser) {
-          actions.addCommand(item);
+          addCommand(item);
         }
         if (!inputRef.current) return;
         inputRef.current.value = '';
@@ -80,7 +77,7 @@ const CommandInput: React.FC<IProps> = ({ text, commands, actions, descriptions 
         onKeyPress={onInputChange}
       />
       {showPopup && (
-        <Popup massage={popupText} closePopup={togglePopup} />
+        <Popup massage={popupText} />
       )}
     </>
   );
