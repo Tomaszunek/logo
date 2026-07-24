@@ -1,21 +1,28 @@
 import * as React from "react";
 import { IPathwayExample } from "src/models";
+import { useCommandStore } from "src/store/commandStore";
 
-const PathwayExample: React.FC<IProps> = ({ examplePath, actions }) => {
+const PathwayExample: React.FC<IProps> = ({ examplePath }) => {
+  const replaceCommands = useCommandStore((state) => state.replaceCommands);
   const { name, path, image } = examplePath;
   const setCommands = () => {
     const { command } = examplePath;
-    actions.replaceCommands([command]);
+    replaceCommands([command]);
   };
   return (
-    <div className="pathexample" onClick={setCommands}>
+    <button
+      type="button"
+      className="pathexample"
+      onClick={setCommands}
+      aria-label={`Load ${name} example`}
+    >
       <p>{name}</p>
       <img
         src={`./images/examples/${image}`}
         alt={`${name} Logo drawing preview`}
       />
       <p className="path">{path}</p>
-    </div>
+    </button>
   );
 };
 
@@ -23,5 +30,4 @@ export default PathwayExample;
 
 interface IProps {
   examplePath: IPathwayExample;
-  actions: any; // use actions from Zustand store
 }

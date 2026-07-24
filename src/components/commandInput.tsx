@@ -1,19 +1,17 @@
 import * as React from 'react';
-import { ICommandModel, ICommandDescription } from 'src/models';
-// actions removed; use Zustand store instead
+import { ICommandDescription } from 'src/models';
+import { useCommandStore } from 'src/store/commandStore';
 
 import { Parser } from 'src/utils/parser';
 import Popup from './popup';
 import { ErrorHandler } from 'src/utils/errorHandler';
 
 interface IProps {
-  text?: string | null;
-  commands: Array<ICommandModel>;
-  actions: any; // use actions from Zustand store
   descriptions: Readonly<Record<string,ICommandDescription>>;
 }
 
-const CommandInput: React.FC<IProps> = ({ text, commands, actions, descriptions }) => {
+const CommandInput: React.FC<IProps> = ({ descriptions }) => {
+  const addCommand = useCommandStore((state) => state.addCommand);
   const timeoutRef = React.useRef<number | null>(null);
 
   // Cleanup any pending error popup timer on unmount
@@ -60,7 +58,7 @@ const CommandInput: React.FC<IProps> = ({ text, commands, actions, descriptions 
       const parser = new Parser((e.target as HTMLInputElement).value.trim()).parse(onError);
       if (parser && parser.length > 0) {
         for (const item of parser) {
-          actions.addCommand(item);
+          addCommand(item);
         }
         if (!inputRef.current) return;
         inputRef.current.value = '';

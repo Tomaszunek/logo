@@ -1,14 +1,13 @@
 import * as React from "react";
-import { IPathwayExample } from "src/models";
+import { ICommandDescription, IPathwayExample } from "src/models";
 import PathwayExample from "./templates/pathwayExample";
 import CommandDescription from "./templates/CommandDescription";
 
 interface IProps {
-  examplePaths: Array<IPathwayExample>;
-  descriptions: any;
+  examplePaths: ReadonlyArray<IPathwayExample>;
+  descriptions: Readonly<Record<string, ICommandDescription>>;
   itemStyle: React.CSSProperties;
   site: string;
-  actions: any; // use actions from Zustand store
 }
 
 const HelperWindow: React.FC<IProps> = ({
@@ -16,7 +15,6 @@ const HelperWindow: React.FC<IProps> = ({
   descriptions,
   itemStyle,
   site,
-  actions,
 }) => {
   const displayAll = () => {
     const groups: Record<string, IPathwayExample[]> = {};
@@ -40,10 +38,9 @@ const HelperWindow: React.FC<IProps> = ({
     ));
   };
 
-  const displayExample = (examples: Array<IPathwayExample>) =>
+  const displayExample = (examples: ReadonlyArray<IPathwayExample>) =>
     examples.map((example) => (
       <PathwayExample
-        actions={actions}
         key={example.name}
         examplePath={example}
       />

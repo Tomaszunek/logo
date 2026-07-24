@@ -1,115 +1,140 @@
-import { create } from 'zustand';
-import { ICommandModel } from '../models';
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
+import { ICommandModel } from "../models";
 
-// Helper functions replicate reducer logic
-const findMostInsideRepeat = (commands: Array<ICommandModel>): number => {
-  let lastRepeatIndexCommand = 0;
-  for (const command of commands) {
-    lastRepeatIndexCommand = command.id;
-    if (command.commands) {
-      lastRepeatIndexCommand = findMostInsideRepeat(command.commands);
-    }
-  }
-  // Ensure we return a valid id; if no commands, default to 0
-  const fallback = commands.length > 0 ? commands[commands.length - 1].id : 0;
-  return (lastRepeatIndexCommand || fallback) + 1;
-};
-
-const indexsizeRepeat = (
-  commands: Array<ICommandModel> | undefined,
-  lastIndex: number
-): Array<ICommandModel> => {
-  let index = lastIndex;
-  if (commands) {
-    for (const command of commands) {
-      command.id = index;
-      if (command.commands) {
-        command.commands = indexsizeRepeat(command.commands, ++index);
-      }
-      index++;
-    }
-  }
-  return commands as Array<ICommandModel>;
-};
-
-const findElementById = (
-  commands: Array<ICommandModel>,
-  newCommand: ICommandModel
-): Array<ICommandModel> => {
-  return commands.map((cmd) => {
-    if (cmd && cmd.id === newCommand.id) {
-      if (cmd.commands) {
-        cmd.commands = findElementById(cmd.commands, newCommand);
-      }
-      return { ...cmd, ...newCommand };
-    }
-    return cmd;
-  });
-};
-
-const filterToDelete = (
-  commands: Array<ICommandModel>,
-  ind: number
-): Array<ICommandModel> => {
-  return commands.filter((command) => {
-    if (command.id !== ind) {
-      if (command.commands) {
-        command.commands = filterToDelete(command.commands, ind);
-      }
-      return true;
-    }
-    return false;
-  });
-};
-
-interface CommandState {
-  commands: Array<ICommandModel>;
-  addCommand: (item: ICommandModel) => void;
+export interface CommandStore {
+  commands: ReadonlyArray<ICommandModel>;
+  addCommand: (command: Readonly<ICommandModel>) => void;
+  editCommand: (command: Readonly<ICommandModel>) => void;
   deleteCommand: (id: number) => void;
-  editCommand: (item: ICommandModel) => void;
-  replaceCommands: (commands: Array<ICommandModel>) => void;
+  replaceCommands: (commands: ReadonlyArray<ICommandModel>) => void;
 }
 
-export const useCommandStore = create<CommandState>((set, get) => ({
-  commands: [],
-  addCommand: (item) => {
-    const currentCommands = get().commands;
-    let id = 0;
-    if (!currentCommands.length) {
-      id = 0;
-    } else {
-      const lastCommand = currentCommands[currentCommands.length - 1];
-      if (lastCommand.commands) {
-        id = findMostInsideRepeat(lastCommand.commands);
-      } else {
-        id = lastCommand.id + 1;
-      }
+interface IndexedCommands {
+  commands: ICommandModel[];
+  nextId: number;
+}
+
+const cloneCommand = (command: Readonly<ICommandModel>): ICommandModel => ({
+  ...command,
+  ...(command.commands
+    ? { commands: command.commands.map((child) => cloneCommand(child)) }
+    : {}),
+});
+
+const assignIds = (
+  commands: ReadonlyArray<ICommandModel>,
+  startId: number,
+): IndexedCommands => {
+  let nextId = startId;
+  const indexed = commands.map((command) => {
+    const id = nextId++;
+    const children = command.commands
+      ? assignIds(command.commands, nextId)
+      : undefined;
+
+    if (children) {
+      nextId = children.nextId;
     }
-    if (item) {
+
+    return {
+      ...command,
+      id,
+      ...(children ? { commands: children.commands } : {}),
+    };
+  });
+
+  return { commands: indexed, nextId };
+};
+
+const getNextId = (commands: ReadonlyArray<ICommandModel>): number => {
+  let highestId = -1;
+
+  const visit = (items: ReadonlyArray<ICommandModel>) => {
+    items.forEach((item) => {
+      highestId = Math.max(highestId, item.id);
       if (item.commands) {
-        item.id = id;
-        item.commands = indexsizeRepeat(item.commands, ++id);
-        set((state) => ({
-          commands: [...state.commands, { ...item }],
-        }));
-      } else {
-        set((state) => ({
-          commands: [...state.commands, { ...item, id }],
-        }));
+        visit(item.commands);
       }
+    });
+  };
+
+  visit(commands);
+  return highestId + 1;
+};
+
+const addToTree = (
+  commands: ReadonlyArray<ICommandModel>,
+  command: Readonly<ICommandModel>,
+): ICommandModel[] => {
+  const indexed = assignIds([cloneCommand(command)], getNextId(commands));
+  return [...commands.map((item) => cloneCommand(item)), ...indexed.commands];
+};
+
+const editTree = (
+  commands: ReadonlyArray<ICommandModel>,
+  replacement: Readonly<ICommandModel>,
+): ICommandModel[] =>
+  commands.map((command) => {
+    if (command.id === replacement.id) {
+      return cloneCommand({ ...command, ...replacement });
     }
-  },
-  deleteCommand: (id) => {
-    const currentCommands = get().commands;
-    const newCommands = filterToDelete(currentCommands, id);
-    set({ commands: newCommands });
-  },
-  editCommand: (item) => {
-    const currentCommands = get().commands;
-    const updated = findElementById(currentCommands, item);
-    set({ commands: updated });
-  },
-  replaceCommands: (commands: Array<ICommandModel>) => {
-    set({ commands });
-  },
-}));
+
+    return command.commands
+      ? {
+          ...command,
+          commands: editTree(command.commands, replacement),
+        }
+      : cloneCommand(command);
+  });
+
+const deleteFromTree = (
+  commands: ReadonlyArray<ICommandModel>,
+  id: number,
+): ICommandModel[] =>
+  commands
+    .filter((command) => command.id !== id)
+    .map((command) =>
+      command.commands
+        ? {
+            ...command,
+            commands: deleteFromTree(command.commands, id),
+          }
+        : cloneCommand(command),
+    );
+
+export const useCommandStore = create<CommandStore>()(
+  devtools(
+    (set) => ({
+      commands: [],
+      addCommand: (command) =>
+        set(
+          (state) => ({ commands: addToTree(state.commands, command) }),
+          false,
+          "commands/add",
+        ),
+      editCommand: (command) =>
+        set(
+          (state) => ({ commands: editTree(state.commands, command) }),
+          false,
+          "commands/edit",
+        ),
+      deleteCommand: (id) =>
+        set(
+          (state) => ({ commands: deleteFromTree(state.commands, id) }),
+          false,
+          "commands/delete",
+        ),
+      replaceCommands: (commands) =>
+        set(
+          { commands: assignIds(commands, 0).commands },
+          false,
+          "commands/replace",
+        ),
+    }),
+    {
+      name: "logo-command-store",
+      enabled: import.meta.env.DEV,
+    },
+  ),
+);

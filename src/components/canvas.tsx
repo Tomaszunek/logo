@@ -1,14 +1,11 @@
 import * as React from "react";
 import { ICommandModel } from "src/models";
+import { useCommandStore } from "src/store/commandStore";
 import { Turtle } from "../utils/turtle";
 import { Caller } from "src/utils/caller";
 
-interface IProps {
-  text?: string | null;
-  commands: Array<ICommandModel>;
-}
-
-const Canvas: React.FC<IProps> = ({ commands }) => {
+const Canvas: React.FC = () => {
+  const commands = useCommandStore((state) => state.commands);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const turtleRef = React.useRef<Turtle | null>(null);
   const callerRef = React.useRef<Caller | null>(null);

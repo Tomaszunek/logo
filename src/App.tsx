@@ -8,7 +8,6 @@ import TutorialPopup from "./components/tutorialPopup";
 import Header from "./components/header";
 import SkipLink from "./components/skipLink";
 
-import { useCommandStore } from "./store/commandStore";
 import { commandDescriptions } from "./data/commandDescriptions";
 import { pathwayExamples } from "./data/pathwayExamples";
 import { tutorialPages } from "./data/tutorialPages";
@@ -19,15 +18,6 @@ import "./vis-001.css";
 export const App: React.FC = () => {
   const [showHelper, setShowHelper] = React.useState(false);
   const [activePanel, setActivePanel] = React.useState<"tips" | "examples">("tips");
-
-  // Zustand store for commands
-  const commands = useCommandStore(state => state.commands);
-  const addCommand = useCommandStore(state => state.addCommand);
-  const editCommand = useCommandStore(state => state.editCommand);
-  const deleteCommand = useCommandStore(state => state.deleteCommand);
-  const replaceCommands = useCommandStore(state => state.replaceCommands);
-
-  const actions: any = { addCommand, editCommand, deleteCommand, replaceCommands };
 
   const handleShowHelper = (panel: "tips" | "examples") => {
     setShowHelper(true);
@@ -46,7 +36,6 @@ export const App: React.FC = () => {
             onClose={() => setShowHelper(false)}
             examplePaths={pathwayExamples}
             descriptions={commandDescriptions}
-            actions={actions}
           />
         )}
         {showHelper && activePanel === "tips" && (
@@ -54,20 +43,12 @@ export const App: React.FC = () => {
         )}
         <div className="editorContainer">
           <section className="editorLine">
-            <CommandEditor commands={commands} actions={actions} />
-            <CommandInput
-              commands={commands}
-              actions={actions}
-              descriptions={commandDescriptions}
-            />
-            <Canvas commands={commands} />
+            <CommandEditor />
+            <CommandInput descriptions={commandDescriptions} />
+            <Canvas />
           </section>
           <aside className="commandListLine">
-            <CommandList
-              commands={commands}
-              descriptions={commandDescriptions}
-              actions={actions}
-            />
+            <CommandList descriptions={commandDescriptions} />
           </aside>
         </div>
       </div>

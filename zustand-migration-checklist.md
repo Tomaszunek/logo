@@ -49,7 +49,7 @@
 
 ## Migration tasks
 
-- [ ] 1. Extract immutable catalogs from Redux
+- [x] 1. Extract immutable catalogs from Redux
 
   - Ownership key: `static-catalog-extraction`
   - Goal: represent descriptions, examples, and tutorials as typed data modules while leaving Redux responsible only for the mutable command tree.
@@ -57,7 +57,7 @@
   - Current behavior: all three catalogs are plain data modules and the legacy reducers are removed. `App` imports the values directly, but mutable component prop declarations reject the readonly pathway and tutorial arrays.
   - Typed design: export `Readonly<Record<string, ICommandDescription>>`, `readonly IPathwayExample[]`, and `readonly ITutorialPage[]` constants. Keep existing model types and data-building helpers, and copy only at an API boundary if a consumer truly requires a mutable array.
   - Progress evidence: `commandDescriptions`, `pathwayExamples`, and `tutorialPages` exist as typed data modules; `App` imports them directly; all legacy reducer files and state aliases are gone.
-  - Remaining work: catalog consumer props are not consistently readonly, causing two TypeScript errors; catalog parity has not been verified in the browser.
+  - Completion evidence (2026-07-24): catalog consumer props accept readonly collections; `npm.cmd run tsc` passes; the browser shows all five tutorial pages in order, 48 examples grouped as simple/crazy/color, and the `fd` command description without console errors.
   - Steps:
     1. Compare the three data modules with their legacy reducer values and correct only proven omissions or ordering changes.
     2. Change helper, example, tutorial, input, and list catalog props to readonly model types without `any`.
@@ -68,14 +68,14 @@
   - Completion evidence: catalog values and UI order match the baseline, catalog props are readonly and typed, and no catalog-related TypeScript error remains.
   - Rollback boundary: `src/data`, the three former static reducer modules, `src/reducers/index.ts`, `src/reducers/state.ts`, and static-data changes in `src/App.tsx`.
 
-- [ ] 2. Replace the command Redux domain with a typed Zustand store
+- [x] 2. Replace the command Redux domain with a typed Zustand store
 
   - Ownership key: `command-store-migration`
   - Goal: make Zustand the sole runtime owner of the command tree and route every command mutation through typed store actions.
   - Scope: `package.json`, `package-lock.json`, `src/store/commandStore.ts`, `src/App.tsx`, `src/index.tsx`, `Canvas`, `CommandEditor`, `CommandInput`, `CommandList`, `HelperLayer`, `HelperWindow`, and `templates/pathwayExample`.
-  - Current partial state: Zustand 5.0.14 is installed; `App` is unconnected; Provider and Redux store creation are removed; `BrowserRouter` is active; and the bound store exposes `replaceCommands`. However, `App` owns all selectors and passes an `any` action bag, leaf components still prop-drill state/actions, recursive helpers mutate inputs and nested state, and no devtools middleware or behavioral evidence exists.
+  - Current behavior: Zustand 5.0.14 is the sole runtime command owner; leaf components select their own data/actions; `App` is unconnected; Provider is absent; `BrowserRouter` and Strict Mode are active; and named development actions use Zustand devtools.
   - Typed design: use `create<CommandStore>()(devtools(...))`, named action records, immutable recursive helpers, and atomic leaf selectors. Do not expose raw `set`, action envelopes, `Dispatch`, `any`, or non-null assertions in the store API.
-  - Remaining work: remove stale comments, replace `any` props, finish immutable helpers, move subscriptions to consumers, add justified observability, and capture behavioral comparisons.
+  - Completion evidence (2026-07-24): `npm.cmd run tsc` passes; direct store checks prove immutable inputs, unique IDs, nested edit/delete, and replacement behavior; browser checks prove one add per Enter, cleared input, nested rendering/edit/delete, example replacement, and canvas redraw with no console errors.
   - Steps:
     1. Capture add, nested repeat, edit, delete, and example-replacement outputs from the old reducer before deleting it.
     2. Export an explicit `CommandStore` contract and accept readonly command inputs without exposing mutation-prone arrays.
@@ -91,12 +91,13 @@
   - Completion evidence: TypeScript passes at this checkpoint, no runtime consumer imports Redux, leaf consumers use typed selectors/actions, `BrowserRouter` remains active, and recorded behavior matches.
   - Rollback boundary: Zustand dependency addition, `src/store/commandStore.ts`, component subscription changes, `src/App.tsx`, and `src/index.tsx`.
 
-- [ ] 3. Retire the unreachable Redux system and configuration
+- [x] 3. Retire the unreachable Redux system and configuration
 
   - Ownership key: `redux-retirement`
   - Goal: remove every leftover artifact whose only responsibility was the replaced Redux implementation.
   - Scope: command-only files under `src/actions` and `src/reducers`, `src/store/index.ts`, `src/middleware/logger.ts`, `src/utils/index.ts`, `package.json`, `package-lock.json`, `vite.config.js`, `README.md`, and the package description.
-  - Current state: Redux packages, action/reducer/store/middleware files, the `omit` helper, and Vite prebundling are removed; `package.json` names Zustand. Remaining cleanup is the Redux sentence in `README.md` and stale Redux comments in `src/index.tsx` and `src/components/commandEditor.tsx`.
+  - Current state: Redux packages, action/reducer/store/middleware files, the `omit` helper, Vite prebundling, stale comments, and Redux documentation wording are removed.
+  - Completion evidence (2026-07-24): a focused case-insensitive search finds no Redux package, API, provider, store, reducer, or action reference; the direct dependency tree contains React, React DOM, and Zustand 5.0.14 only.
   - Typed design: retain model types in `src/models` and the Zustand store type in its own module. Do not keep compatibility aliases, Redux action names, reducer-shaped adapters, or `any` casts for deleted APIs.
   - Steps:
     1. Remove the stale Redux comments from `src/index.tsx` and `src/components/commandEditor.tsx`.
@@ -152,10 +153,10 @@
 | --- | --- | --- |
 | Store ownership and minimal state | Pass | One command store owns mutable shared state; catalogs and component UI state remain outside Zustand. |
 | Installed version and official integration guidance | Fix in `zustand-quality-review` | Zustand 5.0.14 is installed; the current official-guidance comparison is not recorded. |
-| Public store and consumer types | Fix in `command-store-migration` | `CommandState` is not exported and consumer action props still use `any`. |
-| Immutable updates and readonly inputs | Fix in `command-store-migration` | Recursive helpers mutate command inputs and nested command arrays. |
-| Selector and subscription boundaries | Fix in `command-store-migration` | `App` owns every selector and prop-drills commands/actions to leaf consumers. |
-| Middleware and action observability | Fix in `command-store-migration` | The target calls for named development actions, but the store uses plain `create`. |
+| Public store and consumer types | Pass | `CommandStore` is exported, inputs are readonly, and no consumer action bag remains. |
+| Immutable updates and readonly inputs | Pass | Store checks confirm add and replace inputs are unchanged; recursive helpers return new trees. |
+| Selector and subscription boundaries | Pass | Command-aware leaf components use atomic selectors and `App` does not subscribe to the store. |
+| Middleware and action observability | Pass | Development-only Zustand devtools records named add/edit/delete/replace actions. |
 | Router/provider integration | Pass | `BrowserRouter` is present and the Redux Provider is absent. |
 | SSR isolation | Not applicable | This is a client-only Vite SPA with no SSR runtime. |
 | Persistence and hydration | Not applicable | The command store has no persisted state. |
@@ -170,17 +171,16 @@
 | Static description reducer                                      | Typed `commandDescriptions` data module           | `static-catalog-extraction` | Removed |
 | Static pathway reducer                                          | Typed `pathwayExamples` data module               | `static-catalog-extraction` | Removed |
 | Static tutorial reducer                                         | Typed `tutorialPages` data module                 | `static-catalog-extraction` | Removed |
-| React Redux `connect` and Provider                              | Direct Zustand selectors and bound store          | `command-store-migration`   | Removed; consumer typing remains |
+| React Redux `connect` and Provider                              | Direct Zustand selectors and bound store          | `command-store-migration`   | Removed; typed leaf selectors active |
 | Redux action namespace and command reducer                      | Typed Zustand actions and immutable helpers       | `redux-retirement`          | Removed |
 | Redux store, root reducer, state aliases, and logger            | Zustand bound store                               | `redux-retirement`          | Removed |
 | `react-redux`, `redux`, `redux-actions`, `@types/redux-actions` | Superseded dependencies                           | `redux-retirement`          | Removed |
-| Redux Vite prebundle entry and documentation references         | Final Zustand configuration and descriptions      | `redux-retirement`          | Vite entry removed; README text remains |
+| Redux Vite prebundle entry and documentation references         | Final Zustand configuration and descriptions      | `redux-retirement`          | Removed |
 | Redux-only `omit` helper                                        | No longer needed after dispatch binding removal   | `redux-retirement`          | Removed |
 
 ## Risks and blockers
 
-- The current Zustand helpers still mutate payloads and nested state; an immutable rewrite can expose identity or ID-allocation drift. Capture outcomes before replacement.
-- The Zustand `findMostInsideRepeat` calculation differs from the former reducer's post-increment behavior. Treat any correction as a separately evidenced behavior decision.
+- Command IDs are internal and are now reassigned depth-first on add/replace to prevent duplicate React keys and ambiguous nested edits; runtime evidence confirms the intended flows.
 - The pathway-example module is very large. Avoid unrelated formatting or content churn while verifying parity.
 - There is no automated test suite. Runtime evidence is mandatory, and `npm.cmd test` must not be presented as a passing gate.
 - Do not touch the unrelated untracked `.claude/settings.local.json`.
@@ -188,4 +188,4 @@
 
 ## Final status
 
-`IN PROGRESS`: 0 of 5 major jobs complete. Tasks 1–3 contain partial or near-complete implementation, but none meets its completion evidence. First incomplete job: `static-catalog-extraction`. Quality review: not started.
+`IN PROGRESS`: 3 of 5 major jobs complete. First incomplete job: `zustand-quality-review`. Quality review: in progress.

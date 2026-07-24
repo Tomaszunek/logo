@@ -51,5 +51,5 @@ const TutorialPopup: React.FC<IProps> = ({ tutorialPages }) => {
 export default TutorialPopup;
 
 interface IProps {
-  tutorialPages: Array<ITutorialPage>;
+  tutorialPages: ReadonlyArray<ITutorialPage>;
 }

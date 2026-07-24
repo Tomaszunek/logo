@@ -97,8 +97,14 @@
   margin: 0px;
 }
 .helperWindow .commandType .pathexample {
+  display: block;
+  width: calc(100% - 16px);
   padding: 5px 5px 5px 15px;
   margin: 12px 8px;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
   cursor: pointer;
 }
 .helperWindow .commandType.crazy::-webkit-scrollbar-thumb {
