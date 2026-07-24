@@ -2,14 +2,14 @@ import * as React from 'react';
 import { IPathwayExample } from 'src/models';
 import PathwayExample from './templates/pathwayExample';
 import CommandDescription from './templates/CommandDescription';
-import { CommandActions } from 'src/actions';
+// No Redux action types needed; use simple actions object
 
 interface IProps {
   examplePaths: Array<IPathwayExample>,
   descriptions: any,
   itemStyle: React.CSSProperties,
   site: string,
-  actions: CommandActions
+  actions: any // use actions from Zustand store
 }
 
 const HelperWindow: React.FC<IProps> = ({ examplePaths, descriptions, itemStyle, site, actions }) => {

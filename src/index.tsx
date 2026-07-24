@@ -1,13 +1,12 @@
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import { Application } from "./router";
-import { configureStore } from "./store";
+// import { configureStore } from "./store";
 import registerServiceWorker from "./registerServiceWorker";
-import { Provider } from "react-redux";
-import { BrowserRouter } from "react-router-dom";
+// import { Provider } from "react-redux";
+// import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 
-const store = configureStore();
 
 const rootEl = document.getElementById("root");
 if (!rootEl) {
@@ -16,11 +15,7 @@ if (!rootEl) {
 const root = createRoot(rootEl!);
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <BrowserRouter>
-        <Application />
-      </BrowserRouter>
-    </Provider>
+      <Application />
   </React.StrictMode>
 );
 

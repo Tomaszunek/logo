@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { IPathwayExample } from 'src/models';
-import { CommandActions } from 'src/actions';
-
+// No Redux action types needed; use simple actions object
 const PathwayExample: React.FC<IProps> = ({ examplePath, actions }) => {
   const { name, path, image } = examplePath;
   const setCommands = () => {
@@ -25,5 +24,5 @@ export default PathwayExample;
 
 interface IProps {
   examplePath: IPathwayExample;
-  actions: CommandActions;
+  actions: any; // use actions from Zustand store
 }

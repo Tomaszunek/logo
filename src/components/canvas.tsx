@@ -1,14 +1,12 @@
 import * as React from 'react';
 // Removed react-redux connect import; Canvas is now a plain component receiving props directly.
 import { ICommandModel } from 'src/models';
-import { CommandActions } from 'src/actions';
 import { Turtle } from '../utils/turtle';
 import { Caller } from 'src/utils/caller';
 
 interface IProps {
   text?: string | null;
   commands: Array<ICommandModel>;
-  actions: CommandActions;
 }
 
 const Canvas: React.FC<IProps> = ({ commands }) => {

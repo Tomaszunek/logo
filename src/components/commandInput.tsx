@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ICommandModel } from 'src/models';
-import { CommandActions } from 'src/actions';
+// actions removed; use Zustand store instead
+
 import { Parser } from 'src/utils/parser';
 import Popup from './popup';
 import { ErrorHandler } from 'src/utils/errorHandler';
@@ -8,7 +9,7 @@ import { ErrorHandler } from 'src/utils/errorHandler';
 interface IProps {
   text?: string | null;
   commands: Array<ICommandModel>;
-  actions: CommandActions;
+  actions: any; // use actions from Zustand store
   descriptions: any;
 }
 

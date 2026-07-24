@@ -7,76 +7,32 @@ import HelperLayer from "./components/helperLayer";
 import TutorialPopup from "./components/tutorialPopup";
 import Header from "./components/header";
 import SkipLink from "./components/skipLink";
-import { RouteComponentProps } from "react-router";
-import { bindActionCreators, Dispatch } from "redux";
-import { connect } from "react-redux";
-import { CommandActions } from "./actions";
-import { CommandModel } from "./models";
-import { IRootState, CommandState } from "./reducers";
+
+import { useCommandStore } from "./store/commandStore";
 import { commandDescriptions } from "./data/commandDescriptions";
 import { pathwayExamples } from "./data/pathwayExamples";
 import { tutorialPages } from "./data/tutorialPages";
-import { omit } from "./utils";
+
 import "./App.css";
 import "./vis-001.css";
 
-interface IAppState {
-  showHelper: boolean;
-  activePanel: "tips" | "examples";
-}
-
-const FILTER_VALUES = (
-  Object.keys(CommandModel.Filter) as (keyof typeof CommandModel.Filter)[]
-).map((key) => CommandModel.Filter[key]);
-
-export namespace App {
-  export interface IProps extends RouteComponentProps<void> {
-    commands: CommandState;
-    descriptions: CommandDescriptionState;
-    pathwayExample: PathwayExample;
-    tutorialPages: TutorialPages;
-    actions: CommandActions;
-    filter: CommandModel.Filter;
-  }
-}
-
-// Map state and dispatch to props
-const mapStateToProps = (
-  state: IRootState,
-  ownProps: any,
-): Pick<
-  App.IProps,
-  "commands" | "descriptions" | "pathwayExample" | "tutorialPages" | "filter"
-> => {
-  const hash = ownProps.location && ownProps.location.hash.replace("#", "");
-  const filter =
-    FILTER_VALUES.find((value) => value === hash) ||
-    CommandModel.Filter.SHOW_ALL;
-  return {
-    commands: state.commands,
-    descriptions: state.descriptions,
-    pathwayExample: state.pathwayExample,
-    tutorialPages: state.tutorialPages,
-    filter,
-  };
-};
-
-const mapDispatchToProps = (
-  dispatch: Dispatch,
-): Pick<App.IProps, "actions"> => ({
-  actions: bindActionCreators(omit(CommandActions, "Type"), dispatch),
-});
-
-const App: React.FC<App.IProps> = (props) => {
+export const App: React.FC = () => {
   const [showHelper, setShowHelper] = React.useState(false);
   const [activePanel, setActivePanel] = React.useState<"tips" | "examples">("tips");
+
+  // Zustand store for commands
+  const commands = useCommandStore(state => state.commands);
+  const addCommand = useCommandStore(state => state.addCommand);
+  const editCommand = useCommandStore(state => state.editCommand);
+  const deleteCommand = useCommandStore(state => state.deleteCommand);
+  const setCommand = useCommandStore(state => state.setCommand);
+
+  const actions: any = { addCommand, editCommand, deleteCommand, setCommand };
 
   const handleShowHelper = (panel: "tips" | "examples") => {
     setShowHelper(true);
     setActivePanel(panel);
   };
-
-  const { descriptions, commands, pathwayExample, tutorialPages, actions } = props;
 
   return (
     <main id="main" className="App">
@@ -88,8 +44,8 @@ const App: React.FC<App.IProps> = (props) => {
             visible={true}
             panel="examples"
             onClose={() => setShowHelper(false)}
-            examplePaths={pathwayExample}
-            descriptions={descriptions}
+            examplePaths={pathwayExamples}
+            descriptions={commandDescriptions}
             actions={actions}
           />
         )}
@@ -102,14 +58,14 @@ const App: React.FC<App.IProps> = (props) => {
             <CommandInput
               commands={commands}
               actions={actions}
-              descriptions={descriptions}
+              descriptions={commandDescriptions}
             />
-            <Canvas commands={commands} actions={actions} />
+            <Canvas commands={commands} />
           </section>
           <aside className="commandListLine">
             <CommandList
               commands={commands}
-              descriptions={descriptions}
+              descriptions={commandDescriptions}
               actions={actions}
             />
           </aside>
@@ -120,4 +76,4 @@ const App: React.FC<App.IProps> = (props) => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;

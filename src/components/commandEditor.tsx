@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { ICommandModel } from 'src/models';
-import { CommandActions } from 'src/actions';
+// CommandActions removed, using Zustand store instead
 
 interface IProps {
   text?: string | null;
   commands: Array<ICommandModel>;
-  actions: CommandActions;
+  actions: any; // use actions from Zustand store
 }
 
 const CommandEditor: React.FC<IProps> = ({ commands, actions }) => {

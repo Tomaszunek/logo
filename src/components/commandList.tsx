@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { ICommandModel, ICommandDescription, CommandTypes } from 'src/models';
-import { CommandActions } from 'src/actions';
+// import { CommandActions } from 'src/actions'; // not used
 
 interface IProps {
   text?: string | null;
   commands: Array<ICommandModel>;
   descriptions: Record<string, ICommandDescription>;
-  actions: CommandActions;
+  actions: any; // use actions from Zustand store
 }
 
 const CommandList: React.FC<IProps> = ({ text, commands, descriptions, actions }) => {

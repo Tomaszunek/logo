@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { IPathwayExample } from 'src/models';
 import HelperWindow from './helperWindow';
-import { CommandActions } from 'src/actions';
+// actions removed, using Zustand store instead
+
 import { ICommandDescription } from 'src/models';
 
 interface HelperLayerProps {
   examplePaths: Array<IPathwayExample>;
   descriptions: Readonly<Record<string, ICommandDescription>>;
-  actions: CommandActions;
+  actions: any;
   visible: boolean;
   panel: 'tips' | 'examples';
   onClose: () => void;

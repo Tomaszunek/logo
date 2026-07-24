@@ -4,12 +4,14 @@
 
 - Project/workspace: `logo`, a single-package Vite browser application at `C:\Users\Tomasz\Desktop\pimp-my-codebase\logo`.
 - TypeScript and framework: React 19.2.8, TypeScript 5.9.3, Vite 8.1.5, `strictNullChecks: true`, and otherwise non-strict TypeScript.
-- Current state systems: Redux 5.0.1, React Redux 9.3.0, Redux Actions 2.6.5, one Redux store, four reducers, one action namespace, a development logger middleware, and Redux DevTools composition.
-- Proposed Zustand target: Zustand 5.0.11, the latest stable release found in the official repository on 2026-07-23.
+- Current state systems: hybrid migration state. `App` reads commands from Zustand 5.0.14, while Redux 5.0.1, React Redux 9.3.0, Redux Actions 2.6.5, the old store, actions, reducers, middleware, dependencies, and configuration remain.
+- Zustand version: 5.0.14 is installed in `package.json`, `package-lock.json`, and the direct dependency tree.
 - Validation commands: `npm.cmd run tsc`, `npm.cmd run build`, `npm.cmd ls react react-dom react-redux redux redux-actions zustand --depth=0`, and focused `rg` searches. The configured `npm.cmd test` intentionally exits with an error and is not a usable test suite.
-- Baseline result: `npm.cmd run tsc` passes; `npm.cmd run build` passes with 113 modules transformed; the dependency tree contains React Redux, Redux, and Redux Actions and does not contain Zustand.
+- Original baseline: before migration edits, `npm.cmd run tsc` and `npm.cmd run build` passed with 113 modules transformed.
+- Inspection result on 2026-07-24: `npm.cmd run tsc` fails in `src/reducers/commandDescription.ts:8`; `npm.cmd run build` passes with 63 modules transformed; the direct dependency tree contains Zustand and all three runtime Redux packages.
 - Worktree protection: `.claude/settings.local.json` is pre-existing and untracked; leave it untouched.
 - Assumptions and exclusions: preserve application behavior rather than fixing unrelated command-ID or mutation bugs; do not add persistence, SSR handling, a test framework, Immer, or server-state tooling.
+- Immediate runtime risk: `src/index.tsx` removed `BrowserRouter` even though `src/router/index.tsx` still renders `Switch` and `Route`; restore the router boundary before runtime verification.
 
 ## State inventory and decisions
 
@@ -53,46 +55,58 @@
   - Scope: `src/reducers/commandDescription.ts`, `src/reducers/pathwayExample.ts`, `src/reducers/tutorialPageReducer.ts`, `src/reducers/index.ts`, `src/reducers/state.ts`, `src/App.tsx`, the helper/tutorial catalog prop types, and new modules under `src/data`.
   - Current behavior: all three reducers return large static initial values and have no action handlers. `App` receives their values through `connect` and passes them to helper, tutorial, input, and list components.
   - Typed design: export `Readonly<Record<string, ICommandDescription>>`, `readonly IPathwayExample[]`, and `readonly ITutorialPage[]` constants. Keep existing model types and data-building helpers, and copy only at an API boundary if a consumer truly requires a mutable array.
+  - Progress evidence: `commandDescriptions`, `pathwayExamples`, and `tutorialPages` exist as typed data modules; `App` imports them directly; `IRootState` and `rootReducer` contain only `commands`.
+  - Remaining work: catalog consumer props are not consistently readonly; the three obsolete static reducer files and unused aliases remain; catalog parity has not been verified in the browser.
   - Steps:
-    1. Move the command-description object into `src/data/commandDescriptions.ts` and export it with its concrete model type.
-    2. Relocate the pathway-example builders and array into `src/data/pathwayExamples.ts` without changing paths, command shapes, images, or grouping types.
-    3. Transfer the tutorial-page array into `src/data/tutorialPages.ts` while preserving order and displayed text.
-    4. Add a single `src/data/index.ts` export surface and import the catalogs in `App` instead of selecting them from Redux.
-    5. Change catalog consumer props to readonly collection types so the data modules cannot be mutated through React boundaries.
-    6. Narrow `IRootState`, `rootReducer`, and their aliases to the command domain, removing the unused `router` field and the three static reducers.
-    7. Inspect the helper panel, tutorial popup, error popup, and command descriptions in the browser for unchanged content and ordering.
-  - Legacy removal: remove the three static reducer exports and their state aliases here. Keep the command reducer, Redux store, Provider, middleware, and dependencies until their owner tasks.
+    1. Compare the three data modules with their legacy reducer values and correct only proven omissions or ordering changes.
+    2. Change helper, example, tutorial, input, and list catalog props to readonly model types without `any`.
+    3. Remove `commandDescription.ts`, `pathwayExample.ts`, and `tutorialPageReducer.ts` from `src/reducers` together with their now-unused state aliases.
+    4. Exercise the helper panel, tutorial popup, error popup, command descriptions, and example grouping for unchanged content.
+  - Legacy removal: this group exclusively owns the three static reducer files and static state aliases. Keep the command reducer, Redux store, Provider remnants, middleware, and packages for later owners.
   - Expected result: static content renders from typed modules, and Redux state contains only `commands`.
   - Verification: compare representative description entries, simple/color/crazy example groups, and all five tutorial pages before and after the edit; confirm `rootReducer` has one key.
-  - Completion evidence: catalog values and UI order match the baseline, no static catalog is registered as a reducer, and `static-catalog-extraction` owns every changed catalog artifact.
+  - Completion evidence: catalog values and UI order match the baseline, no static reducer or alias remains, catalog props are readonly and typed, and the malformed legacy reducer no longer blocks TypeScript.
   - Rollback boundary: `src/data`, the three former static reducer modules, `src/reducers/index.ts`, `src/reducers/state.ts`, and static-data changes in `src/App.tsx`.
 
 - [ ] 2. Replace the command Redux domain with a typed Zustand store
 
   - Ownership key: `command-store-migration`
-    - Goal: make Zustand the sole runtime owner of the command tree and route every command mutation through typed store actions.
-      - Scope: `package.json`, `package-lock.json`, a new `src/store/commandStore.ts`, `src/App.tsx`, `src/index.tsx`, `Canvas`, `CommandEditor`, `CommandInput`, `CommandList`, `HelperLayer`, `HelperWindow`, and `templates/pathwayExample`.
-        - Current behavior: Redux starts with an empty command array; add allocates IDs and recursively indexes repeats; edit recursively replaces a matching command; delete recursively filters an ID; selecting an example replaces the array; every dispatched action is logged in development; command changes redraw the canvas.
-          - Typed design: use `create<CommandStore>()(devtools(...))`, named action records, immutable recursive helpers, and atomic selectors. Do not expose raw `set`, action envelopes, `Dispatch`, `any`, or non-null assertions in the store API.
-            - Steps:
-              1. Install `zustand@^5.0.11` through npm so the manifest and lockfile change together. 2. Record add, nested repeat, edit, delete, and example-replacement outputs from the current reducer as migration fixtures or concise evidence. 3. Implement the bound command store with immutable helpers and development-only named action observation. 4. Subscribe each command-aware leaf component to only the state fields and mutations it consumes, deleting unused command and action props along the way. 5. Convert the example tile from dispatching `setCommand` with a wrapper object to calling `replaceCommands` with the selected example command. 6. Simplify `App` to an unconnected component and remove `mapStateToProps`, `mapDispatchToProps`, Redux-derived prop types, the unused hash filter, and the `omit` call. 7. Delete the React Redux `Provider` and `configureStore()` bootstrapping from `src/index.tsx` so the router renders directly under Strict Mode. 8. Exercise command entry, nested rendering, numeric and color edits, deletion at multiple depths, example selection, and canvas redraw against the captured outcomes. - Legacy removal: remove live imports of `react-redux`, `redux`, `redux-actions`, `CommandActions`, reducers, and the Redux store. Leave now-unreachable files and package removals to `redux-retirement`. - Expected result: the application has one active command owner, no dual writes, no Provider, and user interactions produce the same command tree and drawing. - Verification: inspect Zustand selector usage for narrow subscriptions and compare each runtime scenario with the recorded reducer outcome, including development action names. - Completion evidence: all command consumers use `useCommandStore`, the React root has no state provider, legacy Redux modules are unreachable, and command behavior matches the migration evidence. - Rollback boundary: Zustand dependency additions, `src/store/commandStore.ts`, component subscription changes, `src/App.tsx`, and `src/index.tsx`.
+  - Goal: make Zustand the sole runtime owner of the command tree and route every command mutation through typed store actions.
+  - Scope: `package.json`, `package-lock.json`, `src/store/commandStore.ts`, `src/App.tsx`, `src/index.tsx`, `Canvas`, `CommandEditor`, `CommandInput`, `CommandList`, `HelperLayer`, `HelperWindow`, and `templates/pathwayExample`.
+  - Current partial state: Zustand 5.0.14 is installed; `App` is no longer connected; Provider and Redux store creation are inactive; a bound store handles command mutations. However, `App` owns all selectors and passes an `any` action bag, leaf components still prop-drill state/actions, the store mutates inputs and nested state, `setAll` is declared but missing, `setCommand` retains the Redux-shaped wrapper, and no devtools middleware or behavioral evidence exists.
+  - Typed design: use `create<CommandStore>()(devtools(...))`, named action records, immutable recursive helpers, and atomic leaf selectors. Do not expose raw `set`, action envelopes, `Dispatch`, `any`, or non-null assertions in the store API.
+  - Remaining work: restore `BrowserRouter`; remove commented Redux imports; finish the store API and immutable implementation; move subscriptions to consumers; replace the synthetic example payload; capture and run behavioral comparisons.
+  - Steps:
+    1. Capture add, nested repeat, edit, delete, and example-replacement outputs from the old reducer before deleting it.
+    2. Make `CommandStore` internally consistent, remove the undeclared implementation gap, and expose `replaceCommands(readonlyCommands)` instead of `setCommand` and `setAll`.
+    3. Rewrite recursive helpers to return new command trees without mutating action inputs or existing Zustand state.
+    4. Add development-only `devtools` with named actions that preserve useful migration observability.
+    5. Subscribe command-aware leaf components to only the fields and actions they consume, removing the `actions: any` bag and unused props.
+    6. Call `replaceCommands([example.command])` directly from the example tile.
+    7. Keep `App` unconnected, delete stale Redux comments, and restore `BrowserRouter` around `Application` while leaving only the Redux Provider removed.
+    8. Compare command entry, nested rendering, numeric and color edits, multi-depth deletion, example selection, and canvas redraw with the captured reducer outcomes.
+  - Legacy removal: remove live Redux imports and runtime setup here. Leave unreachable command actions/reducer/store/middleware files and package uninstall work to `redux-retirement`.
+  - Expected result: the application has one active command owner, typed narrow subscriptions, a valid router boundary, no dual writes, and unchanged command/drawing behavior.
+  - Verification: run `npm.cmd run tsc` after Task 1 removes its malformed reducer, inspect selector boundaries, and execute every command behavior scenario including development action names.
+  - Completion evidence: TypeScript passes at this checkpoint, no runtime consumer imports Redux, leaf consumers use typed selectors/actions, `BrowserRouter` remains active, and recorded behavior matches.
+  - Rollback boundary: Zustand dependency addition, `src/store/commandStore.ts`, component subscription changes, `src/App.tsx`, and `src/index.tsx`.
 
 - [ ] 3. Retire the unreachable Redux system and configuration
 
   - Ownership key: `redux-retirement`
   - Goal: remove every leftover artifact whose only responsibility was the replaced Redux implementation.
-  - Scope: `src/actions`, residual `src/reducers`, `src/store/index.ts`, `src/middleware/logger.ts`, `src/utils/index.ts`, `package.json`, `package-lock.json`, `vite.config.js`, `README.md`, and the package description.
-  - Current behavior: after `command-store-migration`, these artifacts have no runtime consumers; Redux-related packages and Vite prebundling would otherwise remain as dead weight.
+  - Scope: command-only files under `src/actions` and `src/reducers`, `src/store/index.ts`, `src/middleware/logger.ts`, `src/utils/index.ts`, `package.json`, `package-lock.json`, `vite.config.js`, `README.md`, and the package description.
+  - Current state: no cleanup step is complete. Redux packages remain installed, every legacy command/store/middleware file remains, Vite still prebundles Redux, README/package metadata still name Redux, and `omit` remains after its only caller was removed.
   - Typed design: retain model types in `src/models` and the Zustand store type in its own module. Do not keep compatibility aliases, Redux action names, reducer-shaped adapters, or `any` casts for deleted APIs.
   - Steps:
-    1. Remove the obsolete action namespace, command reducer, root reducer, Redux state types, Redux store factory, and logger middleware.
+    1. Remove the obsolete command action namespace, command reducer, root reducer, Redux state types, Redux store factory, and logger middleware after Task 2 captures parity evidence.
     2. Delete the `omit` utility only after confirming no non-Redux caller remains.
     3. Uninstall `react-redux`, `redux`, `redux-actions`, and `@types/redux-actions` with npm while retaining Zustand.
     4. Drop the Redux-only `optimizeDeps.include` entry from `vite.config.js`.
     5. Update the repository and package descriptions to name Zustand instead of Redux without rewriting unrelated documentation.
     6. Search project-owned source, configuration, manifests, and documentation for legacy package names, APIs, symbols, and paths; classify any remaining match with a concrete reason.
     7. Inspect the direct dependency tree to prove Zustand is present and all four retired packages are absent.
-  - Legacy removal: this task owns all residual Redux deletions and no catalog or consumer migration work.
+  - Legacy removal: this task owns command/store/middleware Redux leftovers only; Task 1 owns static reducer deletion and Task 2 owns live consumer/runtime migration.
   - Expected result: Zustand is the only global-state dependency and no dead Redux code or configuration remains.
   - Verification: `rg` returns no unexplained `redux`, `react-redux`, `redux-actions`, `connect`, `Provider`, `createStore`, `rootReducer`, `CommandActions`, or Redux store-factory match; the direct dependency tree contains only the intended state library.
   - Completion evidence: every removal-ledger row owned by `redux-retirement` is removed, the lockfile has no direct or transitive Redux package from this app's dependency graph, and documentation describes the final architecture.
@@ -102,7 +116,7 @@
   - Ownership key: `integrated-proof`
   - Goal: validate the final source and dependency state once, after all migration edits are complete.
   - Scope: final repository state, compiler, production bundle, critical browser behavior, cleanup evidence, and migration checklist status.
-  - Current behavior: the baseline typecheck and production build pass; no automated test suite exists; the app supports command entry, recursive editing/deletion, examples, tutorials, helper content, routing, and canvas drawing.
+  - Current inspection: the intermediate production build passes with 63 modules, but this is not completion evidence because TypeScript fails, Redux cleanup is pending, no runtime walkthrough is recorded, and the missing `BrowserRouter` can break routing at startup.
   - Typed design: final checks must not introduce suppressions, compatibility shims, broad selectors, duplicate stores, or a second owner for any value.
   - Steps:
     1. Run `npm.cmd run tsc` from the final dependency state and record the zero-error result.
@@ -113,7 +127,7 @@
     6. Reconcile the removal ledger and mark the final status `COMPLETE` only when every checkbox has its evidence.
   - Legacy removal: none; unresolved legacy work reopens `redux-retirement` instead of being duplicated here.
   - Expected result: the migration passes compiler, bundle, runtime, ownership, and cleanup checks with no unrelated changes.
-  - Verification: successful final typecheck and build, complete integrated browser scenario, clean ownership review, and no unresolved removal-ledger item.
+  - Verification: rerun the final typecheck and build only after cleanup, then complete the browser scenario, ownership review, and removal-ledger reconciliation.
   - Completion evidence: commands and outputs are recorded, all runtime scenarios pass, every task is checked, and the final status is `COMPLETE`.
   - Rollback boundary: verification should not edit source; only evidence and status lines in this checklist may change.
 
@@ -121,15 +135,15 @@
 
 | Legacy element                                                  | Replacement or reason to remove                   | Removal task                | Final result |
 | --------------------------------------------------------------- | ------------------------------------------------- | --------------------------- | ------------ |
-| Static description reducer                                      | Typed `commandDescriptions` data module           | `static-catalog-extraction` | Pending      |
-| Static pathway reducer                                          | Typed `pathwayExamples` data module               | `static-catalog-extraction` | Pending      |
-| Static tutorial reducer                                         | Typed `tutorialPages` data module                 | `static-catalog-extraction` | Pending      |
-| React Redux `connect` and Provider                              | Direct Zustand selectors and bound store          | `command-store-migration`   | Pending      |
+| Static description reducer                                      | Typed `commandDescriptions` data module           | `static-catalog-extraction` | Data exists; reducer remains and is malformed |
+| Static pathway reducer                                          | Typed `pathwayExamples` data module               | `static-catalog-extraction` | Data exists; reducer remains |
+| Static tutorial reducer                                         | Typed `tutorialPages` data module                 | `static-catalog-extraction` | Data exists; reducer remains |
+| React Redux `connect` and Provider                              | Direct Zustand selectors and bound store          | `command-store-migration`   | Runtime wrappers inactive; stale comments and prop-drilling remain |
 | Redux action namespace and command reducer                      | Typed Zustand actions and immutable helpers       | `redux-retirement`          | Pending      |
 | Redux store, root reducer, state aliases, and logger            | Zustand bound store with development action names | `redux-retirement`          | Pending      |
 | `react-redux`, `redux`, `redux-actions`, `@types/redux-actions` | Superseded dependencies                           | `redux-retirement`          | Pending      |
 | Redux Vite prebundle entry and documentation references         | Final Zustand configuration and descriptions      | `redux-retirement`          | Pending      |
-| Redux-only `omit` helper                                        | No longer needed after dispatch binding removal   | `redux-retirement`          | Pending      |
+| Redux-only `omit` helper                                        | No longer needed after dispatch binding removal   | `redux-retirement`          | Unused but still present |
 
 ## Risks and blockers
 
@@ -138,7 +152,8 @@
 - The pathway-example module is very large. Move its data without formatting or content churn so the migration diff remains reviewable.
 - There is no automated test suite. Runtime evidence is mandatory, and `npm.cmd test` must not be presented as a passing gate.
 - Do not touch the unrelated untracked `.claude/settings.local.json`.
+- Preserve `BrowserRouter`; only the Redux Provider is obsolete.
 
 ## Final status
 
-`NOT STARTED`: 0 of 4 major jobs complete. First incomplete job: `static-catalog-extraction`.
+`IN PROGRESS`: 0 of 4 major jobs complete. Tasks 1 and 2 contain partial implementation, but neither meets its completion evidence. First incomplete job: `static-catalog-extraction`.
