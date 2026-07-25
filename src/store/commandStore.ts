@@ -1,13 +1,13 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { ICommandModel } from "../models";
+import type { ICommandModel } from "../models";
 
 export interface CommandStore {
-  commands: ReadonlyArray<ICommandModel>;
+  commands: readonly ICommandModel[];
   addCommand: (command: Readonly<ICommandModel>) => void;
   editCommand: (command: Readonly<ICommandModel>) => void;
   deleteCommand: (id: number) => void;
-  replaceCommands: (commands: ReadonlyArray<ICommandModel>) => void;
+  replaceCommands: (commands: readonly ICommandModel[]) => void;
 }
 
 interface IndexedCommands {
@@ -22,19 +22,20 @@ const cloneCommand = (command: Readonly<ICommandModel>): ICommandModel => ({
     : {}),
 });
 
-const assignIds = (
-  commands: ReadonlyArray<ICommandModel>,
+ const assignIds = (
+  commands: readonly ICommandModel[],
   startId: number,
 ): IndexedCommands => {
   let nextId = startId;
   const indexed = commands.map((command) => {
-    const id = nextId++;
-    const children = command.commands
+    const id = nextId;
+    nextId += 1;
+     const children = command.commands
       ? assignIds(command.commands, nextId)
       : undefined;
 
     if (children) {
-      nextId = children.nextId;
+      ({ nextId } = children);
     }
 
     return {
@@ -47,10 +48,10 @@ const assignIds = (
   return { commands: indexed, nextId };
 };
 
-const getNextId = (commands: ReadonlyArray<ICommandModel>): number => {
+ const getNextId = (commands: readonly ICommandModel[]): number => {
   let highestId = -1;
 
-  const visit = (items: ReadonlyArray<ICommandModel>) => {
+  const visit = (items: readonly ICommandModel[]) => {
     items.forEach((item) => {
       highestId = Math.max(highestId, item.id);
       if (item.commands) {
@@ -63,16 +64,16 @@ const getNextId = (commands: ReadonlyArray<ICommandModel>): number => {
   return highestId + 1;
 };
 
-const addToTree = (
-  commands: ReadonlyArray<ICommandModel>,
+ const addToTree = (
+  commands: readonly ICommandModel[],
   command: Readonly<ICommandModel>,
 ): ICommandModel[] => {
   const indexed = assignIds([cloneCommand(command)], getNextId(commands));
   return [...commands.map((item) => cloneCommand(item)), ...indexed.commands];
 };
 
-const editTree = (
-  commands: ReadonlyArray<ICommandModel>,
+ const editTree = (
+  commands: readonly ICommandModel[],
   replacement: Readonly<ICommandModel>,
 ): ICommandModel[] =>
   commands.map((command) => {
@@ -88,8 +89,8 @@ const editTree = (
       : cloneCommand(command);
   });
 
-const deleteFromTree = (
-  commands: ReadonlyArray<ICommandModel>,
+ const deleteFromTree = (
+  commands: readonly ICommandModel[],
   id: number,
 ): ICommandModel[] =>
   commands
@@ -108,29 +109,29 @@ export const useCommandStore = create<CommandStore>()(
     (set) => ({
       commands: [],
       addCommand: (command) =>
-        set(
+        { set(
           (state) => ({ commands: addToTree(state.commands, command) }),
           false,
           "commands/add",
-        ),
+        ); },
       editCommand: (command) =>
-        set(
+        { set(
           (state) => ({ commands: editTree(state.commands, command) }),
           false,
           "commands/edit",
-        ),
+        ); },
       deleteCommand: (id) =>
-        set(
+        { set(
           (state) => ({ commands: deleteFromTree(state.commands, id) }),
           false,
           "commands/delete",
-        ),
+        ); },
       replaceCommands: (commands) =>
-        set(
+        { set(
           { commands: assignIds(commands, 0).commands },
           false,
           "commands/replace",
-        ),
+        ); },
     }),
     {
       name: "logo-command-store",

@@ -1,4 +1,4 @@
-import { ICommandModel, IPathwayExample } from "../models";
+import type { ICommandModel, IPathwayExample } from "../models";
 
 interface IExampleCommand {
   name: ICommandModel["name"];
@@ -11,15 +11,15 @@ const step = (name: ICommandModel["name"], value: number): IExampleCommand => ({
   name,
   value,
 });
-const stroke = (color: ICommandModel["color"]): IExampleCommand => ({
+ const stroke = (color: ICommandModel["color"]): IExampleCommand => ({
   name: "setsc",
   color,
 });
-const background = (color: ICommandModel["color"]): IExampleCommand => ({
+ const background = (color: ICommandModel["color"]): IExampleCommand => ({
   name: "setbc",
   color,
 });
-const loop = (
+ const loop = (
   value: number,
   ...commands: IExampleCommand[]
 ): IExampleCommand => ({
@@ -28,14 +28,15 @@ const loop = (
   commands,
 });
 
-const buildExampleCommand = (source: IExampleCommand): ICommandModel => {
+ const buildExampleCommand = (source: IExampleCommand): ICommandModel => {
   let nextId = 0;
 
   const build = (command: IExampleCommand): ICommandModel => {
     const result: ICommandModel = {
-      id: nextId++,
+      id: nextId,
       name: command.name,
     };
+    nextId += 1;
 
     if (command.value !== undefined) {
       result.value = command.value;
@@ -53,7 +54,7 @@ const buildExampleCommand = (source: IExampleCommand): ICommandModel => {
   return build(source);
 };
 
-export const pathwayExamples: ReadonlyArray<IPathwayExample> = [
+export const pathwayExamples: readonly IPathwayExample[] = [
   {
     name: "command1",
     path: "repeat 50 [repeat 159 [tr 44 fd 61] tr 591]",

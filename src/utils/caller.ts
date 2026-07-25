@@ -1,9 +1,9 @@
-import { Turtle } from './turtle';
-import { ICommandModel } from 'src/models';
+import type { Turtle } from './turtle';
+import type { ICommandModel } from 'src/models';
 
 export class Caller {
-    private turtle: Turtle;
-    constructor(turtle: Turtle) {
+    private readonly turtle: Turtle;
+    public constructor(turtle: Turtle) {
         this.turtle = turtle;
     }
     public execute = (command: ICommandModel) => {
@@ -60,10 +60,10 @@ export class Caller {
     }
     public repeat = (command: ICommandModel) => {
         const caller = new Caller(this.turtle);
-        if(command && command.value) {
-            for(let i = 0; i < command.value; i++) {
+        if(command.value !== undefined && command.value !== 0) {
+            for(let i = 0; i < command.value; i += 1) {
                 if(command.commands) {
-                    command.commands.forEach((newCommand) => caller.execute(newCommand));
+                    command.commands.forEach((newCommand) => { caller.execute(newCommand); });
                 }
             }
         }
@@ -88,12 +88,12 @@ export class Caller {
         this.turtle.setPosition(x, y);
     }
     public setbc = (color?: string) => {
-        if(color) {
+        if(color !== undefined && color !== '') {
             this.turtle.setBackgroundColor(color);
         }
     }
     public setsc = (color?: string) => {
-        if(color) {
+        if(color !== undefined && color !== '') {
             this.turtle.setStrokeColor(color);
         }        
     }

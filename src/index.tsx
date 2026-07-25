@@ -10,7 +10,7 @@ const rootEl = document.getElementById("root");
 if (!rootEl) {
   throw new Error("Failed to find #root element for React root.");
 }
-const root = createRoot(rootEl!);
+const root = createRoot(rootEl);
 root.render(
   <React.StrictMode>
     <BrowserRouter>

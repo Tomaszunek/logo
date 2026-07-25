@@ -8,7 +8,7 @@ export interface ICommandDescription {
     name: string;
     long: string;
     description: string;
-    args: ReadonlyArray<ICommandArgument>;
+    args: readonly ICommandArgument[];
     color: string;
     image: string;
     argCount: number;

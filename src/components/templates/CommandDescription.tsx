@@ -1,12 +1,12 @@
 import * as React from "react";
-import { ICommandDescription } from "src/models";
+import type { ICommandDescription } from "src/models";
 
 interface IProps {
   description: ICommandDescription;
 }
 
 const CommandDescription: React.FC<IProps> = ({ description }) => {
-  const fields: ReadonlyArray<readonly [string, string | number]> = [
+  const fields: readonly (readonly [string, string | number])[] = [
     ["short", description.short],
     ["name", description.name],
     ["long", description.long],

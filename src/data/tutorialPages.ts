@@ -1,6 +1,6 @@
-import { ITutorialPage } from '../models';
+import type { ITutorialPage } from '../models';
 
-export const tutorialPages: ReadonlyArray<ITutorialPage> = [
+export const tutorialPages: readonly ITutorialPage[] = [
   {
     name: "Command input",
     image: "tutorial1.gif",

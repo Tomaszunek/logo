@@ -11,8 +11,8 @@ const Header: React.FC<HeaderProps> = ({ onShowHelper }) => (
       <h1>Logo Playground</h1>
     </div>
     <nav className="rightSide">
-      <button type="button" onClick={() => onShowHelper('tips')}>Tips</button>
-      <button type="button" onClick={() => onShowHelper('examples')}>Command Examples</button>
+      <button type="button" onClick={() => { onShowHelper('tips'); }}>Tips</button>
+      <button type="button" onClick={() => { onShowHelper('examples'); }}>Command Examples</button>
     </nav>
   </header>
 );

@@ -1,4 +1,4 @@
-import { ICommandModel } from './Command';
+import type { ICommandModel } from './Command';
 
 export interface IPathwayExample {
     name: string,

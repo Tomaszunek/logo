@@ -1,4 +1,4 @@
-import { CommandTypes } from './CommandTypes';
+import type { CommandTypes } from './CommandTypes';
 
 export interface ICommandModel {
     id: number;
@@ -7,5 +7,5 @@ export interface ICommandModel {
     arg2?: number;
     color?: string;
     filename?: string;
-    commands?: Array<ICommandModel>;
+    commands?: ICommandModel[];
   }
