@@ -9,6 +9,9 @@ const withoutIds = (commands: readonly ICommandModel[]): unknown[] =>
     ...(command.value === undefined ? {} : { value: command.value }),
     ...(command.arg2 === undefined ? {} : { arg2: command.arg2 }),
     ...(command.color === undefined ? {} : { color: command.color }),
+    ...(command.color2 === undefined ? {} : { color2: command.color2 }),
+    ...(command.blend === undefined ? {} : { blend: command.blend }),
+    ...(command.palette === undefined ? {} : { palette: command.palette }),
     ...(command.commands
       ? { commands: withoutIds(command.commands) }
       : {}),
@@ -25,4 +28,21 @@ describe("pathwayExamples", () => {
       expect(withoutIds([example.command])).toEqual(withoutIds(parsedCommands));
     },
   );
+
+  it("uses every command available in the guide", async () => {
+    const { commandDescriptions } = await import("./commandDescriptions");
+    const demonstrated = new Set<string>();
+    const visit = (command: Readonly<ICommandModel>) => {
+      demonstrated.add(command.name);
+      command.commands?.forEach(visit);
+    };
+
+    pathwayExamples.forEach((example) => {
+      visit(example.command);
+    });
+
+    expect([...demonstrated].sort()).toEqual(
+      Object.keys(commandDescriptions).sort(),
+    );
+  });
 });

@@ -1,5 +1,6 @@
 import * as React from "react";
 import type { ICommandDescription, IPathwayExample } from "src/models";
+import { exampleCollections } from "src/data/pathwayExamples";
 import PathwayExample from "./templates/pathwayExample";
 import CommandDescription from "./templates/CommandDescription";
 
@@ -18,32 +19,72 @@ const HelperWindow: React.FC<IProps> = ({
   site,
   onSelect,
 }) => {
+  const [activeCollection, setActiveCollection] = React.useState<
+    IPathwayExample["type"] | "all"
+  >("all");
+
   const displayAll = () => {
-    const groups: Partial<Record<string, IPathwayExample[]>> = {};
+    const visibleCollections =
+      activeCollection === "all"
+        ? exampleCollections
+        : exampleCollections.filter(
+            (collection) => collection.id === activeCollection,
+          );
 
-    examplePaths.forEach((item) => {
-      const list = groups[item.type];
-      if (list) {
-        list.push(item);
-      } else {
-        groups[item.type] = [item];
-      }
-    });
-
-    return Object.entries(groups).map(([type, examples]) => {
-      if (examples === undefined) {
-        return null;
-      }
-
-      return (
-        <section key={type} className="exampleGroup">
-          <h3>{type} collection</h3>
-          <div className={`commandType ${type}`}>
-            {displayExample(examples)}
-          </div>
-        </section>
-      );
-    });
+    return (
+      <>
+        <nav className="exampleFilters" aria-label="Example collections">
+          <button
+            type="button"
+            className={activeCollection === "all" ? "active" : ""}
+            aria-pressed={activeCollection === "all"}
+            onClick={() => {
+              setActiveCollection("all");
+            }}
+          >
+            All <span>{examplePaths.length}</span>
+          </button>
+          {exampleCollections.map((collection) => (
+            <button
+              type="button"
+              key={collection.id}
+              className={activeCollection === collection.id ? "active" : ""}
+              aria-pressed={activeCollection === collection.id}
+              onClick={() => {
+                setActiveCollection(collection.id);
+              }}
+            >
+              {collection.label}{" "}
+              <span>
+                {
+                  examplePaths.filter(
+                    (examplePath) => examplePath.type === collection.id,
+                  ).length
+                }
+              </span>
+            </button>
+          ))}
+        </nav>
+        <div className="exampleCollections">
+          {visibleCollections.map((collection) => {
+            const examples = examplePaths.filter(
+              (examplePath) => examplePath.type === collection.id,
+            );
+            return (
+              <section key={collection.id} className="exampleGroup">
+                <div className="exampleGroupHeading">
+                  <h3>{collection.label}</h3>
+                  <p>{collection.description}</p>
+                </div>
+                <div className={`commandType ${collection.id}`}>
+                  {displayExample(examples)}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+      </>
+    );
   };
 
    const displayExample = (examples: readonly IPathwayExample[]) =>
