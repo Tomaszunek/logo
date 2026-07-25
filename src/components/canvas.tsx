@@ -18,7 +18,7 @@ const Canvas: React.FC = () => {
     homeY: 400,
     dir: 0,
     strokeColor: "#111827",
-    strokeWeight: 1,
+    strokeWeight: 2,
     pen: true,
     visible: true,
   });
@@ -106,7 +106,7 @@ const Canvas: React.FC = () => {
           <span className="statusDot" aria-hidden="true" />
           Renders automatically
         </span>
-        <span>800 × 800 transparent PNG</span>
+        <span>Light preview · 800 × 800 transparent PNG</span>
       </div>
       <p className="srOnly" aria-live="polite">
         {announcement}
