@@ -14,21 +14,36 @@ const HelperLayer: React.FC<HelperLayerProps> = ({ examplePaths, descriptions, v
   if (!visible) {return null;}
   const site = panel === 'tips' ? 'left' : 'right';
   return (
-    <div className="helperLayer">
-      <HelperWindow
-        descriptions={descriptions}
-        itemStyle={{ display: 'block' }}
-        examplePaths={examplePaths}
-        site={site}
-      />
-      <button
-        type="button"
-        aria-label="Close helper panel"
-        onClick={onClose}
-        style={{ position: "absolute", top: 10, right: 10 }}
+    <div className="modalBackdrop">
+      <section
+        className="helperLayer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="examples-title"
       >
-        &times;
-      </button>
+        <div className="modalHeader">
+          <div>
+            <p className="eyebrow">Inspiration gallery</p>
+            <h2 id="examples-title">Start from an example</h2>
+            <p>Pick a design to load its editable command stack.</p>
+          </div>
+          <button
+            type="button"
+            className="modalClose"
+            aria-label="Close examples"
+            onClick={onClose}
+          >
+            &times;
+          </button>
+        </div>
+        <HelperWindow
+          descriptions={descriptions}
+          itemStyle={{ display: "block" }}
+          examplePaths={examplePaths}
+          site={site}
+          onSelect={onClose}
+        />
+      </section>
     </div>
   );
 };

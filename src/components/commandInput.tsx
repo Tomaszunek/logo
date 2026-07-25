@@ -1,83 +1,105 @@
-import * as React from 'react';
-import type { ICommandDescription } from 'src/models';
-import { useCommandStore } from 'src/store/commandStore';
-
-import { Parser } from 'src/utils/parser';
-import Popup from './popup';
-import { ErrorHandler } from 'src/utils/errorHandler';
+import * as React from "react";
+import type { ICommandDescription } from "src/models";
+import { useCommandStore } from "src/store/commandStore";
+import { ErrorHandler } from "src/utils/errorHandler";
+import { Parser } from "src/utils/parser";
+import Popup from "./popup";
 
 interface IProps {
-  descriptions: Readonly<Record<string,ICommandDescription>>;
+  descriptions: Readonly<Record<string, ICommandDescription>>;
 }
 
 const CommandInput: React.FC<IProps> = ({ descriptions }) => {
   const addCommand = useCommandStore((state) => state.addCommand);
-   const timeoutRef = React.useRef<number | null>(null);
+  const timeoutRef = React.useRef<number | null>(null);
+  const [input, setInput] = React.useState("");
+  const [showPopup, setShowPopup] = React.useState(false);
+  const [popupText, setPopupText] = React.useState("");
 
-  // Cleanup any pending error popup timer on unmount
-  React.useEffect(() => () => {
+  React.useEffect(
+    () => () => {
       if (timeoutRef.current !== null) {
         clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
       }
-    }, []);
-  const [showPopup, setShowPopup] = React.useState(false);
-   const [popupText, setPopupText] = React.useState('');
-   const inputRef = React.useRef<HTMLInputElement>(null);
+    },
+    [],
+  );
 
-   const onError = (insideCommand: string, wrongCommand: string) => {
-    const errorHandler = new ErrorHandler(
+  const onError = (insideCommand: string, parsedCommand: string) => {
+    const message = new ErrorHandler(
       {
-        fullCommand: inputRef.current ? inputRef.current.value : '',
+        fullCommand: input,
         insideCommand,
-        wrongCommand
+        wrongCommand: parsedCommand,
       },
-      descriptions
+      descriptions,
     ).handleError();
 
     setShowPopup(true);
-    setPopupText(errorHandler);
-
-    // Clear any existing timer before setting a new one
+    setPopupText(message);
     if (timeoutRef.current !== null) {
       clearTimeout(timeoutRef.current);
     }
     timeoutRef.current = window.setTimeout(() => {
       setShowPopup(false);
-      setPopupText(errorHandler);
       timeoutRef.current = null;
     }, 5000);
   };
 
-   const onInputChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      const parser = new Parser(e.currentTarget.value.trim()).parse(onError);
-      if (parser.length > 0) {
-        for (const item of parser) {
-          addCommand(item);
-        }
-        if (!inputRef.current) {return;}
-        inputRef.current.value = '';
-      } else {
-        // No valid commands
-      }
+  const submitCommand = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const value = input.trim();
+    if (value === "") {
+      return;
     }
+
+    const parsedCommands = new Parser(value).parse(onError);
+    if (parsedCommands.length === 0) {
+      return;
+    }
+
+    parsedCommands.forEach(addCommand);
+    setInput("");
+    setShowPopup(false);
   };
 
   return (
-    <>
-      <input
-        className="commandInput"
-        placeholder="Enter a command"
-        aria-label="Command input"
-        autoFocus={true}
-        ref={inputRef}
-        onKeyDown={onInputChange}
-      />
-      {showPopup && (
-        <Popup massage={popupText} />
-      )}
-    </>
+    <div className="commandComposer">
+      <div className="composerHeading">
+        <div>
+          <p className="eyebrow">Command line</p>
+          <h2>Build your mark</h2>
+        </div>
+        <code>repeat 6 [fd 120 tr 60]</code>
+      </div>
+      <form className="commandForm" onSubmit={submitCommand}>
+        <span className="commandPrompt" aria-hidden="true">
+          &gt;
+        </span>
+        <label className="srOnly" htmlFor="command-input">
+          Enter one or more Logo commands
+        </label>
+        <input
+          id="command-input"
+          className="commandInput"
+          placeholder="Try: repeat 5 [fd 140 tr 144]"
+          autoComplete="off"
+          spellCheck={false}
+          autoFocus={true}
+          value={input}
+          onChange={(event) => {
+            setInput(event.currentTarget.value);
+          }}
+        />
+        <button type="submit" className="button buttonPrimary runButton">
+          Run
+        </button>
+      </form>
+      <p className="inputHint">
+        Chain commands with spaces. Colors accept hex values with or without #.
+      </p>
+      {showPopup && <Popup massage={popupText} />}
+    </div>
   );
 };
 

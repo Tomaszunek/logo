@@ -2,12 +2,13 @@ import * as React from "react";
 import type { IPathwayExample } from "src/models";
 import { useCommandStore } from "src/store/commandStore";
 
-const PathwayExample: React.FC<IProps> = ({ examplePath }) => {
+const PathwayExample: React.FC<IProps> = ({ examplePath, onSelect }) => {
   const replaceCommands = useCommandStore((state) => state.replaceCommands);
    const { name, path, image } = examplePath;
    const setCommands = () => {
     const { command } = examplePath;
     replaceCommands([command]);
+    onSelect();
   };
   return (
     <button
@@ -30,4 +31,5 @@ export default PathwayExample;
 
 interface IProps {
   examplePath: IPathwayExample;
+  onSelect: () => void;
 }

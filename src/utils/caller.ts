@@ -53,10 +53,10 @@ export class Caller {
         this.turtle.drawLine(-dist);
     }
     public tl = (dir: number) => {
-        this.turtle.rotate(dir);
+        this.turtle.rotate(-dir);
     }
     public tr = (dir: number) => {
-        this.turtle.rotate(-dir);
+        this.turtle.rotate(dir);
     }
     public repeat = (command: ICommandModel) => {
         const caller = new Caller(this.turtle);
