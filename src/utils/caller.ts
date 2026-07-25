@@ -19,6 +19,11 @@ export class Caller {
       return;
     }
 
+    if (command.name === "setpalette" && command.palette !== undefined) {
+      this.setpalette(command.palette);
+      return;
+    }
+
     const pairAction = pairActions[command.name];
     if (
       pairAction !== undefined &&
@@ -205,6 +210,22 @@ export class Caller {
     this.turtle.setBlend(blend);
   };
 
+  public setseed = (seed: number) => {
+    this.turtle.setSeed(seed);
+  };
+
+  public setpalette = (palette: readonly string[]) => {
+    this.turtle.setPalette(palette);
+  };
+
+  public push = () => {
+    this.turtle.pushState();
+  };
+
+  public pop = () => {
+    this.turtle.popState();
+  };
+
   public setgradient = (color1: string, color2: string, angle: number) => {
     this.turtle.setLinearGradient(color1, color2, angle);
   };
@@ -240,6 +261,7 @@ const numberActions: Readonly<
   setflow: (caller, value) => { caller.setflow(value); },
   setglow: (caller, value) => { caller.setglow(value); },
   seth: (caller, value) => { caller.seth(value); },
+  setseed: (caller, value) => { caller.setseed(value); },
   setsw: (caller, value) => { caller.setsw(value); },
   setsoftness: (caller, value) => { caller.setsoftness(value); },
   setsymmetry: (caller, value) => { caller.setsymmetry(value); },
@@ -294,5 +316,7 @@ const noArgumentActions: Readonly<
   home: (caller) => { caller.home(); },
   pendown: (caller) => { caller.pendown(); },
   penup: (caller) => { caller.penup(); },
+  pop: (caller) => { caller.pop(); },
+  push: (caller) => { caller.push(); },
   showturtle: (caller) => { caller.showturtle(); },
 };

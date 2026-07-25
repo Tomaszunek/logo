@@ -156,6 +156,24 @@ describe("Parser", () => {
     expect(onError).not.toHaveBeenCalled();
   });
 
+  it("parses seeds, variable palettes, and state stack commands", () => {
+    const { commands, onError } = parse(
+      "setseed 42 setpalette ff006e ffb703 3a86ff push fd 20 pop",
+    );
+
+    expect(commands).toMatchObject([
+      { name: "setseed", value: 42 },
+      {
+        name: "setpalette",
+        palette: ["#ff006e", "#ffb703", "#3a86ff"],
+      },
+      { name: "push" },
+      { name: "fd", value: 20 },
+      { name: "pop" },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
   it("accepts uppercase commands and flexible whitespace", () => {
     const { commands, onError } = parse(
       "  REPEAT  4 [ FD 100\nTR 90 ]  ",
@@ -211,6 +229,8 @@ describe("Parser", () => {
     "gradientbg ff0000",
     "setblend unknown",
     "spray 40",
+    "setpalette",
+    "setpalette nope",
     "repeat 1.5 [fd 10]",
     "repeat -1 [fd 10]",
     "repeat 2 []",

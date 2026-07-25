@@ -67,6 +67,19 @@ const CommandList: React.FC<IProps> = ({ descriptions }) => {
                   ))}
                 </select>
               )}
+              {item.palette?.map((color, paletteIndex) => (
+                <input
+                  key={`${item.id}-${paletteIndex}`}
+                  aria-label={`${short} color ${paletteIndex + 1}`}
+                  type="color"
+                  value={color}
+                  onChange={(event) => {
+                    const palette = [...(item.palette ?? [])];
+                    palette[paletteIndex] = event.target.value;
+                    editCommand({ ...item, palette });
+                  }}
+                />
+              ))}
               <button
                 type="button"
                 className="remove"

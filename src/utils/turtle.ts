@@ -18,6 +18,7 @@ export class Turtle {
   public flow: number;
   public symmetry: number;
   public blend: BlendMode;
+  public palette: readonly string[];
   public pen: boolean;
   public visible: boolean;
 
@@ -31,6 +32,8 @@ export class Turtle {
   private frameActive = false;
   private pendingStroke = false;
   private randomState = 123456789;
+  private paletteIndex = 0;
+  private stateStack: TurtleState[] = [];
 
   public constructor(turtle: ITurtleInstance) {
     this.x = turtle.homeX;
@@ -51,6 +54,7 @@ export class Turtle {
     this.flow = 1;
     this.symmetry = 1;
     this.blend = "source-over";
+    this.palette = [];
     this.pen = turtle.pen;
     this.initialPen = turtle.pen;
     this.visible = turtle.visible;
@@ -72,6 +76,7 @@ export class Turtle {
     const newY = this.y + Math.sin(radians) * distance;
 
     if (this.pen) {
+      this.applyNextPaletteColor();
       if (this.softness > 0) {
         this.flushStroke();
         this.forEachSymmetry(context, () => {
@@ -573,6 +578,8 @@ export class Turtle {
     }
     this.strokeColor = color;
     this.paintStyle = { kind: "solid" };
+    this.palette = [];
+    this.paletteIndex = 0;
   };
 
   public setLinearGradient = (
@@ -583,6 +590,8 @@ export class Turtle {
     this.flushStroke();
     this.strokeColor = color1;
     this.paintStyle = { angle, color1, color2, kind: "linear" };
+    this.palette = [];
+    this.paletteIndex = 0;
   };
 
   public setRadialGradient = (
@@ -598,6 +607,8 @@ export class Turtle {
       kind: "radial",
       radius: Math.max(0.25, Math.abs(radius)),
     };
+    this.palette = [];
+    this.paletteIndex = 0;
   };
 
   public setStrokeWeight = (weight: number) => {
@@ -666,12 +677,76 @@ export class Turtle {
     this.blend = blend;
   };
 
-  private readonly getDrawingContext = (): CanvasRenderingContext2D | null => {
+  public setSeed = (seed: number) => {
+    const normalized = Math.floor(Math.abs(seed)) % 2147483646;
+    this.randomState = normalized + 1;
+  };
+
+  public setPalette = (palette: readonly string[]) => {
     this.flushStroke();
+    this.palette = [...palette];
+    this.paletteIndex = 0;
+    this.paintStyle = { kind: "solid" };
+  };
+
+  public pushState = () => {
+    this.flushStroke();
+    this.stateStack.push({
+      blend: this.blend,
+      dash: [...this.dash],
+      dir: this.dir,
+      flow: this.flow,
+      glow: this.glow,
+      opacity: this.opacity,
+      paintStyle: { ...this.paintStyle },
+      palette: [...this.palette],
+      paletteIndex: this.paletteIndex,
+      pen: this.pen,
+      randomState: this.randomState,
+      softness: this.softness,
+      strokeColor: this.strokeColor,
+      strokeWeight: this.strokeWeight,
+      symmetry: this.symmetry,
+      visible: this.visible,
+      x: this.x,
+      y: this.y,
+    });
+  };
+
+  public popState = () => {
+    const state = this.stateStack.pop();
+    if (state === undefined) {
+      return;
+    }
+
+    this.flushStroke();
+    this.blend = state.blend;
+    this.dash = [...state.dash];
+    this.dir = state.dir;
+    this.flow = state.flow;
+    this.glow = state.glow;
+    this.opacity = state.opacity;
+    this.paintStyle = { ...state.paintStyle };
+    this.palette = [...state.palette];
+    this.paletteIndex = state.paletteIndex;
+    this.pen = state.pen;
+    this.randomState = state.randomState;
+    this.softness = state.softness;
+    this.strokeColor = state.strokeColor;
+    this.strokeWeight = state.strokeWeight;
+    this.symmetry = state.symmetry;
+    this.visible = state.visible;
+    this.x = state.x;
+    this.y = state.y;
+  };
+
+  private readonly getDrawingContext = (): CanvasRenderingContext2D | null => {
     if (!this.pen || this.canvas === null) {
       return null;
     }
 
+    this.applyNextPaletteColor();
+    this.flushStroke();
     const context = this.canvas.getContext("2d");
     if (context === null) {
       return null;
@@ -711,6 +786,20 @@ export class Turtle {
   private readonly nextRandom = (): number => {
     this.randomState = (this.randomState * 16807) % 2147483647;
     return (this.randomState - 1) / 2147483646;
+  };
+
+  private readonly applyNextPaletteColor = () => {
+    if (this.palette.length === 0) {
+      return;
+    }
+
+    const color = this.palette[this.paletteIndex % this.palette.length];
+    if (color !== this.strokeColor || this.paintStyle.kind !== "solid") {
+      this.flushStroke();
+    }
+    this.strokeColor = color;
+    this.paintStyle = { kind: "solid" };
+    this.paletteIndex = (this.paletteIndex + 1) % this.palette.length;
   };
 
   private readonly drawSoftSegment = (
@@ -841,6 +930,9 @@ export class Turtle {
     this.symmetry = 1;
     this.blend = "source-over";
     this.randomState = 123456789;
+    this.palette = [];
+    this.paletteIndex = 0;
+    this.stateStack = [];
     this.pen = this.initialPen;
     this.visible = this.initialVisibility;
   };
@@ -865,6 +957,27 @@ type PaintStyle =
       color2: string;
       radius: number;
     };
+
+interface TurtleState {
+  blend: BlendMode;
+  dash: readonly [number, number];
+  dir: number;
+  flow: number;
+  glow: number;
+  opacity: number;
+  paintStyle: PaintStyle;
+  palette: readonly string[];
+  paletteIndex: number;
+  pen: boolean;
+  randomState: number;
+  softness: number;
+  strokeColor: string;
+  strokeWeight: number;
+  symmetry: number;
+  visible: boolean;
+  x: number;
+  y: number;
+}
 
 const clampInteger = (value: number, minimum: number, maximum: number): number =>
   Math.min(maximum, Math.max(minimum, Math.round(value)));

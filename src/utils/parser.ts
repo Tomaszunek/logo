@@ -31,6 +31,8 @@ const commandByName: Readonly<Partial<Record<string, CommandTypes>>> = {
   pendown: "pendown",
   penup: "penup",
   polygon: "polygon",
+  pop: "pop",
+  push: "push",
   repeat: "repeat",
   right: "tr",
   rt: "tr",
@@ -43,9 +45,11 @@ const commandByName: Readonly<Partial<Record<string, CommandTypes>>> = {
   setgradient: "setgradient",
   seth: "seth",
   setheading: "seth",
+  setpalette: "setpalette",
   setpos: "setpos",
   setradial: "setradial",
   setsc: "setsc",
+  setseed: "setseed",
   setsoftness: "setsoftness",
   setsw: "setsw",
   setsymmetry: "setsymmetry",
@@ -68,6 +72,7 @@ const numberCommands = new Set<CommandTypes>([
   "setflow",
   "setglow",
   "seth",
+  "setseed",
   "setsoftness",
   "setsymmetry",
   "setsw",
@@ -80,6 +85,8 @@ const noArgumentCommands = new Set<CommandTypes>([
   "home",
   "pendown",
   "penup",
+  "pop",
+  "push",
   "showturtle",
 ]);
 
@@ -189,6 +196,22 @@ export class Parser {
         throw parseError(blendToken.start);
       }
       command.blend = blend;
+      return command;
+    }
+
+    if (name === "setpalette") {
+      const colors: string[] = [];
+      while (
+        this.peek() !== undefined &&
+        this.peek() !== "]" &&
+        commandByName[this.peek()?.toLowerCase() ?? ""] === undefined
+      ) {
+        colors.push(this.takeColor());
+      }
+      if (colors.length === 0) {
+        throw parseError(this.currentPosition());
+      }
+      command.palette = colors;
       return command;
     }
 

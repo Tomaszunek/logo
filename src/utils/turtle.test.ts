@@ -273,6 +273,65 @@ describe("Turtle and Caller", () => {
     );
   });
 
+  it("cycles palette colors once per logical mark", () => {
+    const { caller, context, turtle } = createHarness();
+
+    caller.setpalette(["#ff006e", "#ffb703", "#3a86ff"]);
+    caller.fd(10);
+    expect(context.strokeStyle).toBe("#ff006e");
+    caller.fd(10);
+    expect(context.strokeStyle).toBe("#ffb703");
+    caller.dot(5);
+    expect(context.fillStyle).toBe("#3a86ff");
+    caller.fd(10);
+    expect(context.strokeStyle).toBe("#ff006e");
+    expect(turtle.palette).toEqual(["#ff006e", "#ffb703", "#3a86ff"]);
+  });
+
+  it("restores complete turtle state with push and pop", () => {
+    const { caller, turtle } = createHarness();
+
+    caller.setseed(99);
+    caller.setpalette(["#ff006e", "#3a86ff"]);
+    caller.setsw(8);
+    caller.setalpha(0.4);
+    caller.setblend("screen");
+    caller.setsymmetry(4);
+    caller.push();
+    caller.fd(50);
+    caller.tr(90);
+    caller.setsw(2);
+    caller.setalpha(1);
+    caller.setblend("multiply");
+    caller.setsymmetry(1);
+    caller.pop();
+
+    expect(turtle).toMatchObject({
+      x: 400,
+      y: 400,
+      dir: 0,
+      strokeWeight: 8,
+      opacity: 0.4,
+      blend: "screen",
+      symmetry: 4,
+      palette: ["#ff006e", "#3a86ff"],
+    });
+  });
+
+  it("changes deterministic spray patterns with setseed", () => {
+    const first = createHarness();
+    const second = createHarness();
+
+    first.caller.setseed(10);
+    second.caller.setseed(20);
+    first.caller.spray(30, 8);
+    second.caller.spray(30, 8);
+
+    expect(first.context.fillRect.mock.calls).not.toEqual(
+      second.context.fillRect.mock.calls,
+    );
+  });
+
   it("executes repeat exactly the requested number of times", () => {
     const { caller, context, turtle } = createHarness();
 

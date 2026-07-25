@@ -35,4 +35,8 @@ export type CommandTypes =
   | "setflow"
   | "setsymmetry"
   | "setblend"
-  | "spray";
+  | "spray"
+  | "setseed"
+  | "setpalette"
+  | "push"
+  | "pop";

@@ -111,8 +111,8 @@ const CommandInput: React.FC<IProps> = ({ descriptions }) => {
         </button>
       </form>
       <p className="inputHint">
-        Combine setsymmetry, setblend, and spray for kaleidoscopic particles
-        and luminous overlays.
+        Use setpalette for automatic color cycles, setseed for repeatable
+        particles, and push/pop for branching forms.
       </p>
       {showPopup && <Popup massage={popupText} />}
     </div>

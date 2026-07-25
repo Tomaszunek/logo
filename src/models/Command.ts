@@ -20,5 +20,6 @@ export interface ICommandModel {
   color?: string;
   color2?: string;
   blend?: BlendMode;
+  palette?: string[];
   commands?: ICommandModel[];
 }

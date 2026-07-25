@@ -88,6 +88,15 @@ const scaleCommand = (
     : {}),
 });
 
+const serializeDefaultArgument = (
+  command: Readonly<ICommandModel>,
+): string | number => {
+  if (command.palette !== undefined) {
+    return command.palette.map((color) => color.replace("#", "")).join(" ");
+  }
+  return command.blend ?? command.value ?? 0;
+};
+
 const serializeCommand = (command: Readonly<ICommandModel>): string => {
   if (command.name === "repeat") {
     const nestedCommands = command.commands
@@ -114,7 +123,7 @@ const serializeCommand = (command: Readonly<ICommandModel>): string => {
     return command.name;
   }
 
-  return `${command.name} ${command.blend ?? command.value ?? 0}`;
+  return `${command.name} ${serializeDefaultArgument(command)}`;
 };
 
 const example = ({
