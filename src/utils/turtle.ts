@@ -62,56 +62,11 @@ export class Turtle {
   }
 
   public drawLine = (distance: number) => {
-    if (this.canvas === null) {
-      return;
-    }
+    this.drawLineSegment(distance, true);
+  };
 
-    const context = this.canvas.getContext("2d");
-    if (context === null) {
-      return;
-    }
-
-    const radians = (this.dir * Math.PI) / 180;
-    const newX = this.x + Math.cos(radians) * distance;
-    const newY = this.y + Math.sin(radians) * distance;
-
-    if (this.pen) {
-      this.applyNextPaletteColor();
-      if (this.softness > 0) {
-        this.flushStroke();
-        this.forEachSymmetry(context, () => {
-          this.drawSoftSegment(context, this.x, this.y, newX, newY);
-        });
-        this.x = newX;
-        this.y = newY;
-        return;
-      }
-
-      if (!this.frameActive || !this.pendingStroke) {
-        context.beginPath();
-        context.lineCap = "round";
-        context.lineJoin = "round";
-        context.lineWidth = this.strokeWeight;
-        context.strokeStyle = this.resolvePaint(context);
-        context.globalAlpha = this.opacity;
-        context.setLineDash([...this.dash]);
-        context.shadowBlur = this.glow;
-        context.shadowColor = this.getGlowColor();
-        context.globalCompositeOperation = this.blend;
-      }
-      this.forEachSymmetry(context, () => {
-        context.moveTo(this.x, this.y);
-        context.lineTo(newX, newY);
-      });
-      if (this.frameActive) {
-        this.pendingStroke = true;
-      } else {
-        context.stroke();
-      }
-    }
-
-    this.x = newX;
-    this.y = newY;
+  public continueLine = (distance: number) => {
+    this.drawLineSegment(distance, false);
   };
 
   public beginFrame = () => {
@@ -738,6 +693,64 @@ export class Turtle {
     this.visible = state.visible;
     this.x = state.x;
     this.y = state.y;
+  };
+
+  private readonly drawLineSegment = (
+    distance: number,
+    advancePalette: boolean,
+  ) => {
+    if (this.canvas === null) {
+      return;
+    }
+
+    const context = this.canvas.getContext("2d");
+    if (context === null) {
+      return;
+    }
+
+    const radians = (this.dir * Math.PI) / 180;
+    const newX = this.x + Math.cos(radians) * distance;
+    const newY = this.y + Math.sin(radians) * distance;
+
+    if (this.pen) {
+      if (advancePalette) {
+        this.applyNextPaletteColor();
+      }
+      if (this.softness > 0) {
+        this.flushStroke();
+        this.forEachSymmetry(context, () => {
+          this.drawSoftSegment(context, this.x, this.y, newX, newY);
+        });
+        this.x = newX;
+        this.y = newY;
+        return;
+      }
+
+      if (!this.frameActive || !this.pendingStroke) {
+        context.beginPath();
+        context.lineCap = "round";
+        context.lineJoin = "round";
+        context.lineWidth = this.strokeWeight;
+        context.strokeStyle = this.resolvePaint(context);
+        context.globalAlpha = this.opacity;
+        context.setLineDash([...this.dash]);
+        context.shadowBlur = this.glow;
+        context.shadowColor = this.getGlowColor();
+        context.globalCompositeOperation = this.blend;
+      }
+      this.forEachSymmetry(context, () => {
+        context.moveTo(this.x, this.y);
+        context.lineTo(newX, newY);
+      });
+      if (this.frameActive) {
+        this.pendingStroke = true;
+      } else {
+        context.stroke();
+      }
+    }
+
+    this.x = newX;
+    this.y = newY;
   };
 
   private readonly getDrawingContext = (): CanvasRenderingContext2D | null => {

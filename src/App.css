@@ -157,6 +157,28 @@ input:focus-visible,
   background: rgba(255, 255, 255, 0.035);
 }
 
+.animationToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.animationToggleDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #59657b;
+  box-shadow: 0 0 0 3px rgba(89, 101, 123, 0.12);
+  transition: background 160ms ease, box-shadow 160ms ease;
+}
+
+.animationToggleDot.isEnabled {
+  background: var(--accent);
+  box-shadow:
+    0 0 0 3px rgba(121, 242, 192, 0.12),
+    0 0 10px rgba(121, 242, 192, 0.7);
+}
+
 .appMain {
   width: min(1560px, 100%);
   margin: 0 auto;
@@ -412,11 +434,16 @@ input:focus-visible,
   pointer-events: none;
 }
 
-.canvasStage canvas {
+.canvasViewport {
   position: relative;
   z-index: 1;
-  display: block;
   width: min(800px, 100%);
+  aspect-ratio: 1;
+}
+
+.canvasStage canvas {
+  display: block;
+  width: 100%;
   height: auto;
   border: 1px solid rgba(15, 23, 42, 0.16);
   border-radius: 12px;
@@ -428,6 +455,178 @@ input:focus-visible,
   box-shadow:
     0 22px 70px rgba(0, 0, 0, 0.34),
     0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.animatedTurtle {
+  position: absolute;
+  z-index: 2;
+  width: clamp(22px, 4.5%, 36px);
+  height: auto;
+  filter:
+    drop-shadow(0 0 5px rgba(121, 242, 192, 0.9))
+    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.45));
+  pointer-events: none;
+  will-change: left, top, transform;
+}
+
+.animatedTurtle.isMoving {
+  filter:
+    drop-shadow(0 0 8px rgba(121, 242, 192, 1))
+    drop-shadow(0 5px 10px rgba(0, 0, 0, 0.5));
+}
+
+.actionIndicator {
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  left: 12px;
+  max-width: calc(100% - 24px);
+  overflow: hidden;
+  padding: 6px 9px;
+  border: 1px solid rgba(121, 242, 192, 0.32);
+  border-radius: 8px;
+  color: #d9ffef;
+  background: rgba(5, 16, 14, 0.84);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 0.62rem;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  animation: actionBadgeIn 180ms ease-out both;
+  pointer-events: none;
+}
+
+.actionIndicator.action-turn {
+  border-color: rgba(139, 124, 255, 0.42);
+  color: #ded9ff;
+  background: rgba(20, 16, 54, 0.86);
+}
+
+.actionIndicator.action-pen {
+  border-color: rgba(255, 196, 107, 0.45);
+  color: #ffe4b8;
+  background: rgba(52, 34, 10, 0.86);
+}
+
+.actionIndicator.action-shape,
+.actionIndicator.action-style {
+  border-color: rgba(89, 196, 255, 0.4);
+  color: #cceeff;
+  background: rgba(8, 31, 49, 0.86);
+}
+
+.actionPulse {
+  position: absolute;
+  z-index: 1;
+  width: 48px;
+  height: 48px;
+  border: 2px solid rgba(121, 242, 192, 0.7);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: actionPulse 420ms ease-out both;
+  pointer-events: none;
+}
+
+.actionPulse.action-turn {
+  border-color: rgba(139, 124, 255, 0.85);
+  border-style: dashed;
+  animation: turnPulse 520ms ease-out both;
+}
+
+.actionPulse.action-pen {
+  border-color: rgba(255, 196, 107, 0.85);
+  animation: penPulse 360ms ease-out both;
+}
+
+.actionPulse.action-shape,
+.actionPulse.action-style {
+  border-color: rgba(89, 196, 255, 0.82);
+  box-shadow: 0 0 24px rgba(89, 196, 255, 0.32);
+}
+
+@keyframes actionBadgeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes actionPulse {
+  from {
+    opacity: 0.85;
+    transform: translate(-50%, -50%) scale(0.45);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.8);
+  }
+}
+
+@keyframes turnPulse {
+  from {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.65);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(180deg) scale(1.45);
+  }
+}
+
+@keyframes penPulse {
+  45% {
+    opacity: 0.9;
+    transform: translate(-50%, -70%) scale(0.72);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.35);
+  }
+}
+
+.canvasPlayback {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 20px;
+  border-top: 1px solid var(--line);
+  background: rgba(7, 12, 22, 0.46);
+}
+
+.playbackButton {
+  min-height: 32px;
+  padding: 0 11px;
+  font-size: 0.7rem;
+}
+
+.speedControl {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--ink-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.speedControl select {
+  min-height: 30px;
+  padding: 0 24px 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #0a1120;
+  font: inherit;
+}
+
+.playbackProgress {
+  margin-left: auto;
+  color: var(--ink-muted);
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 0.63rem;
 }
 
 .canvasMeta {
@@ -446,6 +645,17 @@ input:focus-visible,
   border-radius: 50%;
   background: var(--accent);
   box-shadow: 0 0 12px var(--accent);
+}
+
+.statusDot.isAnimating {
+  animation: statusPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  50% {
+    opacity: 0.45;
+    transform: scale(0.72);
+  }
 }
 
 .canvasWarning {
@@ -851,10 +1061,16 @@ input:focus-visible,
 
   .rightSide {
     width: 100%;
+    flex-wrap: wrap;
   }
 
   .rightSide .button {
     flex: 1;
+  }
+
+  .rightSide .animationToggle {
+    flex-basis: 100%;
+    justify-content: center;
   }
 
   .brandCopy p,
@@ -888,6 +1104,25 @@ input:focus-visible,
     flex: 1;
   }
 
+  .canvasPlayback {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .playbackButton {
+    flex: 1;
+  }
+
+  .speedControl {
+    flex: 1 0 100%;
+    justify-content: space-between;
+  }
+
+  .playbackProgress {
+    width: 100%;
+    margin-left: 0;
+  }
+
   .commandForm {
     grid-template-columns: auto minmax(0, 1fr);
   }
@@ -914,5 +1149,21 @@ input:focus-visible,
   .appFooter {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .actionIndicator,
+  .actionPulse,
+  .animatedTurtle,
+  .animationToggleDot,
+  .button,
+  .pathexample {
+    animation: none;
+    transition: none;
+  }
+
+  .statusDot.isAnimating {
+    animation: none;
   }
 }

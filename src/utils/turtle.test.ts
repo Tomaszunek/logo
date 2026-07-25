@@ -168,6 +168,21 @@ describe("Turtle and Caller", () => {
     expect(context.setLineDash).toHaveBeenLastCalledWith([8, 4]);
   });
 
+  it("keeps one palette color across animated line segments", () => {
+    const { caller, turtle } = createHarness();
+
+    caller.setpalette(["#ff0000", "#00ff00"]);
+    turtle.drawLine(10);
+    turtle.continueLine(10);
+
+    expect(turtle.strokeColor).toBe("#ff0000");
+
+    turtle.drawLine(10);
+
+    expect(turtle.strokeColor).toBe("#00ff00");
+    expect(turtle.x).toBe(430);
+  });
+
   it("draws scene primitives and applies neon glow", () => {
     const { caller, context } = createHarness();
 
