@@ -1,6 +1,6 @@
 # TypeScript 7 migration checklist
 
-Status: PLANNED
+Status: COMPLETE
 
 ## Scope
 
@@ -38,22 +38,23 @@ Authoritative references:
 
 ## Implementation
 
-- [ ] TS7-004 — Replace the direct compiler dependency with the approved TypeScript 7/6 side-by-side aliases and regenerate the authoritative npm lockfile. Done when: `package.json` and `package-lock.json` resolve `@typescript/native` to `typescript@7.0.2`, resolve the package named `typescript` to `@typescript/typescript6@6.0.2`, retain the current resolved `typescript-eslint@8.65.0`, and contain no preview compiler package. Verify: run `npm.cmd install --save-dev @typescript/native@npm:typescript@7.0.2 typescript@npm:@typescript/typescript6@6.0.2`, inspect the manifest/lockfile diff, then run `npm.cmd ls @typescript/native typescript typescript-eslint @typescript-eslint/parser --depth=1`.
-  - Evidence: Pending.
+- [x] TS7-004 — Replace the direct compiler dependency with the approved TypeScript 7/6 side-by-side aliases and regenerate the authoritative npm lockfile. Done when: `package.json` and `package-lock.json` resolve `@typescript/native` to `typescript@7.0.2`, resolve the package named `typescript` to `@typescript/typescript6@6.0.2`, retain the current resolved `typescript-eslint@8.65.0`, and contain no preview compiler package. Verify: run `npm.cmd install --save-dev @typescript/native@npm:typescript@7.0.2 typescript@npm:@typescript/typescript6@6.0.2`, inspect the manifest/lockfile diff, then run `npm.cmd ls @typescript/native typescript typescript-eslint @typescript-eslint/parser --depth=1`.
+  - Evidence: On 2026-07-25, npm installed `@typescript/native: npm:typescript@^7.0.2` and `typescript: npm:@typescript/typescript6@^6.0.2`, updating the manifest and authoritative lockfile together without force flags or peer overrides. `npm.cmd ls @typescript/native typescript typescript-eslint @typescript-eslint/parser --depth=1` exits 0 and shows native 7.0.2, the 6.0.2 compatibility wrapper, and `typescript-eslint`/parser 8.65.0 deduped onto that wrapper. The wrapper's documented `@typescript/old: npm:typescript@^6` implementation resolves 6.0.3 and supplies `tsc6`; `tsc` reports 7.0.2 and `tsc6` reports 6.0.3. The dependency diff is limited to this side-by-side route and its TypeScript 7 platform packages, and the focused scan finds no `@typescript/native-preview` or `tsgo` reference.
 
-- [ ] TS7-005 — Replace the removed TypeScript configuration options. Done when: `tsconfig.json` has no `baseUrl`, uses `"moduleResolution": "bundler"`, and maps `"src/*"` to `"./src/*"` without changing unrelated compiler behavior. Verify: run `npm.cmd exec -- tsc --version`, `npm.cmd run tsc`, `npm.cmd exec -- tsc6 --noEmit`, and inspect `npm.cmd exec -- tsc --showConfig`.
-  - Evidence: Pending.
+- [x] TS7-005 — Replace the removed TypeScript configuration options. Done when: `tsconfig.json` has no `baseUrl`, uses `"moduleResolution": "bundler"`, and maps `"src/*"` to `"./src/*"` without changing unrelated compiler behavior. Verify: run `npm.cmd exec -- tsc --version`, `npm.cmd run tsc`, `npm.cmd exec -- tsc6 --noEmit`, and inspect `npm.cmd exec -- tsc --showConfig`.
+  - Evidence: On 2026-07-25, `tsconfig.json` removes `baseUrl`, changes only `moduleResolution` from `node` to `bundler`, and adds `"paths": {"src/*": ["./src/*"]}`. `tsc --showConfig` reports the intended effective settings and the same 32 source files, with explicit `module: esnext`, `target: es2018`, `rootDir: ./src`, and `strict: false` retained. Native `tsc` reports 7.0.2 and `npm.cmd run tsc` exits 0; the `tsc6 --noEmit` diagnostic bridge also exits 0. The focused config scan finds no remaining `baseUrl` or Node 10 module-resolution setting.
 
 ## Verification
 
-- [ ] TS7-006 — Verify the final TypeScript 7 migration and stale-reference cleanup. Done when: a clean lockfile install succeeds; `tsc` reports 7.0.2; `tsc6` reports 6.0.2; TypeScript 7 typecheck, the TypeScript 6 diagnostic bridge, production build, and lint pass; the known test placeholder is documented rather than misreported as a regression; and no retired option, preview package, `tsgo` command, unintended TypeScript 6 owner, or unexpected file change remains. Verify: run `npm.cmd ci`, `npm.cmd exec -- tsc --version`, `npm.cmd exec -- tsc6 --version`, `npm.cmd run tsc`, `npm.cmd exec -- tsc6 --noEmit`, `npm.cmd run build`, `npm.cmd run lint`, `npm.cmd test`, `npm.cmd ls @typescript/native typescript typescript-eslint @typescript-eslint/parser --depth=1`, focused `rg` scans for `baseUrl|moduleResolution.*node|@typescript/native-preview|\btsgo\b`, `git diff --check`, and `git status --short`.
-  - Evidence: Pending.
+- [x] TS7-006 — Verify the final TypeScript 7 migration and stale-reference cleanup. Done when: a clean lockfile install succeeds; `tsc` reports 7.0.2; the `@typescript/typescript6@6.0.2` wrapper's `tsc6` reports its resolved TypeScript 6 implementation version 6.0.3; TypeScript 7 typecheck, the TypeScript 6 diagnostic bridge, production build, and lint pass; the known test placeholder is documented rather than misreported as a regression; and no retired option, preview package, `tsgo` command, unintended TypeScript 6 owner, or unexpected file change remains. Verify: run `npm.cmd ci`, `npm.cmd exec -- tsc --version`, `npm.cmd exec -- tsc6 --version`, `npm.cmd run tsc`, `npm.cmd exec -- tsc6 --noEmit`, `npm.cmd run build`, `npm.cmd run lint`, `npm.cmd test`, `npm.cmd ls @typescript/native typescript typescript-eslint @typescript-eslint/parser --depth=1`, focused `rg` scans for `baseUrl|moduleResolution.*node|@typescript/native-preview|\btsgo\b`, `git diff --check`, and `git status --short`.
+  - Evidence: On 2026-07-25, the first `npm.cmd ci` attempt correctly exposed that the repository's running `npm run serve` process held Vite's native Rolldown binary open on Windows; after stopping only those verified project PIDs, a retry installed all 139 packages from the final lockfile and reported zero audit findings. Node 25.5.0/npm 11.8.0 then report native `tsc` 7.0.2 and bridge `tsc6` 6.0.3. `npm.cmd run tsc`, `npm.cmd exec -- tsc6 --noEmit`, `npm.cmd run build`, and `npm.cmd run lint` all exit 0; Vite 8.1.5 transforms 64 modules and produces the production bundle. `npm.cmd test` remains the unchanged intentional placeholder and exits 1, matching the baseline rather than indicating a migration regression. The dependency tree exits 0 and assigns TypeScript 7 to `@typescript/native` while `typescript-eslint@8.65.0` and its parser use the deduped `@typescript/typescript6@6.0.2` compatibility package. Focused source/config/manifest scans find no `baseUrl`, Node 10 module resolution, native-preview package, or `tsgo` command. `git diff --check` exits 0, and the only migration changes are `package.json`, `package-lock.json`, `tsconfig.json`, and this checklist; the unrelated untracked `.claude/settings.local.json` remains untouched. The project Vite serve process was restarted from the final dependency state after validation.
 
 ## Outcome
 
-PARTIAL — the plan and compatibility route are evidence-backed, but no project
-dependencies or source/configuration were changed. Remaining tasks: TS7-004,
-TS7-005, and TS7-006.
+COMPLETE — all migration tasks are checked. The project now type-checks with
+native TypeScript 7.0.2, retains the supported TypeScript 6 API bridge for
+`typescript-eslint`, and passes the clean install, bridge typecheck, production
+build, lint, stale-reference, and diff validations. No source change was needed.
 
 Rollback: restore the pre-migration `package.json`, `package-lock.json`, and
 `tsconfig.json` together. Do not keep the TypeScript 7 dependency with the

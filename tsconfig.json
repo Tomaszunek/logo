@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "outDir": "build/dist",
     "module": "esnext",
     "target": "es2018",
@@ -8,7 +7,10 @@
     "sourceMap": true,
     "allowJs": false,
     "jsx": "react-jsx",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "paths": {
+      "src/*": ["./src/*"]
+    },
     "rootDir": "src",
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
