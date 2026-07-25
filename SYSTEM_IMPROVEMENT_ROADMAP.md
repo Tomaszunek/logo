@@ -26,12 +26,17 @@ negative coordinates, nested repeats, and both forms of hex colors.
 
 ## Next: lock correctness with automated tests
 
-1. Add unit tests for every parser command and invalid-input boundary.
-2. Add canvas pixel tests for heading, pen state, colors, repeat counts, and
-   replay determinism.
-3. Add a complexity budget so extremely large nested repeats cannot freeze the
-   browser.
-4. Add visual regression snapshots for several canonical designs.
+- [x] Add unit tests for every parser command and invalid-input boundary.
+- [x] Add deterministic rendering tests for heading, pen state, colors, exact
+  repeat counts, home behavior, and replay resets.
+- [x] Add a complexity budget so extremely large nested repeats cannot freeze
+  the browser. The current 750,000-operation ceiling preserves every bundled
+  example and blocks million-step command trees.
+- [ ] Add browser-based visual regression snapshots for several canonical
+  designs.
+
+Current automated baseline: 29 passing tests across parser, complexity, and
+Turtle/Caller behavior.
 
 ## Next: align and regenerate the example gallery
 

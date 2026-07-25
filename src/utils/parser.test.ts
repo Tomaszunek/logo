@@ -1,0 +1,115 @@
+import { describe, expect, it, vi } from "vitest";
+import { Parser } from "./parser";
+
+const parse = (input: string) => {
+  const onError = vi.fn();
+  const commands = new Parser(input).parse(onError);
+  return { commands, onError };
+};
+
+describe("Parser", () => {
+  it("parses movement, turn, and stroke-width numbers", () => {
+    const { commands, onError } = parse(
+      "fd -12.5 bk 4 tl 90 tr 45 setsw .5",
+    );
+
+    expect(commands.map(({ name, value }) => ({ name, value }))).toEqual([
+      { name: "fd", value: -12.5 },
+      { name: "bk", value: 4 },
+      { name: "tl", value: 90 },
+      { name: "tr", value: 45 },
+      { name: "setsw", value: 0.5 },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it("parses every no-argument command", () => {
+    const { commands } = parse(
+      "penup pendown hideturtle showturtle home",
+    );
+
+    expect(commands.map(({ name }) => name)).toEqual([
+      "penup",
+      "pendown",
+      "hideturtle",
+      "showturtle",
+      "home",
+    ]);
+  });
+
+  it("parses positions and normalizes both hex color forms", () => {
+    const { commands } = parse(
+      "setpos -20.5 300 setsc FF00aa setbc #102030",
+    );
+
+    expect(commands).toMatchObject([
+      { name: "setpos", value: -20.5, arg2: 300 },
+      { name: "setsc", color: "#ff00aa" },
+      { name: "setbc", color: "#102030" },
+    ]);
+  });
+
+  it("accepts uppercase commands and flexible whitespace", () => {
+    const { commands, onError } = parse(
+      "  REPEAT  4 [ FD 100\nTR 90 ]  ",
+    );
+
+    expect(commands).toMatchObject([
+      {
+        name: "repeat",
+        value: 4,
+        commands: [
+          { name: "fd", value: 100 },
+          { name: "tr", value: 90 },
+        ],
+      },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it("parses nested repeat blocks", () => {
+    const { commands } = parse(
+      "repeat 3 [fd 20 repeat 2 [tl 30 bk 5] tr 90]",
+    );
+
+    expect(commands).toMatchObject([
+      {
+        name: "repeat",
+        value: 3,
+        commands: [
+          { name: "fd", value: 20 },
+          {
+            name: "repeat",
+            value: 2,
+            commands: [
+              { name: "tl", value: 30 },
+              { name: "bk", value: 5 },
+            ],
+          },
+          { name: "tr", value: 90 },
+        ],
+      },
+    ]);
+  });
+
+  it.each([
+    "unknown 10",
+    "fd",
+    "fd nope",
+    "setpos 10",
+    "setsc 12345",
+    "setbc not-a-color",
+    "repeat 1.5 [fd 10]",
+    "repeat -1 [fd 10]",
+    "repeat 2 []",
+    "repeat 2 [fd 10",
+    "fd 10 ]",
+    "save design",
+    "load design",
+  ])("rejects invalid input: %s", (input) => {
+    const { commands, onError } = parse(input);
+
+    expect(commands).toEqual([]);
+    expect(onError).toHaveBeenCalledOnce();
+  });
+});

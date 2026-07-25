@@ -1,6 +1,10 @@
 import * as React from "react";
 import type { ICommandDescription } from "src/models";
 import { useCommandStore } from "src/store/commandStore";
+import {
+  getCommandComplexity,
+  MAX_COMMAND_OPERATIONS,
+} from "src/utils/commandComplexity";
 import { ErrorHandler } from "src/utils/errorHandler";
 import { Parser } from "src/utils/parser";
 import Popup from "./popup";
@@ -10,6 +14,7 @@ interface IProps {
 }
 
 const CommandInput: React.FC<IProps> = ({ descriptions }) => {
+  const commands = useCommandStore((state) => state.commands);
   const addCommand = useCommandStore((state) => state.addCommand);
   const timeoutRef = React.useRef<number | null>(null);
   const [input, setInput] = React.useState("");
@@ -25,16 +30,7 @@ const CommandInput: React.FC<IProps> = ({ descriptions }) => {
     [],
   );
 
-  const onError = (insideCommand: string, parsedCommand: string) => {
-    const message = new ErrorHandler(
-      {
-        fullCommand: input,
-        insideCommand,
-        wrongCommand: parsedCommand,
-      },
-      descriptions,
-    ).handleError();
-
+  const showError = (message: string) => {
     setShowPopup(true);
     setPopupText(message);
     if (timeoutRef.current !== null) {
@@ -46,6 +42,17 @@ const CommandInput: React.FC<IProps> = ({ descriptions }) => {
     }, 5000);
   };
 
+  const onError = (insideCommand: string, parsedCommand: string) => {
+    showError(new ErrorHandler(
+      {
+        fullCommand: input,
+        insideCommand,
+        wrongCommand: parsedCommand,
+      },
+      descriptions,
+    ).handleError());
+  };
+
   const submitCommand = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     const value = input.trim();
@@ -55,6 +62,14 @@ const CommandInput: React.FC<IProps> = ({ descriptions }) => {
 
     const parsedCommands = new Parser(value).parse(onError);
     if (parsedCommands.length === 0) {
+      return;
+    }
+
+    const complexity = getCommandComplexity([...commands, ...parsedCommands]);
+    if (complexity.exceedsLimit) {
+      showError(
+        `This program is too large to run safely. Keep it below ${MAX_COMMAND_OPERATIONS.toLocaleString()} command operations.`,
+      );
       return;
     }
 
@@ -97,6 +112,7 @@ const CommandInput: React.FC<IProps> = ({ descriptions }) => {
       </form>
       <p className="inputHint">
         Chain commands with spaces. Colors accept hex values with or without #.
+        Large repeat trees are stopped before they can freeze the browser.
       </p>
       {showPopup && <Popup massage={popupText} />}
     </div>

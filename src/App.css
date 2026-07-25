@@ -448,6 +448,11 @@ input:focus-visible,
   box-shadow: 0 0 12px var(--accent);
 }
 
+.canvasWarning {
+  color: #ffc0ca;
+  font-weight: 700;
+}
+
 .inspectorIntro {
   margin-bottom: 17px;
 }

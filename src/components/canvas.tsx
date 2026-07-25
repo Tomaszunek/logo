@@ -2,6 +2,10 @@ import * as React from "react";
 import type { ICommandModel } from "src/models";
 import { useCommandStore } from "src/store/commandStore";
 import { Caller } from "src/utils/caller";
+import {
+  getCommandComplexity,
+  MAX_COMMAND_OPERATIONS,
+} from "src/utils/commandComplexity";
 import { Turtle } from "../utils/turtle";
 
 const Canvas: React.FC = () => {
@@ -11,6 +15,7 @@ const Canvas: React.FC = () => {
   const turtleRef = React.useRef<Turtle | null>(null);
   const callerRef = React.useRef<Caller | null>(null);
   const [announcement, setAnnouncement] = React.useState("");
+  const [renderWarning, setRenderWarning] = React.useState("");
 
   turtleRef.current ??= new Turtle({
     canvas: null,
@@ -34,6 +39,19 @@ const Canvas: React.FC = () => {
 
     turtle.canvas = canvas;
     turtle.clearCanvas();
+    const complexity = getCommandComplexity(commands);
+    if (complexity.exceedsLimit) {
+      setRenderWarning(
+        `Program paused: limit is ${MAX_COMMAND_OPERATIONS.toLocaleString()} operations.`,
+      );
+      turtle.drawTurtle();
+      return () => {
+        turtle.cancelImageLoading();
+        turtle.canvas = null;
+      };
+    }
+
+    setRenderWarning("");
     commands.forEach((command: ICommandModel) => {
       caller.execute(command);
     });
@@ -102,10 +120,14 @@ const Canvas: React.FC = () => {
         />
       </div>
       <div className="canvasMeta">
-        <span>
-          <span className="statusDot" aria-hidden="true" />
-          Renders automatically
-        </span>
+        {renderWarning === "" ? (
+          <span>
+            <span className="statusDot" aria-hidden="true" />
+            Renders automatically
+          </span>
+        ) : (
+          <span className="canvasWarning">{renderWarning}</span>
+        )}
         <span>Light preview · 800 × 800 transparent PNG</span>
       </div>
       <p className="srOnly" aria-live="polite">
