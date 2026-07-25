@@ -9,6 +9,7 @@ export interface IPathwayExample {
 }
 
 export type ExampleCategory =
+  | "showstoppers"
   | "first-steps"
   | "geometry"
   | "depth"

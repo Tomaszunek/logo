@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type { ICommandModel } from "../models";
+import { getCommandComplexity } from "../utils/commandComplexity";
 import { Parser } from "../utils/parser";
 import { pathwayExamples } from "./pathwayExamples";
 
@@ -45,4 +46,11 @@ describe("pathwayExamples", () => {
       Object.keys(commandDescriptions).sort(),
     );
   });
+
+  it.each(pathwayExamples)(
+    "$type / $name stays within the canvas rendering limit",
+    (example) => {
+      expect(getCommandComplexity([example.command]).exceedsLimit).toBe(false);
+    },
+  );
 });

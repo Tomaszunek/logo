@@ -178,6 +178,12 @@ const example = ({
 
 export const exampleCollections: readonly IExampleCollection[] = [
   {
+    id: "showstoppers",
+    label: "Showstoppers",
+    description:
+      "Dense, surprising compositions that reveal how far commands can go.",
+  },
+  {
     id: "first-steps",
     label: "First steps",
     description:
@@ -216,6 +222,62 @@ export const exampleCollections: readonly IExampleCollection[] = [
 ];
 
 export const pathwayExamples: readonly IPathwayExample[] = [
+  example({
+    name: "Neon singularity",
+    source:
+      "repeat 1 [gradientbg 02030a 1e1b4b 45 hideturtle setblend screen setalpha .5 setglow 20 setsw 5 setpalette ff4d9d ff9f1c 38bdf8 a78bfa repeat 72 [ellipse 285 58 tr 5] setalpha .28 setseed 731 setsymmetry 12 spray 330 180 setsymmetry 1 setblend source-over setalpha 1 setglow 0 setsc 02030a fillpoly 48 105 setgradient fef3c7 f97316 0 setsw 10 ellipse 138 34]",
+    image: "neon-singularity.png",
+    type: "showstoppers",
+  }),
+  example({
+    name: "Quantum rose engine",
+    source:
+      "repeat 1 [gradientbg 030712 240046 90 hideturtle setblend lighter setalpha .48 setglow 16 setsw 3 setpalette ff006e 8338ec 3a86ff 00f5d4 fee440 repeat 36 [star 7 245 tr 10 ellipse 178 58 tr 5] setblend screen setalpha .7 setradial ffffff ff006e 95 fillpoly 18 82 setblend source-over setalpha 1 setglow 0]",
+    image: "quantum-rose-engine.png",
+    type: "showstoppers",
+  }),
+  example({
+    name: "Crystal city",
+    source:
+      "repeat 1 [gradientbg 020617 172554 90 hideturtle setblend screen setgradient 22d3ee c084fc 45 setglow 14 setsw 3 push penup setpos 400 235 pendown seth 0 grid3d 315 16 pop repeat 16 [tr 22.5 push penup fd 245 pendown cube 108 72 sphere 42 6 pop] setradial ffffff 38bdf8 125 sphere 112 12 setblend source-over setglow 0]",
+    image: "crystal-city.png",
+    type: "showstoppers",
+  }),
+  example({
+    name: "Fractal lightning garden",
+    source:
+      "repeat 1 [gradientbg 020617 111827 90 hideturtle setblend screen setgradient 67e8f9 a78bfa 45 setglow 15 setsw 4 repeat 16 [tr 22.5 push fd 65 repeat 6 [push tl 34 fd 58 setsw 7 fd 30 dot 15 pop push tr 34 fd 58 setsw 3 fd 44 dot 11 pop fd 24] pop] setblend source-over setglow 0]",
+    image: "fractal-lightning-garden.png",
+    type: "showstoppers",
+  }),
+  example({
+    name: "Hypercube reactor",
+    source:
+      "repeat 1 [gradientbg 050816 1e1b4b 45 hideturtle setblend lighter setgradient 00f5d4 ff006e 35 setglow 20 setsw 3 repeat 24 [tr 15 push penup fd 205 pendown seth 45 cube 138 92 pop] setalpha .7 sphere 155 14 setalpha .35 setdash 8 9 repeat 18 [ellipse 285 95 tr 10] setdash 0 0 setblend source-over setalpha 1 setglow 0]",
+    image: "hypercube-reactor.png",
+    type: "showstoppers",
+  }),
+  example({
+    name: "Aurora supernova",
+    source:
+      "repeat 1 [gradientbg 020617 312e81 90 hideturtle setblend screen setsymmetry 12 setalpha .55 setsc 67e8f9 setsw 44 setsoftness .9 setflow .12 repeat 3 [fd 175 bk 175 tr 10] setalpha .5 setsc f0abfc setsw 28 setflow .18 repeat 2 [fd 125 dot 42 bk 125 tr 15] setsoftness 0 setflow 1 setalpha .85 setgradient fef08a f472b6 45 setsw 2 star 24 245 setsymmetry 1 setblend source-over setalpha 1]",
+    image: "aurora-supernova.png",
+    type: "showstoppers",
+  }),
+  example({
+    name: "Eye of the cosmos",
+    source:
+      "repeat 1 [gradientbg 02030a 1d1135 0 hideturtle setblend screen setglow 22 setalpha .62 setpalette 38bdf8 a78bfa f472b6 repeat 36 [ellipse 285 112 tr 5] setalpha .85 setradial ffffff 3a86ff 145 fillpoly 48 138 setblend source-over setsc 02030a fillpoly 48 58 setsc ffffff dot 24 setblend lighter setalpha .75 repeat 36 [push penup fd 205 pendown dot 9 pop tr 10] setblend source-over setalpha 1 setglow 0]",
+    image: "eye-of-the-cosmos.png",
+    type: "showstoppers",
+  }),
+  example({
+    name: "Celestial clockwork",
+    source:
+      "repeat 1 [gradientbg 071013 172554 45 hideturtle setblend screen setglow 12 setpalette ffb703 06d6a0 3a86ff f72585 setsw 4 repeat 36 [push penup fd 238 pendown polygon 8 34 star 8 25 pop tr 10] setgradient fef3c7 f59e0b 0 setsw 7 circle 190 setdash 12 8 circle 145 setdash 0 0 setalpha .65 repeat 24 [push penup fd 112 pendown dot 16 pop tr 15] setalpha 1 setradial ffffff f59e0b 70 fillpoly 24 66 setblend source-over setglow 0]",
+    image: "celestial-clockwork.png",
+    type: "showstoppers",
+  }),
   example({
     name: "Turtle compass",
     source:

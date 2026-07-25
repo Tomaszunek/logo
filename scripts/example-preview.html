@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Example preview renderer</title>
+    <style>
+      html,
+      body {
+        width: 800px;
+        height: 800px;
+        margin: 0;
+        overflow: hidden;
+        background: white;
+      }
+
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas width="800" height="800"></canvas>
+    <script type="module">
+      import { pathwayExamples } from "/src/data/pathwayExamples.ts";
+      import { Caller } from "/src/utils/caller.ts";
+      import { Turtle } from "/src/utils/turtle.ts";
+
+      const name = new URLSearchParams(window.location.search).get("name");
+      const example = pathwayExamples.find((item) => item.name === name);
+      const canvas = document.querySelector("canvas");
+
+      if (!example || !canvas) {
+        throw new Error(`Unknown example: ${name ?? "(missing)"}`);
+      }
+
+      const turtle = new Turtle({
+        canvas,
+        homeX: 400,
+        homeY: 400,
+        dir: 0,
+        strokeColor: "#111827",
+        strokeWeight: 2,
+        pen: true,
+        visible: false,
+      });
+      const caller = new Caller(turtle);
+
+      turtle.beginFrame();
+      caller.execute(example.command);
+      turtle.endFrame();
+      document.documentElement.dataset.ready = "true";
+    </script>
+  </body>
+</html>
