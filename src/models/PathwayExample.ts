@@ -6,6 +6,7 @@ export interface IPathwayExample {
   command: ICommandModel;
   image: string;
   type: ExampleCategory;
+  performanceFocus?: string;
 }
 
 export type ExampleCategory =
@@ -16,7 +17,8 @@ export type ExampleCategory =
   | "depth"
   | "color-light"
   | "brushes-particles"
-  | "generative-systems";
+  | "generative-systems"
+  | "performance";
 
 export interface IExampleCollection {
   id: ExampleCategory;

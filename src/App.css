@@ -732,6 +732,12 @@ input:focus-visible,
   font-size: 0.53rem;
 }
 
+.exampleTags .performanceBadge {
+  border-color: rgba(251, 191, 36, 0.28);
+  color: #fde68a;
+  background: rgba(251, 191, 36, 0.09);
+}
+
 .pathexample .path {
   display: -webkit-box;
   overflow: hidden;

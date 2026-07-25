@@ -11,6 +11,7 @@ interface ExampleSpec {
   source: string;
   image: string;
   type: IPathwayExample["type"];
+  performanceFocus?: string;
   scale?: number;
   start?: readonly [x: number, y: number];
 }
@@ -191,6 +192,12 @@ export const exampleCollections: readonly IExampleCollection[] = [
       "Dense, surprising compositions that reveal how far commands can go.",
   },
   {
+    id: "performance",
+    label: "Performance lab",
+    description:
+      "Beautiful stress scenes for measuring paths, particles, brushes, and geometry.",
+  },
+  {
     id: "symbols",
     label: "Icons & symbols",
     description:
@@ -290,6 +297,94 @@ export const pathwayExamples: readonly IPathwayExample[] = [
       "repeat 1 [gradientbg 071013 172554 45 hideturtle setblend screen setglow 12 setpalette ffb703 06d6a0 3a86ff f72585 setsw 4 repeat 36 [push penup fd 238 pendown polygon 8 34 star 8 25 pop tr 10] setgradient fef3c7 f59e0b 0 setsw 7 circle 190 setdash 12 8 circle 145 setdash 0 0 setalpha .65 repeat 24 [push penup fd 112 pendown dot 16 pop tr 15] setalpha 1 setradial ffffff f59e0b 70 fillpoly 24 66 setblend source-over setglow 0]",
     image: "celestial-clockwork.png",
     type: "showstoppers",
+  }),
+  example({
+    name: "Prismatic thread reactor",
+    source:
+      "repeat 1 [gradientbg 03020c 190b3d 45 hideturtle setblend screen setalpha .13 setglow 3 setsw .75 setpalette 22d3ee 818cf8 e879f9 fb7185 fbbf24 repeat 240 [tr 1.5 push penup fd 220 pendown tr 68 repeat 720 [fd 1.05 tr .5] pop] setblend source-over setalpha 1 setglow 0]",
+    image: "prismatic-thread-reactor.png",
+    type: "performance",
+    performanceFocus: "Path batching",
+  }),
+  example({
+    name: "Particle halo furnace",
+    source:
+      "repeat 1 [gradientbg 020617 20104f 90 hideturtle setseed 2026 setblend screen setalpha .32 setsw 2 setflow .65 setsc 22d3ee setsymmetry 18 repeat 10 [push penup fd 210 pendown spray 52 620 pop tr 2] setsc a78bfa setsymmetry 12 setalpha .38 repeat 12 [push penup fd 125 pendown spray 48 520 pop tr 2.5] setsc f472b6 setsymmetry 8 setalpha .5 repeat 8 [push penup fd 62 pendown spray 38 420 pop tr 5] setsymmetry 1 setalpha .85 setglow 16 setradial ffffff fbbf24 46 fillpoly 24 42 setblend source-over setalpha 1 setglow 0]",
+    image: "particle-halo-furnace.png",
+    type: "performance",
+    performanceFocus: "Particles × symmetry",
+  }),
+  example({
+    name: "Velvet caustic bloom",
+    source:
+      "repeat 1 [gradientbg 02030a 172554 45 hideturtle setblend screen setalpha .45 setsymmetry 12 setsoftness .92 setflow .035 setglow 5 setsw 32 setsc 22d3ee repeat 32 [tr 1.17 push penup fd 150 pendown tr 58 repeat 44 [fd 10.5 tr 3.7] pop] setsw 24 setsc a78bfa repeat 36 [tr 1.43 push penup fd 215 pendown tr 76 repeat 52 [fd 8.7 tr 3.15] pop] setsw 18 setsc f472b6 repeat 42 [tr 1.71 push penup fd 100 pendown tr 42 repeat 38 [fd 9.2 tr 4.4] pop] setsoftness 0 setflow 1 setsymmetry 1 setblend source-over setalpha 1 setglow 0]",
+    image: "velvet-caustic-bloom.png",
+    type: "performance",
+    performanceFocus: "Soft-brush gradients",
+  }),
+  example({
+    name: "Orbital glass cathedral",
+    source:
+      "repeat 1 [gradientbg 020617 172554 90 hideturtle setblend screen setalpha .045 setglow 3 setsw .75 setgradient 22d3ee e879f9 45 repeat 144 [tr 2.5 push penup fd 170 pendown sphere 92 32 pop] setalpha .055 setgradient fbbf24 818cf8 135 repeat 120 [tr 3 push penup fd 255 pendown tr 45 cube 80 55 pop] setalpha .62 setglow 12 setradial ffffff 22d3ee 92 sphere 86 16 setalpha .7 setgradient fef3c7 e879f9 45 star 18 74 setblend source-over setalpha 1 setglow 0]",
+    image: "orbital-glass-cathedral.png",
+    type: "performance",
+    performanceFocus: "Complex geometry",
+  }),
+  example({
+    name: "Neon megacity canyon",
+    source:
+      "repeat 1 [gradientbg 020617 172554 90 hideturtle setblend screen setalpha .28 setglow 7 setsw 1 setgradient 22d3ee 818cf8 90 penup setpos 400 238 pendown seth 0 grid3d 365 64 setalpha .22 setgradient 22d3ee e879f9 45 repeat 5 [push penup setpos 270 285 pendown repeat 6 [cube 30 20 penup fd 52 pendown] pop push penup setpos 205 342 pendown repeat 8 [cube 40 27 penup fd 58 pendown] pop push penup setpos 125 415 pendown repeat 11 [cube 54 36 penup fd 62 pendown] pop push penup setpos 50 505 pendown repeat 13 [cube 72 48 penup fd 66 pendown] pop push penup setpos -20 620 pendown repeat 14 [cube 96 64 penup fd 70 pendown] pop tr .45] setalpha .5 setglow 14 setgradient fef08a f472b6 90 push penup setpos 120 465 pendown cube 115 78 pop push penup setpos 610 430 pendown cube 132 88 pop setblend source-over setalpha 1 setglow 0]",
+    image: "neon-megacity-canyon.png",
+    type: "performance",
+    performanceFocus: "Layered 3D city",
+  }),
+  example({
+    name: "Saturn forge shipyard",
+    source:
+      "repeat 1 [gradientbg 02030a 172554 45 hideturtle setseed 948 setblend screen setalpha .34 setsw 1 setsc 94a3b8 spray 390 900 penup setpos 540 315 pendown setalpha .065 setglow 4 setgradient 22d3ee a78bfa 35 repeat 360 [tr 1 push penup fd 238 pendown tr 45 cube 30 20 pop] setalpha .5 setglow 10 setgradient fef3c7 f97316 12 sphere 172 32 setalpha .34 setglow 7 setgradient 38bdf8 e879f9 35 setsw 3 repeat 9 [ellipse 265 74 tr 4] setalpha .72 setradial ffffff 38bdf8 56 push penup setpos 210 210 pendown sphere 48 16 pop setradial ffffff f472b6 38 push penup setpos 245 565 pendown sphere 31 12 pop setalpha .48 setgradient fef08a f97316 90 push penup setpos 115 610 pendown seth -18 grid3d 245 32 pop setblend source-over setalpha 1 setglow 0]",
+    image: "saturn-forge-shipyard.png",
+    type: "performance",
+    performanceFocus: "Orbital 3D geometry",
+  }),
+  example({
+    name: "Atlas construction mech",
+    source:
+      "repeat 1 [gradientbg 020617 111827 90 hideturtle setblend screen setalpha .22 setglow 5 setsw 1 setgradient 22d3ee 818cf8 90 push penup setpos 400 520 pendown seth 0 grid3d 360 48 pop seth 0 setalpha .09 setgradient 22d3ee e879f9 45 repeat 10 [push penup setpos 400 350 pendown cube 180 110 pop push penup setpos 435 205 pendown cube 96 62 pop push penup setpos 400 475 pendown cube 136 72 pop push penup setpos 285 342 pendown sphere 52 18 pop push penup setpos 575 342 pendown sphere 52 18 pop push tr 14 penup setpos 245 425 pendown cube 82 52 pop push tl 14 penup setpos 595 425 pendown cube 82 52 pop push penup setpos 330 515 pendown sphere 43 16 pop push penup setpos 495 515 pendown sphere 43 16 pop push tr 5 penup setpos 315 585 pendown cube 92 58 pop push tl 5 penup setpos 510 585 pendown cube 92 58 pop push penup setpos 300 688 pendown cube 112 62 pop push penup setpos 535 688 pendown cube 112 62 pop tr .65] setalpha .58 setglow 12 setgradient fef3c7 f59e0b 35 push penup setpos 400 350 pendown cube 180 110 pop push penup setpos 435 205 pendown cube 96 62 pop push penup setpos 400 475 pendown cube 136 72 pop setradial ffffff 22d3ee 42 push penup setpos 285 342 pendown sphere 45 12 pop push penup setpos 575 342 pendown sphere 45 12 pop setgradient fef3c7 f472b6 90 setsw 5 push penup setpos 405 210 pendown ellipse 26 12 pop setblend source-over setalpha 1 setglow 0]",
+    image: "atlas-construction-mech.png",
+    type: "performance",
+    performanceFocus: "Articulated 3D model",
+  }),
+  example({
+    name: "Aegis orbital lander",
+    source:
+      "repeat 1 [gradientbg 02030a 172554 45 hideturtle setseed 7314 setblend screen setalpha .3 setsw 1 setsc 64748b spray 390 720 setalpha .14 setglow 5 setgradient 22d3ee 818cf8 90 push penup setpos 345 405 pendown seth 90 grid3d 235 32 pop push penup setpos 455 405 pendown seth -90 grid3d 235 32 pop push penup setpos 400 238 pendown seth 180 grid3d 178 24 pop seth 0 setalpha .1 setgradient 22d3ee e879f9 35 repeat 12 [push penup setpos 400 348 pendown cube 112 78 pop push penup setpos 400 458 pendown cube 145 96 pop push penup setpos 400 555 pendown cube 92 68 pop push penup setpos 305 485 pendown cube 62 42 pop push penup setpos 515 485 pendown cube 62 42 pop push penup setpos 330 625 pendown sphere 44 14 pop push penup setpos 490 625 pendown sphere 44 14 pop tr .55] setalpha .62 setglow 14 setradial ffffff 38bdf8 52 push penup setpos 410 255 pendown sphere 44 16 pop setalpha .42 setgradient fef3c7 f472b6 45 push penup setpos 400 350 pendown cube 112 78 pop setradial ffffff f97316 38 push penup setpos 330 625 pendown sphere 36 12 pop push penup setpos 490 625 pendown sphere 36 12 pop setblend source-over setalpha 1 setglow 0]",
+    image: "aegis-orbital-lander.png",
+    type: "performance",
+    performanceFocus: "Layered spacecraft mesh",
+  }),
+  example({
+    name: "Lunar habitat complex",
+    source:
+      "repeat 1 [gradientbg 030712 172554 90 hideturtle setseed 2049 setblend screen setalpha .28 setsw 1 setsc 94a3b8 spray 390 650 setalpha .16 setglow 4 setgradient 64748b 38bdf8 90 push penup setpos 400 292 pendown seth 0 grid3d 365 48 pop setalpha .05 setgradient 22d3ee a78bfa 35 push penup setpos 245 440 pendown repeat 18 [sphere 112 28 tr 1.2] pop push penup setpos 565 405 pendown repeat 16 [sphere 86 24 tr 1.5] pop push penup setpos 475 600 pendown repeat 14 [sphere 68 20 tr 1.8] pop setalpha .48 setglow 8 setgradient fef3c7 38bdf8 45 push penup setpos 350 440 pendown seth -6 repeat 5 [cube 50 32 penup fd 47 pendown] pop push penup setpos 338 515 pendown seth 36 repeat 3 [cube 46 30 penup fd 52 pendown] pop push penup setpos 535 485 pendown seth 108 repeat 3 [cube 44 28 penup fd 50 pendown] pop setalpha .24 setgradient fef08a f59e0b 90 push penup setpos 95 555 pendown seth 88 grid3d 145 20 pop push penup setpos 665 520 pendown seth -88 grid3d 145 20 pop setalpha .65 setglow 13 setradial ffffff 22d3ee 42 push penup setpos 655 250 pendown sphere 38 14 pop setgradient ffffff 38bdf8 90 setsw 4 push penup setpos 655 288 pendown seth 90 fd 118 pop setblend source-over setalpha 1 setglow 0]",
+    image: "lunar-habitat-complex.png",
+    type: "performance",
+    performanceFocus: "Architectural 3D model",
+  }),
+  example({
+    name: "Obsidian voxel arcology",
+    source:
+      "repeat 1 [gradientbg 01030a 111827 90 hideturtle setblend screen setalpha .18 setglow 5 setsw 1 setgradient 22d3ee 818cf8 90 push penup setpos 400 220 pendown seth 0 grid3d 380 64 pop seth 0 setalpha .008 setglow 11 setgradient 22d3ee e879f9 45 repeat 320 [push penup setpos 270 275 pendown repeat 6 [cube 34 23 penup fd 52 pendown] pop push penup setpos 205 340 pendown repeat 8 [cube 46 31 penup fd 58 pendown] pop push penup setpos 125 420 pendown repeat 10 [cube 62 42 penup fd 65 pendown] pop push penup setpos 42 525 pendown repeat 12 [cube 86 58 penup fd 72 pendown] pop tr .08] setalpha .62 setglow 15 setgradient fef3c7 f59e0b 35 push penup setpos 400 315 pendown cube 172 116 pop push penup setpos 205 455 pendown cube 128 86 pop push penup setpos 595 455 pendown cube 128 86 pop setalpha .75 setradial ffffff 38bdf8 44 push penup setpos 430 185 pendown sphere 40 14 pop setblend source-over setalpha 1 setglow 0]",
+    image: "obsidian-voxel-arcology.png",
+    type: "performance",
+    performanceFocus: "High-load voxel scene",
+  }),
+  example({
+    name: "Leviathan fusion reactor",
+    source:
+      "repeat 1 [gradientbg 02030a 172554 45 hideturtle setblend screen setalpha .16 setglow 5 setsw 1 setgradient 64748b 38bdf8 90 push penup setpos 400 535 pendown seth 0 grid3d 350 48 pop penup setpos 400 370 pendown seth 0 setalpha .009 setglow 9 setgradient 22d3ee a78bfa 35 repeat 1920 [tr .1875 push penup fd 248 pendown tr 45 cube 54 36 sphere 24 18 pop] setalpha .013 setgradient fbbf24 f472b6 120 repeat 1440 [tr .25 push penup fd 168 pendown tr 30 cube 42 28 sphere 19 14 pop] setalpha .02 setgradient 38bdf8 e879f9 45 repeat 192 [sphere 138 32 tr .85] setalpha .54 setglow 14 setgradient fef3c7 f97316 12 sphere 126 32 setalpha .68 setradial ffffff f59e0b 82 fillpoly 32 76 setblend source-over setalpha 1 setglow 0]",
+    image: "leviathan-fusion-reactor.png",
+    type: "performance",
+    performanceFocus: "High-load turbine model",
   }),
   example({
     name: "Radiation warning",
