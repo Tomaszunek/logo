@@ -37,10 +37,10 @@ export class Caller {
                 this[command.name]();
                 break;
             case 'load':
-                this.load(command.filename);
+                this.load();
                 break;
             case 'save':
-                this.save(command.filename);
+                this.save();
                 break;
             default:
                 break;
@@ -100,10 +100,10 @@ export class Caller {
     public setsw = (weight: number) => {
         this.turtle.setStrokeWeight(weight);               
     }
-    public load = (_filename?: string) => {
+    public load = () => {
         this.turtle.setPen(true);
     }
-    public save = (_filename?: string) => {
+    public save = () => {
         this.turtle.setPen(true);
     }
 }

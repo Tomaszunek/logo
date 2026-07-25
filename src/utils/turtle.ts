@@ -32,11 +32,9 @@ export class Turtle {
     public drawLine = (dist :number) => {
         if(this.canvas === null) {return};    
         const ctx = this.canvas.getContext("2d");
-        let newX: number;
-        let newY: number;
         if(ctx === null) {return};
-        newX = this.x + (Math.cos(this.dir * Math.PI / 180) * dist);
-        newY = this.y + (Math.sin(this.dir * Math.PI / 180) * dist);
+        const newX = this.x + (Math.cos(this.dir * Math.PI / 180) * dist);
+        const newY = this.y + (Math.sin(this.dir * Math.PI / 180) * dist);
         if(this.pen) {
             ctx.beginPath();
             ctx.moveTo(this.x, this.y);
