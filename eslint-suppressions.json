@@ -1,0 +1,22 @@
+{
+  "src/models/Command.ts": {
+    "@typescript-eslint/no-namespace": {
+      "count": 1
+    }
+  },
+  "src/utils/caller.ts": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 2
+    }
+  },
+  "src/utils/turtle.ts": {
+    "prefer-const": {
+      "count": 2
+    }
+  },
+  "vite.config.js": {
+    "no-undef": {
+      "count": 2
+    }
+  }
+}
