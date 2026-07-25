@@ -38,6 +38,14 @@ describe("getCommandComplexity", () => {
     expect(getCommandComplexity(scene).operations).toBe(64);
   });
 
+  it("weights particle spray by density", () => {
+    expect(
+      getCommandComplexity([
+        { id: 0, name: "spray", value: 80, arg2: 450 },
+      ]).operations,
+    ).toBe(451);
+  });
+
   it("counts exact repeat and nested-repeat execution cost", () => {
     const square = command("repeat", 4, [
       command("fd", 100),

@@ -17,6 +17,7 @@ const createHarness = () => {
     fillRect: vi.fn(),
     fillStyle: "",
     globalAlpha: 1,
+    globalCompositeOperation: "source-over",
     lineCap: "butt",
     lineJoin: "miter",
     lineTo: vi.fn(),
@@ -239,6 +240,37 @@ describe("Turtle and Caller", () => {
       "rgba(17, 24, 39, 0)",
     );
     expect(turtle.x).toBe(420);
+  });
+
+  it("replicates pen marks with rotational symmetry", () => {
+    const { caller, context, turtle } = createHarness();
+
+    caller.setsymmetry(6);
+    caller.fd(40);
+
+    expect(context.moveTo).toHaveBeenCalledTimes(6);
+    expect(context.lineTo).toHaveBeenCalledTimes(6);
+    expect(context.rotate).toHaveBeenCalledTimes(6);
+    expect(context.stroke).toHaveBeenCalledOnce();
+    expect(turtle).toMatchObject({ x: 440, y: 400, symmetry: 6 });
+  });
+
+  it("applies blend modes and deterministic symmetrical spray", () => {
+    const first = createHarness();
+    const second = createHarness();
+
+    first.caller.setblend("screen");
+    first.caller.setsymmetry(3);
+    first.caller.spray(30, 10);
+    second.caller.setblend("screen");
+    second.caller.setsymmetry(3);
+    second.caller.spray(30, 10);
+
+    expect(first.context.globalCompositeOperation).toBe("screen");
+    expect(first.context.fillRect).toHaveBeenCalledTimes(30);
+    expect(first.context.fillRect.mock.calls).toEqual(
+      second.context.fillRect.mock.calls,
+    );
   });
 
   it("executes repeat exactly the requested number of times", () => {

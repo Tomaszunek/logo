@@ -1,4 +1,4 @@
-import type { ICommandModel } from "src/models/Command";
+import { blendModes, type ICommandModel } from "src/models/Command";
 import type { CommandTypes } from "src/models/CommandTypes";
 
 interface Token {
@@ -36,6 +36,7 @@ const commandByName: Readonly<Partial<Record<string, CommandTypes>>> = {
   rt: "tr",
   setalpha: "setalpha",
   setbc: "setbc",
+  setblend: "setblend",
   setdash: "setdash",
   setflow: "setflow",
   setglow: "setglow",
@@ -47,10 +48,12 @@ const commandByName: Readonly<Partial<Record<string, CommandTypes>>> = {
   setsc: "setsc",
   setsoftness: "setsoftness",
   setsw: "setsw",
+  setsymmetry: "setsymmetry",
   setxy: "setpos",
   showturtle: "showturtle",
   sphere: "sphere",
   spiral: "spiral",
+  spray: "spray",
   star: "star",
   tl: "tl",
   tr: "tr",
@@ -66,6 +69,7 @@ const numberCommands = new Set<CommandTypes>([
   "setglow",
   "seth",
   "setsoftness",
+  "setsymmetry",
   "setsw",
   "tl",
   "tr",
@@ -89,6 +93,7 @@ const twoNumberCommands = new Set<CommandTypes>([
   "setdash",
   "setpos",
   "sphere",
+  "spray",
   "spiral",
   "star",
 ]);
@@ -172,6 +177,18 @@ export class Parser {
     const command: ICommandModel = { id: 0, name };
 
     if (noArgumentCommands.has(name)) {
+      return command;
+    }
+
+    if (name === "setblend") {
+      const blendToken = this.take();
+      const blend = blendModes.find(
+        (candidate) => candidate === blendToken.value.toLowerCase(),
+      );
+      if (blend === undefined) {
+        throw parseError(blendToken.start);
+      }
+      command.blend = blend;
       return command;
     }
 

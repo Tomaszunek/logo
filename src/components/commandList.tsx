@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { CommandTypes, ICommandDescription, ICommandModel } from 'src/models';
+import { blendModes, type CommandTypes, type ICommandDescription, type ICommandModel } from 'src/models';
 import { useCommandStore } from 'src/store/commandStore';
 
 interface IProps {
@@ -16,6 +16,7 @@ const twoNumberCommands = new Set<CommandTypes>([
   "setdash",
   "setpos",
   "sphere",
+  "spray",
   "spiral",
   "star",
 ]);
@@ -48,6 +49,24 @@ const CommandList: React.FC<IProps> = ({ descriptions }) => {
               {(item.color2 !== undefined && item.color2 !== '') ?
                 <input aria-label={`${short} second color`} name="color2" type="color" value={item.color2} onChange={e => { onChangeInput(e, item, item.name); }} /> :
                 null}
+              {item.blend === undefined ? null : (
+                <select
+                  aria-label={`${short} mode`}
+                  value={item.blend}
+                  onChange={(event) => {
+                    const blend = blendModes.find(
+                      (candidate) => candidate === event.target.value,
+                    );
+                    if (blend !== undefined) {
+                      editCommand({ ...item, blend });
+                    }
+                  }}
+                >
+                  {blendModes.map((blend) => (
+                    <option key={blend} value={blend}>{blend}</option>
+                  ))}
+                </select>
+              )}
               <button
                 type="button"
                 className="remove"

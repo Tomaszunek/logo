@@ -22,6 +22,7 @@ const scalableFirstArguments = new Set<ICommandModel["name"]>([
   "grid3d",
   "setradial",
   "sphere",
+  "spray",
 ]);
 
 const scalableSecondArguments = new Set<ICommandModel["name"]>([
@@ -44,6 +45,7 @@ const twoNumberCommands = new Set<ICommandModel["name"]>([
   "grid3d",
   "polygon",
   "sphere",
+  "spray",
   "spiral",
   "star",
 ]);
@@ -112,7 +114,7 @@ const serializeCommand = (command: Readonly<ICommandModel>): string => {
     return command.name;
   }
 
-  return `${command.name} ${command.value ?? 0}`;
+  return `${command.name} ${command.blend ?? command.value ?? 0}`;
 };
 
 const example = ({

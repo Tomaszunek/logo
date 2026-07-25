@@ -142,6 +142,20 @@ describe("Parser", () => {
     expect(onError).not.toHaveBeenCalled();
   });
 
+  it("parses symmetry, blend, and particle spray commands", () => {
+    const { commands, onError } = parse(
+      "setsymmetry 12 setblend screen spray 90 450 setblend source-over",
+    );
+
+    expect(commands).toMatchObject([
+      { name: "setsymmetry", value: 12 },
+      { name: "setblend", blend: "screen" },
+      { name: "spray", value: 90, arg2: 450 },
+      { name: "setblend", blend: "source-over" },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
   it("accepts uppercase commands and flexible whitespace", () => {
     const { commands, onError } = parse(
       "  REPEAT  4 [ FD 100\nTR 90 ]  ",
@@ -195,6 +209,8 @@ describe("Parser", () => {
     "setgradient ff0000 nope 45",
     "setradial ff0000 00ff00 nope",
     "gradientbg ff0000",
+    "setblend unknown",
+    "spray 40",
     "repeat 1.5 [fd 10]",
     "repeat -1 [fd 10]",
     "repeat 2 []",

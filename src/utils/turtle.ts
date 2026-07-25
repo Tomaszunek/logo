@@ -1,4 +1,5 @@
 import logoTurtle from "../logoTurtle.png";
+import type { BlendMode } from "../models";
 
 export class Turtle {
   public x: number;
@@ -15,6 +16,8 @@ export class Turtle {
   public glow: number;
   public softness: number;
   public flow: number;
+  public symmetry: number;
+  public blend: BlendMode;
   public pen: boolean;
   public visible: boolean;
 
@@ -27,6 +30,7 @@ export class Turtle {
   private imageRequest = 0;
   private frameActive = false;
   private pendingStroke = false;
+  private randomState = 123456789;
 
   public constructor(turtle: ITurtleInstance) {
     this.x = turtle.homeX;
@@ -45,6 +49,8 @@ export class Turtle {
     this.glow = 0;
     this.softness = 0;
     this.flow = 1;
+    this.symmetry = 1;
+    this.blend = "source-over";
     this.pen = turtle.pen;
     this.initialPen = turtle.pen;
     this.visible = turtle.visible;
@@ -68,7 +74,9 @@ export class Turtle {
     if (this.pen) {
       if (this.softness > 0) {
         this.flushStroke();
-        this.drawSoftSegment(context, this.x, this.y, newX, newY);
+        this.forEachSymmetry(context, () => {
+          this.drawSoftSegment(context, this.x, this.y, newX, newY);
+        });
         this.x = newX;
         this.y = newY;
         return;
@@ -84,9 +92,12 @@ export class Turtle {
         context.setLineDash([...this.dash]);
         context.shadowBlur = this.glow;
         context.shadowColor = this.getGlowColor();
+        context.globalCompositeOperation = this.blend;
       }
-      context.moveTo(this.x, this.y);
-      context.lineTo(newX, newY);
+      this.forEachSymmetry(context, () => {
+        context.moveTo(this.x, this.y);
+        context.lineTo(newX, newY);
+      });
       if (this.frameActive) {
         this.pendingStroke = true;
       } else {
@@ -137,6 +148,7 @@ export class Turtle {
       context.save();
       context.globalAlpha = 1;
       context.shadowBlur = 0;
+      context.globalCompositeOperation = "source-over";
       context.translate(this.x, this.y);
       context.rotate((this.dir * Math.PI) / 180 + Math.PI / 2);
       context.drawImage(image, -12, -16);
@@ -233,13 +245,54 @@ export class Turtle {
     }
 
     if (this.softness > 0) {
-      this.drawSoftSegment(context, this.x, this.y, this.x, this.y, radius);
+      this.forEachSymmetry(context, () => {
+        this.drawSoftSegment(
+          context,
+          this.x,
+          this.y,
+          this.x,
+          this.y,
+          radius,
+        );
+      });
       return;
     }
 
-    context.beginPath();
-    context.arc(this.x, this.y, radius, 0, Math.PI * 2);
-    context.fill();
+    this.forEachSymmetry(context, () => {
+      context.beginPath();
+      context.arc(this.x, this.y, radius, 0, Math.PI * 2);
+      context.fill();
+    });
+  };
+
+  public spray = (radius: number, density: number) => {
+    const context = this.getDrawingContext();
+    const safeRadius = Math.abs(radius);
+    const particleCount = clampInteger(Math.abs(density), 1, 1000);
+    if (context === null || safeRadius === 0 || this.flow === 0) {
+      return;
+    }
+
+    const particleSize = Math.max(
+      0.5,
+      Math.min(this.strokeWeight, safeRadius / 5),
+    );
+    context.globalAlpha = this.opacity * this.flow;
+
+    for (let index = 0; index < particleCount; index += 1) {
+      const angle = this.nextRandom() * Math.PI * 2;
+      const distance = Math.sqrt(this.nextRandom()) * safeRadius;
+      const x = this.x + Math.cos(angle) * distance;
+      const y = this.y + Math.sin(angle) * distance;
+      this.forEachSymmetry(context, () => {
+        context.fillRect(
+          x - particleSize / 2,
+          y - particleSize / 2,
+          particleSize,
+          particleSize,
+        );
+      });
+    }
   };
 
   public drawPolygon = (sides: number, radius: number, filled: boolean) => {
@@ -481,6 +534,7 @@ export class Turtle {
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.globalAlpha = 1;
     context.shadowBlur = 0;
+    context.globalCompositeOperation = "source-over";
     context.fillStyle = color;
     context.fillRect(0, 0, this.canvas.width, this.canvas.height);
   };
@@ -503,6 +557,7 @@ export class Turtle {
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.globalAlpha = 1;
     context.shadowBlur = 0;
+    context.globalCompositeOperation = "source-over";
     context.fillStyle = this.createLinearGradient(
       context,
       color1,
@@ -596,6 +651,21 @@ export class Turtle {
     this.flow = safeFlow;
   };
 
+  public setSymmetry = (count: number) => {
+    const safeCount = clampInteger(Math.abs(count), 1, 24);
+    if (safeCount !== this.symmetry) {
+      this.flushStroke();
+    }
+    this.symmetry = safeCount;
+  };
+
+  public setBlend = (blend: BlendMode) => {
+    if (blend !== this.blend) {
+      this.flushStroke();
+    }
+    this.blend = blend;
+  };
+
   private readonly getDrawingContext = (): CanvasRenderingContext2D | null => {
     this.flushStroke();
     if (!this.pen || this.canvas === null) {
@@ -617,7 +687,30 @@ export class Turtle {
     context.setLineDash([...this.dash]);
     context.shadowBlur = this.glow;
     context.shadowColor = this.getGlowColor();
+    context.globalCompositeOperation = this.blend;
     return context;
+  };
+
+  private readonly forEachSymmetry = (
+    context: CanvasRenderingContext2D,
+    draw: () => void,
+  ) => {
+    const centerX = (this.canvas?.width ?? 800) / 2;
+    const centerY = (this.canvas?.height ?? 800) / 2;
+
+    for (let index = 0; index < this.symmetry; index += 1) {
+      context.save();
+      context.translate(centerX, centerY);
+      context.rotate((index * Math.PI * 2) / this.symmetry);
+      context.translate(-centerX, -centerY);
+      draw();
+      context.restore();
+    }
+  };
+
+  private readonly nextRandom = (): number => {
+    this.randomState = (this.randomState * 16807) % 2147483647;
+    return (this.randomState - 1) / 2147483646;
   };
 
   private readonly drawSoftSegment = (
@@ -636,7 +729,7 @@ export class Turtle {
     const distance = Math.hypot(endX - startX, endY - startY);
     const preferredSpacing = Math.max(0.5, radius * 0.28);
     const steps = Math.min(
-      4096,
+      Math.max(1, Math.floor(4096 / this.symmetry)),
       Math.max(1, Math.ceil(distance / preferredSpacing)),
     );
     const transparent = transparentHex(this.strokeColor);
@@ -645,6 +738,7 @@ export class Turtle {
     context.globalAlpha = this.opacity * this.flow;
     context.shadowBlur = this.glow;
     context.shadowColor = this.getGlowColor();
+    context.globalCompositeOperation = this.blend;
 
     for (let index = 0; index <= steps; index += 1) {
       const progress = index / steps;
@@ -744,6 +838,9 @@ export class Turtle {
     this.glow = 0;
     this.softness = 0;
     this.flow = 1;
+    this.symmetry = 1;
+    this.blend = "source-over";
+    this.randomState = 123456789;
     this.pen = this.initialPen;
     this.visible = this.initialVisibility;
   };

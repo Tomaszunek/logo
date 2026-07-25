@@ -1,4 +1,4 @@
-import type { ICommandModel } from "src/models";
+import type { BlendMode, ICommandModel } from "src/models";
 import type { Turtle } from "./turtle";
 
 export class Caller {
@@ -11,6 +11,11 @@ export class Caller {
   public execute = (command: ICommandModel) => {
     if (command.name === "repeat") {
       this.repeat(command);
+      return;
+    }
+
+    if (command.name === "setblend" && command.blend !== undefined) {
+      this.setblend(command.blend);
       return;
     }
 
@@ -118,6 +123,10 @@ export class Caller {
     this.turtle.drawPerspectiveGrid(size, divisions);
   };
 
+  public spray = (radius: number, density: number) => {
+    this.turtle.spray(radius, density);
+  };
+
   public repeat = (command: ICommandModel) => {
     if (command.value !== undefined && command.value !== 0) {
       for (let index = 0; index < command.value; index += 1) {
@@ -188,6 +197,14 @@ export class Caller {
     this.turtle.setFlow(flow);
   };
 
+  public setsymmetry = (count: number) => {
+    this.turtle.setSymmetry(count);
+  };
+
+  public setblend = (blend: BlendMode) => {
+    this.turtle.setBlend(blend);
+  };
+
   public setgradient = (color1: string, color2: string, angle: number) => {
     this.turtle.setLinearGradient(color1, color2, angle);
   };
@@ -225,6 +242,7 @@ const numberActions: Readonly<
   seth: (caller, value) => { caller.seth(value); },
   setsw: (caller, value) => { caller.setsw(value); },
   setsoftness: (caller, value) => { caller.setsoftness(value); },
+  setsymmetry: (caller, value) => { caller.setsymmetry(value); },
   tl: (caller, value) => { caller.tl(value); },
   tr: (caller, value) => { caller.tr(value); },
 };
@@ -243,6 +261,7 @@ const pairActions: Readonly<
   setdash: (caller, dash, gap) => { caller.setdash(dash, gap); },
   setpos: (caller, x, y) => { caller.setpos(x, y); },
   sphere: (caller, radius, detail) => { caller.sphere(radius, detail); },
+  spray: (caller, radius, density) => { caller.spray(radius, density); },
   spiral: (caller, turns, spacing) => { caller.spiral(turns, spacing); },
   star: (caller, points, radius) => { caller.star(points, radius); },
 };

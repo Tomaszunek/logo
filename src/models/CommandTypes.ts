@@ -32,4 +32,7 @@ export type CommandTypes =
   | "setradial"
   | "gradientbg"
   | "setsoftness"
-  | "setflow";
+  | "setflow"
+  | "setsymmetry"
+  | "setblend"
+  | "spray";

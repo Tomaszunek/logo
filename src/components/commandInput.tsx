@@ -111,8 +111,8 @@ const CommandInput: React.FC<IProps> = ({ descriptions }) => {
         </button>
       </form>
       <p className="inputHint">
-        Airbrush with setsw, setsoftness, and setflow. Use setsoftness 0
-        to return to solid lines.
+        Combine setsymmetry, setblend, and spray for kaleidoscopic particles
+        and luminous overlays.
       </p>
       {showPopup && <Popup massage={popupText} />}
     </div>

@@ -8,7 +8,7 @@ const CommandEditor: React.FC = () => {
 
   const displayCommands = (cmds: readonly ICommandModel[]) =>
     cmds.map((item) => {
-      const { name, value, arg2, color, color2, id } = item;
+      const { name, value, arg2, color, color2, blend, id } = item;
       return (
         <li key={id} data-id={id} className={name}>
           <span className="tagName">
@@ -17,6 +17,7 @@ const CommandEditor: React.FC = () => {
             {arg2 !== undefined && <span>{arg2}</span>}
             {color !== undefined && <span>{color}</span>}
             {color2 !== undefined && <span>{color2}</span>}
+            {blend !== undefined && <span>{blend}</span>}
           </span>
           {item.commands ? (
             <ul className="nestedCommands">{displayCommands(item.commands)}</ul>

@@ -78,6 +78,7 @@ const primitiveCosts: Readonly<
   grid3d: (command) => clampInteger(command.arg2, 2, 64) * 2 + 2,
   polygon: (command) => clampInteger(command.value, 3, 360) + 2,
   sphere: (command) => clampInteger(command.arg2, 2, 32) * 2 + 2,
+  spray: (command) => clampInteger(command.arg2, 1, 1000) + 1,
   spiral: (command) =>
     Math.max(12, Math.ceil(Math.min(100, Math.abs(command.value ?? 0)) * 72)) +
     2,
