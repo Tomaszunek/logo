@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150">
-  <rect width="150" height="150" fill="#fff"/>
-  <g fill="none" stroke="#1d2430" stroke-width="2" stroke-linejoin="round">
-    <polygon points="75,13 129,44 129,106 75,137 21,106 21,44"/>
-    <polygon points="75,32 112,53 112,97 75,118 38,97 38,53"/>
-    <path d="M75 13v19M129 44l-17 9M129 106l-17-9M75 137v-19M21 106l17-9M21 44l17 9"/>
-    <path d="M75 32 38 97M112 53H38M112 97 75 32M75 118 38 53M112 97H38M112 53 75 118" opacity=".7"/>
-  </g>
-</svg>
