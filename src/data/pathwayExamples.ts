@@ -12,14 +12,72 @@ interface ExampleSpec {
 
 const round = (value: number): number => Math.round(value * 100) / 100;
 
+const scalableFirstArguments = new Set<ICommandModel["name"]>([
+  "bk",
+  "circle",
+  "cube",
+  "dot",
+  "ellipse",
+  "fd",
+  "grid3d",
+  "setradial",
+  "sphere",
+  "spray",
+]);
+
+const scalableSecondArguments = new Set<ICommandModel["name"]>([
+  "arc",
+  "cube",
+  "ellipse",
+  "fillpoly",
+  "polygon",
+  "spiral",
+  "star",
+]);
+
+const twoNumberCommands = new Set<ICommandModel["name"]>([
+  "arc",
+  "cube",
+  "ellipse",
+  "fillpoly",
+  "setdash",
+  "setpos",
+  "grid3d",
+  "polygon",
+  "sphere",
+  "spray",
+  "spiral",
+  "star",
+]);
+
+const colorCommands = new Set<ICommandModel["name"]>(["setbc", "setsc"]);
+
+const gradientCommands = new Set<ICommandModel["name"]>([
+  "gradientbg",
+  "setgradient",
+  "setradial",
+]);
+
+const noArgumentCommands = new Set<ICommandModel["name"]>([
+  "hideturtle",
+  "home",
+  "pendown",
+  "penup",
+  "showturtle",
+]);
+
 const scaleCommand = (
   command: Readonly<ICommandModel>,
   scale: number,
 ): ICommandModel => ({
   ...command,
-  ...((command.name === "fd" || command.name === "bk") &&
+  ...(scalableFirstArguments.has(command.name) &&
   command.value !== undefined
     ? { value: round(command.value * scale) }
+    : {}),
+  ...(scalableSecondArguments.has(command.name) &&
+  command.arg2 !== undefined
+    ? { arg2: round(command.arg2 * scale) }
     : {}),
   ...(command.commands
     ? {
@@ -30,6 +88,15 @@ const scaleCommand = (
     : {}),
 });
 
+const serializeDefaultArgument = (
+  command: Readonly<ICommandModel>,
+): string | number => {
+  if (command.palette !== undefined) {
+    return command.palette.map((color) => color.replace("#", "")).join(" ");
+  }
+  return command.blend ?? command.value ?? 0;
+};
+
 const serializeCommand = (command: Readonly<ICommandModel>): string => {
   if (command.name === "repeat") {
     const nestedCommands = command.commands
@@ -38,25 +105,25 @@ const serializeCommand = (command: Readonly<ICommandModel>): string => {
     return `repeat ${command.value ?? 0} [${nestedCommands ?? ""}]`;
   }
 
-  if (command.name === "setpos") {
-    return `setpos ${command.value ?? 0} ${command.arg2 ?? 0}`;
+  if (twoNumberCommands.has(command.name)) {
+    return `${command.name} ${command.value ?? 0} ${command.arg2 ?? 0}`;
   }
 
-  if (command.name === "setsc" || command.name === "setbc") {
+  if (colorCommands.has(command.name)) {
     return `${command.name} ${command.color?.replace("#", "") ?? "000000"}`;
   }
 
-  if (
-    command.name === "hideturtle" ||
-    command.name === "home" ||
-    command.name === "pendown" ||
-    command.name === "penup" ||
-    command.name === "showturtle"
-  ) {
+  if (gradientCommands.has(command.name)) {
+    const color1 = command.color?.replace("#", "") ?? "000000";
+    const color2 = command.color2?.replace("#", "") ?? "ffffff";
+    return `${command.name} ${color1} ${color2} ${command.value ?? 0}`;
+  }
+
+  if (noArgumentCommands.has(command.name)) {
     return command.name;
   }
 
-  return `${command.name} ${command.value ?? 0}`;
+  return `${command.name} ${serializeDefaultArgument(command)}`;
 };
 
 const example = ({

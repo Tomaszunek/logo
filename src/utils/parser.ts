@@ -1,4 +1,4 @@
-import type { ICommandModel } from "src/models/Command";
+import { blendModes, type ICommandModel } from "src/models/Command";
 import type { CommandTypes } from "src/models/CommandTypes";
 
 interface Token {
@@ -11,18 +11,54 @@ interface ParserError extends Error {
 }
 
 const commandByName: Readonly<Partial<Record<string, CommandTypes>>> = {
+  arc: "arc",
+  back: "bk",
+  backward: "bk",
   bk: "bk",
+  circle: "circle",
+  cube: "cube",
+  dot: "dot",
+  ellipse: "ellipse",
   fd: "fd",
+  fillpoly: "fillpoly",
+  forward: "fd",
+  gradientbg: "gradientbg",
+  grid3d: "grid3d",
   hideturtle: "hideturtle",
   home: "home",
+  left: "tl",
+  lt: "tl",
   pendown: "pendown",
   penup: "penup",
+  polygon: "polygon",
+  pop: "pop",
+  push: "push",
   repeat: "repeat",
+  right: "tr",
+  rt: "tr",
+  setalpha: "setalpha",
   setbc: "setbc",
+  setblend: "setblend",
+  setdash: "setdash",
+  setflow: "setflow",
+  setglow: "setglow",
+  setgradient: "setgradient",
+  seth: "seth",
+  setheading: "seth",
+  setpalette: "setpalette",
   setpos: "setpos",
+  setradial: "setradial",
   setsc: "setsc",
+  setseed: "setseed",
+  setsoftness: "setsoftness",
   setsw: "setsw",
+  setsymmetry: "setsymmetry",
+  setxy: "setpos",
   showturtle: "showturtle",
+  sphere: "sphere",
+  spiral: "spiral",
+  spray: "spray",
+  star: "star",
   tl: "tl",
   tr: "tr",
 };
@@ -30,6 +66,15 @@ const commandByName: Readonly<Partial<Record<string, CommandTypes>>> = {
 const numberCommands = new Set<CommandTypes>([
   "bk",
   "fd",
+  "circle",
+  "dot",
+  "setalpha",
+  "setflow",
+  "setglow",
+  "seth",
+  "setseed",
+  "setsoftness",
+  "setsymmetry",
   "setsw",
   "tl",
   "tr",
@@ -40,7 +85,30 @@ const noArgumentCommands = new Set<CommandTypes>([
   "home",
   "pendown",
   "penup",
+  "pop",
+  "push",
   "showturtle",
+]);
+
+const twoNumberCommands = new Set<CommandTypes>([
+  "arc",
+  "cube",
+  "ellipse",
+  "fillpoly",
+  "grid3d",
+  "polygon",
+  "setdash",
+  "setpos",
+  "sphere",
+  "spray",
+  "spiral",
+  "star",
+]);
+
+const gradientCommands = new Set<CommandTypes>([
+  "gradientbg",
+  "setgradient",
+  "setradial",
 ]);
 
 const tokenize = (text: string): Token[] => {
@@ -119,25 +187,54 @@ export class Parser {
       return command;
     }
 
+    if (name === "setblend") {
+      const blendToken = this.take();
+      const blend = blendModes.find(
+        (candidate) => candidate === blendToken.value.toLowerCase(),
+      );
+      if (blend === undefined) {
+        throw parseError(blendToken.start);
+      }
+      command.blend = blend;
+      return command;
+    }
+
+    if (name === "setpalette") {
+      const colors: string[] = [];
+      while (
+        this.peek() !== undefined &&
+        this.peek() !== "]" &&
+        commandByName[this.peek()?.toLowerCase() ?? ""] === undefined
+      ) {
+        colors.push(this.takeColor());
+      }
+      if (colors.length === 0) {
+        throw parseError(this.currentPosition());
+      }
+      command.palette = colors;
+      return command;
+    }
+
     if (numberCommands.has(name)) {
       command.value = this.takeNumber();
       return command;
     }
 
-    if (name === "setpos") {
+    if (twoNumberCommands.has(name)) {
       command.value = this.takeNumber();
       command.arg2 = this.takeNumber();
       return command;
     }
 
     if (name === "setsc" || name === "setbc") {
-      const color = this.take();
-      if (!/^#?[0-9a-f]{6}$/iu.test(color.value)) {
-        throw parseError(color.start);
-      }
-      command.color = color.value.startsWith("#")
-        ? color.value.toLowerCase()
-        : `#${color.value.toLowerCase()}`;
+      command.color = this.takeColor();
+      return command;
+    }
+
+    if (gradientCommands.has(name)) {
+      command.color = this.takeColor();
+      command.color2 = this.takeColor();
+      command.value = this.takeNumber();
       return command;
     }
 
@@ -163,6 +260,16 @@ export class Parser {
       throw parseError(token.start);
     }
     return number;
+  };
+
+  private readonly takeColor = (): string => {
+    const color = this.take();
+    if (!/^#?[0-9a-f]{6}$/iu.test(color.value)) {
+      throw parseError(color.start);
+    }
+    return color.value.startsWith("#")
+      ? color.value.toLowerCase()
+      : `#${color.value.toLowerCase()}`;
   };
 
   private readonly expect = (expected: string) => {

@@ -111,8 +111,8 @@ const CommandInput: React.FC<IProps> = ({ descriptions }) => {
         </button>
       </form>
       <p className="inputHint">
-        Chain commands with spaces. Colors accept hex values with or without #.
-        Large repeat trees are stopped before they can freeze the browser.
+        Use setpalette for automatic color cycles, setseed for repeatable
+        particles, and push/pop for branching forms.
       </p>
       {showPopup && <Popup massage={popupText} />}
     </div>

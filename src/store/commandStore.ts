@@ -17,6 +17,7 @@ interface IndexedCommands {
 
 const cloneCommand = (command: Readonly<ICommandModel>): ICommandModel => ({
   ...command,
+  ...(command.palette ? { palette: [...command.palette] } : {}),
   ...(command.commands
     ? { commands: command.commands.map((child) => cloneCommand(child)) }
     : {}),

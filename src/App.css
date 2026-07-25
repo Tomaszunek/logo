@@ -514,6 +514,16 @@ input:focus-visible,
   background: #0a1120;
 }
 
+.commandFields select {
+  max-width: 105px;
+  min-height: 30px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #0a1120;
+  font-size: 0.66rem;
+}
+
 .commandFields .remove {
   display: grid;
   width: 30px;

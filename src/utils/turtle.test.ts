@@ -3,19 +3,36 @@ import { Caller } from "./caller";
 import { Turtle } from "./turtle";
 
 const createHarness = () => {
+  const linearGradient = { addColorStop: vi.fn() };
+  const radialGradient = { addColorStop: vi.fn() };
   const context = {
+    arc: vi.fn(),
     beginPath: vi.fn(),
     clearRect: vi.fn(),
+    closePath: vi.fn(),
+    createLinearGradient: vi.fn(() => linearGradient),
+    createRadialGradient: vi.fn(() => radialGradient),
+    ellipse: vi.fn(),
+    fill: vi.fn(),
     fillRect: vi.fn(),
-    lineTo: vi.fn(),
-    moveTo: vi.fn(),
-    setTransform: vi.fn(),
-    stroke: vi.fn(),
     fillStyle: "",
+    globalAlpha: 1,
+    globalCompositeOperation: "source-over",
     lineCap: "butt",
     lineJoin: "miter",
+    lineTo: vi.fn(),
     lineWidth: 1,
+    moveTo: vi.fn(),
+    restore: vi.fn(),
+    rotate: vi.fn(),
+    save: vi.fn(),
+    setLineDash: vi.fn(),
+    setTransform: vi.fn(),
+    shadowBlur: 0,
+    shadowColor: "",
+    stroke: vi.fn(),
     strokeStyle: "",
+    translate: vi.fn(),
   };
   const canvas = {
     width: 800,
@@ -34,7 +51,14 @@ const createHarness = () => {
   });
   Reflect.set(turtle, "canvas", canvas);
 
-  return { caller: new Caller(turtle), canvas, context, turtle };
+  return {
+    caller: new Caller(turtle),
+    canvas,
+    context,
+    linearGradient,
+    radialGradient,
+    turtle,
+  };
 };
 
 describe("Turtle and Caller", () => {
@@ -80,6 +104,232 @@ describe("Turtle and Caller", () => {
     expect(context.fillRect).toHaveBeenCalledWith(0, 0, 800, 800);
     expect(context.strokeStyle).toBe("#79f2c0");
     expect(context.lineWidth).toBe(3);
+  });
+
+  it("draws centered arcs, circles, ellipses, and dots", () => {
+    const { caller, context, turtle } = createHarness();
+
+    caller.seth(90);
+    caller.arc(120, 80);
+    caller.circle(40);
+    caller.ellipse(70, 25);
+    caller.dot(12);
+
+    expect(context.arc).toHaveBeenNthCalledWith(
+      1,
+      400,
+      400,
+      80,
+      Math.PI / 2,
+      Math.PI / 2 + (120 * Math.PI) / 180,
+      false,
+    );
+    expect(context.ellipse).toHaveBeenNthCalledWith(
+      1,
+      400,
+      400,
+      40,
+      40,
+      Math.PI / 2,
+      0,
+      Math.PI * 2,
+    );
+    expect(context.ellipse).toHaveBeenNthCalledWith(
+      2,
+      400,
+      400,
+      70,
+      25,
+      Math.PI / 2,
+      0,
+      Math.PI * 2,
+    );
+    expect(context.arc).toHaveBeenNthCalledWith(
+      2,
+      400,
+      400,
+      6,
+      0,
+      Math.PI * 2,
+    );
+    expect(context.stroke).toHaveBeenCalledTimes(3);
+    expect(context.fill).toHaveBeenCalledOnce();
+    expect(turtle).toMatchObject({ x: 400, y: 400, dir: 90 });
+  });
+
+  it("applies opacity and dash patterns to new marks", () => {
+    const { caller, context } = createHarness();
+
+    caller.setalpha(0.35);
+    caller.setdash(8, 4);
+    caller.fd(20);
+
+    expect(context.globalAlpha).toBe(0.35);
+    expect(context.setLineDash).toHaveBeenLastCalledWith([8, 4]);
+  });
+
+  it("draws scene primitives and applies neon glow", () => {
+    const { caller, context } = createHarness();
+
+    caller.setglow(18);
+    caller.polygon(6, 80);
+    caller.fillpoly(5, 40);
+    caller.star(9, 120);
+    caller.spiral(-4, 7);
+    caller.cube(100, 45);
+    caller.sphere(90, 8);
+    caller.grid3d(260, 12);
+
+    expect(context.shadowBlur).toBe(18);
+    expect(context.shadowColor).toBe("#111827");
+    expect(context.fill).toHaveBeenCalledOnce();
+    expect(context.closePath).toHaveBeenCalledTimes(5);
+    expect(context.stroke).toHaveBeenCalledTimes(7);
+    expect(context.save).toHaveBeenCalledTimes(7);
+    expect(context.restore).toHaveBeenCalledTimes(7);
+  });
+
+  it("renders linear, radial, and background gradients", () => {
+    const {
+      caller,
+      context,
+      linearGradient,
+      radialGradient,
+    } = createHarness();
+
+    caller.gradientbg("#071013", "#240046", 90);
+    caller.setgradient("#ff006e", "#3a86ff", 45);
+    caller.circle(80);
+    caller.setradial("#ffffff", "#8338ec", 160);
+    caller.fillpoly(6, 70);
+
+    expect(context.createLinearGradient).toHaveBeenCalledTimes(2);
+    expect(context.createRadialGradient).toHaveBeenCalledWith(
+      400,
+      400,
+      0,
+      400,
+      400,
+      160,
+    );
+    expect(linearGradient.addColorStop).toHaveBeenCalledWith(0, "#071013");
+    expect(linearGradient.addColorStop).toHaveBeenCalledWith(1, "#3a86ff");
+    expect(radialGradient.addColorStop).toHaveBeenCalledWith(0, "#ffffff");
+    expect(radialGradient.addColorStop).toHaveBeenCalledWith(1, "#8338ec");
+    expect(context.fillRect).toHaveBeenCalledWith(0, 0, 800, 800);
+    expect(context.stroke).toHaveBeenCalledTimes(2);
+    expect(context.fill).toHaveBeenCalledOnce();
+  });
+
+  it("draws a soft pen with an opaque core and transparent edge", () => {
+    const { caller, context, radialGradient, turtle } = createHarness();
+
+    caller.setsw(40);
+    caller.setsoftness(0.75);
+    caller.setflow(0.6);
+    caller.fd(20);
+
+    expect(context.stroke).not.toHaveBeenCalled();
+    expect(context.createRadialGradient).toHaveBeenCalled();
+    expect(context.fillRect.mock.calls.length).toBeGreaterThan(1);
+    expect(context.globalAlpha).toBe(0.6);
+    expect(radialGradient.addColorStop).toHaveBeenCalledWith(0, "#111827");
+    expect(radialGradient.addColorStop).toHaveBeenCalledWith(0.25, "#111827");
+    expect(radialGradient.addColorStop).toHaveBeenCalledWith(
+      1,
+      "rgba(17, 24, 39, 0)",
+    );
+    expect(turtle.x).toBe(420);
+  });
+
+  it("replicates pen marks with rotational symmetry", () => {
+    const { caller, context, turtle } = createHarness();
+
+    caller.setsymmetry(6);
+    caller.fd(40);
+
+    expect(context.moveTo).toHaveBeenCalledTimes(6);
+    expect(context.lineTo).toHaveBeenCalledTimes(6);
+    expect(context.rotate).toHaveBeenCalledTimes(6);
+    expect(context.stroke).toHaveBeenCalledOnce();
+    expect(turtle).toMatchObject({ x: 440, y: 400, symmetry: 6 });
+  });
+
+  it("applies blend modes and deterministic symmetrical spray", () => {
+    const first = createHarness();
+    const second = createHarness();
+
+    first.caller.setblend("screen");
+    first.caller.setsymmetry(3);
+    first.caller.spray(30, 10);
+    second.caller.setblend("screen");
+    second.caller.setsymmetry(3);
+    second.caller.spray(30, 10);
+
+    expect(first.context.globalCompositeOperation).toBe("screen");
+    expect(first.context.fillRect).toHaveBeenCalledTimes(30);
+    expect(first.context.fillRect.mock.calls).toEqual(
+      second.context.fillRect.mock.calls,
+    );
+  });
+
+  it("cycles palette colors once per logical mark", () => {
+    const { caller, context, turtle } = createHarness();
+
+    caller.setpalette(["#ff006e", "#ffb703", "#3a86ff"]);
+    caller.fd(10);
+    expect(context.strokeStyle).toBe("#ff006e");
+    caller.fd(10);
+    expect(context.strokeStyle).toBe("#ffb703");
+    caller.dot(5);
+    expect(context.fillStyle).toBe("#3a86ff");
+    caller.fd(10);
+    expect(context.strokeStyle).toBe("#ff006e");
+    expect(turtle.palette).toEqual(["#ff006e", "#ffb703", "#3a86ff"]);
+  });
+
+  it("restores complete turtle state with push and pop", () => {
+    const { caller, turtle } = createHarness();
+
+    caller.setseed(99);
+    caller.setpalette(["#ff006e", "#3a86ff"]);
+    caller.setsw(8);
+    caller.setalpha(0.4);
+    caller.setblend("screen");
+    caller.setsymmetry(4);
+    caller.push();
+    caller.fd(50);
+    caller.tr(90);
+    caller.setsw(2);
+    caller.setalpha(1);
+    caller.setblend("multiply");
+    caller.setsymmetry(1);
+    caller.pop();
+
+    expect(turtle).toMatchObject({
+      x: 400,
+      y: 400,
+      dir: 0,
+      strokeWeight: 8,
+      opacity: 0.4,
+      blend: "screen",
+      symmetry: 4,
+      palette: ["#ff006e", "#3a86ff"],
+    });
+  });
+
+  it("changes deterministic spray patterns with setseed", () => {
+    const first = createHarness();
+    const second = createHarness();
+
+    first.caller.setseed(10);
+    second.caller.setseed(20);
+    first.caller.spray(30, 8);
+    second.caller.spray(30, 8);
+
+    expect(first.context.fillRect.mock.calls).not.toEqual(
+      second.context.fillRect.mock.calls,
+    );
   });
 
   it("executes repeat exactly the requested number of times", () => {

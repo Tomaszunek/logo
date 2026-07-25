@@ -34,7 +34,7 @@ const getCommandCost = (
   limit: number,
 ): number => {
   if (command.name !== "repeat") {
-    return 1;
+    return getPrimitiveCost(command);
   }
 
   const repeatCount = command.value ?? 0;
@@ -64,3 +64,26 @@ const getCommandCost = (
 
   return 1 + repeatCount * blockCost;
 };
+
+type CostCalculator = (command: Readonly<ICommandModel>) => number;
+
+const clampInteger = (value: number | undefined, minimum: number, maximum: number) =>
+  Math.min(maximum, Math.max(minimum, Math.round(Math.abs(value ?? minimum))));
+
+const primitiveCosts: Readonly<
+  Partial<Record<ICommandModel["name"], CostCalculator>>
+> = {
+  cube: () => 14,
+  fillpoly: (command) => clampInteger(command.value, 3, 360) + 2,
+  grid3d: (command) => clampInteger(command.arg2, 2, 64) * 2 + 2,
+  polygon: (command) => clampInteger(command.value, 3, 360) + 2,
+  sphere: (command) => clampInteger(command.arg2, 2, 32) * 2 + 2,
+  spray: (command) => clampInteger(command.arg2, 1, 1000) + 1,
+  spiral: (command) =>
+    Math.max(12, Math.ceil(Math.min(100, Math.abs(command.value ?? 0)) * 72)) +
+    2,
+  star: (command) => clampInteger(command.value, 3, 180) * 2 + 2,
+};
+
+const getPrimitiveCost = (command: Readonly<ICommandModel>): number =>
+  primitiveCosts[command.name]?.(command) ?? 1;
