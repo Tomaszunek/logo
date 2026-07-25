@@ -49,6 +49,38 @@ describe("Parser", () => {
     ]);
   });
 
+  it("parses creative geometry and style commands", () => {
+    const { commands, onError } = parse(
+      "seth 45 arc 120 80 circle 40 ellipse 70 25 dot 12 setalpha .35 setdash 8 4",
+    );
+
+    expect(commands).toMatchObject([
+      { name: "seth", value: 45 },
+      { name: "arc", value: 120, arg2: 80 },
+      { name: "circle", value: 40 },
+      { name: "ellipse", value: 70, arg2: 25 },
+      { name: "dot", value: 12 },
+      { name: "setalpha", value: 0.35 },
+      { name: "setdash", value: 8, arg2: 4 },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it("supports familiar Logo aliases while storing canonical commands", () => {
+    const { commands } = parse(
+      "forward 10 back 5 lt 30 rt 60 setheading 90 setxy 12 34",
+    );
+
+    expect(commands).toMatchObject([
+      { name: "fd", value: 10 },
+      { name: "bk", value: 5 },
+      { name: "tl", value: 30 },
+      { name: "tr", value: 60 },
+      { name: "seth", value: 90 },
+      { name: "setpos", value: 12, arg2: 34 },
+    ]);
+  });
+
   it("accepts uppercase commands and flexible whitespace", () => {
     const { commands, onError } = parse(
       "  REPEAT  4 [ FD 100\nTR 90 ]  ",

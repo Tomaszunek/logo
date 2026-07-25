@@ -10,6 +10,8 @@ export class Turtle {
   public strokeColor: string;
   public strokeWeight: number;
   public strokeWeightHome: number;
+  public opacity: number;
+  public dash: readonly [number, number];
   public pen: boolean;
   public visible: boolean;
 
@@ -33,6 +35,8 @@ export class Turtle {
     this.initialStrokeColor = turtle.strokeColor;
     this.strokeWeight = turtle.strokeWeight;
     this.strokeWeightHome = turtle.strokeWeight;
+    this.opacity = 1;
+    this.dash = [0, 0];
     this.pen = turtle.pen;
     this.initialPen = turtle.pen;
     this.visible = turtle.visible;
@@ -60,6 +64,8 @@ export class Turtle {
         context.lineJoin = "round";
         context.lineWidth = this.strokeWeight;
         context.strokeStyle = this.strokeColor;
+        context.globalAlpha = this.opacity;
+        context.setLineDash([...this.dash]);
       }
       context.moveTo(this.x, this.y);
       context.lineTo(newX, newY);
@@ -111,6 +117,7 @@ export class Turtle {
       }
 
       context.save();
+      context.globalAlpha = 1;
       context.translate(this.x, this.y);
       context.rotate((this.dir * Math.PI) / 180 + Math.PI / 2);
       context.drawImage(image, -12, -16);
@@ -142,6 +149,74 @@ export class Turtle {
 
   public rotate = (direction: number) => {
     this.dir = (this.dir + direction) % 360;
+  };
+
+  public setHeading = (direction: number) => {
+    this.dir = direction % 360;
+  };
+
+  public drawArc = (angle: number, radius: number) => {
+    const context = this.getDrawingContext();
+    if (context === null) {
+      return;
+    }
+
+    const safeRadius = Math.abs(radius);
+    if (safeRadius === 0 || angle === 0) {
+      return;
+    }
+
+    const start = (this.dir * Math.PI) / 180;
+    const end = start + (angle * Math.PI) / 180;
+    context.beginPath();
+    context.arc(this.x, this.y, safeRadius, start, end, angle < 0);
+    context.stroke();
+  };
+
+  public drawCircle = (radius: number) => {
+    this.drawEllipse(radius, radius);
+  };
+
+  public drawEllipse = (radiusX: number, radiusY: number) => {
+    const context = this.getDrawingContext();
+    if (context === null) {
+      return;
+    }
+
+    const safeRadiusX = Math.abs(radiusX);
+    const safeRadiusY = Math.abs(radiusY);
+    if (safeRadiusX === 0 || safeRadiusY === 0) {
+      return;
+    }
+
+    context.beginPath();
+    context.ellipse(
+      this.x,
+      this.y,
+      safeRadiusX,
+      safeRadiusY,
+      (this.dir * Math.PI) / 180,
+      0,
+      Math.PI * 2,
+    );
+    context.stroke();
+  };
+
+  public drawDot = (size: number) => {
+    const context = this.getDrawingContext();
+    if (context === null) {
+      return;
+    }
+
+    const radius = Math.abs(size) / 2;
+    if (radius === 0) {
+      return;
+    }
+
+    context.beginPath();
+    context.arc(this.x, this.y, radius, 0, Math.PI * 2);
+    context.fillStyle = this.strokeColor;
+    context.fill();
   };
 
   public clearCanvas = () => {
@@ -193,6 +268,7 @@ export class Turtle {
     }
 
     context.setTransform(1, 0, 0, 1, 0, 0);
+    context.globalAlpha = 1;
     context.fillStyle = color;
     context.fillRect(0, 0, this.canvas.width, this.canvas.height);
   };
@@ -210,6 +286,46 @@ export class Turtle {
       this.flushStroke();
     }
     this.strokeWeight = safeWeight;
+  };
+
+  public setOpacity = (opacity: number) => {
+    const safeOpacity = Math.min(1, Math.max(0, opacity));
+    if (safeOpacity !== this.opacity) {
+      this.flushStroke();
+    }
+    this.opacity = safeOpacity;
+  };
+
+  public setDash = (dash: number, gap: number) => {
+    const safeDash: readonly [number, number] = [
+      Math.max(0, dash),
+      Math.max(0, gap),
+    ];
+    if (safeDash[0] !== this.dash[0] || safeDash[1] !== this.dash[1]) {
+      this.flushStroke();
+    }
+    this.dash = safeDash;
+  };
+
+  private readonly getDrawingContext = (): CanvasRenderingContext2D | null => {
+    this.flushStroke();
+    if (!this.pen || this.canvas === null) {
+      return null;
+    }
+
+    const context = this.canvas.getContext("2d");
+    if (context === null) {
+      return null;
+    }
+
+    context.lineCap = "round";
+    context.lineJoin = "round";
+    context.lineWidth = this.strokeWeight;
+    context.strokeStyle = this.strokeColor;
+    context.fillStyle = this.strokeColor;
+    context.globalAlpha = this.opacity;
+    context.setLineDash([...this.dash]);
+    return context;
   };
 
   private readonly flushStroke = () => {
@@ -230,6 +346,8 @@ export class Turtle {
     this.home();
     this.strokeColor = this.initialStrokeColor;
     this.strokeWeight = this.strokeWeightHome;
+    this.opacity = 1;
+    this.dash = [0, 0];
     this.pen = this.initialPen;
     this.visible = this.initialVisibility;
   };

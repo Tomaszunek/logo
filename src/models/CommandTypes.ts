@@ -12,4 +12,11 @@ export type CommandTypes =
   | "home"
   | "setpos"
   | "setsw"
-  | "setsc";
+  | "setsc"
+  | "seth"
+  | "arc"
+  | "circle"
+  | "ellipse"
+  | "dot"
+  | "setalpha"
+  | "setdash";

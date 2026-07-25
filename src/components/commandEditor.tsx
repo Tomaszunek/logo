@@ -8,12 +8,13 @@ const CommandEditor: React.FC = () => {
 
   const displayCommands = (cmds: readonly ICommandModel[]) =>
     cmds.map((item) => {
-      const { name, value, color, id } = item;
+      const { name, value, arg2, color, id } = item;
       return (
         <li key={id} data-id={id} className={name}>
           <span className="tagName">
             <strong>{name}</strong>
             {value !== undefined && <span>{value}</span>}
+            {arg2 !== undefined && <span>{arg2}</span>}
             {color !== undefined && <span>{color}</span>}
           </span>
           {item.commands ? (

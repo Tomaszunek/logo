@@ -5,13 +5,18 @@ import { Turtle } from "./turtle";
 const createHarness = () => {
   const context = {
     beginPath: vi.fn(),
+    arc: vi.fn(),
     clearRect: vi.fn(),
+    ellipse: vi.fn(),
+    fill: vi.fn(),
     fillRect: vi.fn(),
     lineTo: vi.fn(),
     moveTo: vi.fn(),
     setTransform: vi.fn(),
+    setLineDash: vi.fn(),
     stroke: vi.fn(),
     fillStyle: "",
+    globalAlpha: 1,
     lineCap: "butt",
     lineJoin: "miter",
     lineWidth: 1,
@@ -80,6 +85,68 @@ describe("Turtle and Caller", () => {
     expect(context.fillRect).toHaveBeenCalledWith(0, 0, 800, 800);
     expect(context.strokeStyle).toBe("#79f2c0");
     expect(context.lineWidth).toBe(3);
+  });
+
+  it("draws centered arcs, circles, ellipses, and dots", () => {
+    const { caller, context, turtle } = createHarness();
+
+    caller.seth(90);
+    caller.arc(120, 80);
+    caller.circle(40);
+    caller.ellipse(70, 25);
+    caller.dot(12);
+
+    expect(context.arc).toHaveBeenNthCalledWith(
+      1,
+      400,
+      400,
+      80,
+      Math.PI / 2,
+      Math.PI / 2 + (120 * Math.PI) / 180,
+      false,
+    );
+    expect(context.ellipse).toHaveBeenNthCalledWith(
+      1,
+      400,
+      400,
+      40,
+      40,
+      Math.PI / 2,
+      0,
+      Math.PI * 2,
+    );
+    expect(context.ellipse).toHaveBeenNthCalledWith(
+      2,
+      400,
+      400,
+      70,
+      25,
+      Math.PI / 2,
+      0,
+      Math.PI * 2,
+    );
+    expect(context.arc).toHaveBeenNthCalledWith(
+      2,
+      400,
+      400,
+      6,
+      0,
+      Math.PI * 2,
+    );
+    expect(context.stroke).toHaveBeenCalledTimes(3);
+    expect(context.fill).toHaveBeenCalledOnce();
+    expect(turtle).toMatchObject({ x: 400, y: 400, dir: 90 });
+  });
+
+  it("applies opacity and dash patterns to new marks", () => {
+    const { caller, context } = createHarness();
+
+    caller.setalpha(0.35);
+    caller.setdash(8, 4);
+    caller.fd(20);
+
+    expect(context.globalAlpha).toBe(0.35);
+    expect(context.setLineDash).toHaveBeenLastCalledWith([8, 4]);
   });
 
   it("executes repeat exactly the requested number of times", () => {

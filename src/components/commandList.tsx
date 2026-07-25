@@ -55,7 +55,12 @@ const CommandList: React.FC<IProps> = ({ descriptions }) => {
     const command = { ...item };
     if (type === "setbc" || type === "setsc") {
       command.color = e.target.value;
-    } else if (type === "setpos") {
+    } else if (
+      type === "setpos" ||
+      type === "arc" ||
+      type === "ellipse" ||
+      type === "setdash"
+    ) {
       if (e.target.getAttribute("name") === "value") {
         command.value = Number(e.target.value);
       } else {

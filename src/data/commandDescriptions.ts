@@ -1,8 +1,88 @@
 import type { ICommandDescription } from "../models";
 
+/* eslint-disable sort-keys -- Property order defines the command guide's learning sequence. */
 export const commandDescriptions: Readonly<
   Record<string, ICommandDescription>
 > = {
+  arc: {
+    short: "arc",
+    name: "Arc",
+    long: "Draw an arc around the turtle using an angle and radius.",
+    description: "The turtle stays at the arc center and keeps its heading.",
+    image: "command1.jpg",
+    color: "#7c3aed",
+    argCount: 2,
+    args: [
+      { name: "angle", type: "number:degree" },
+      { name: "radius", type: "number" },
+    ],
+  },
+  circle: {
+    short: "circle",
+    name: "Circle",
+    long: "Draw a circle centered on the turtle without moving it.",
+    description: "",
+    image: "command1.jpg",
+    color: "#7c3aed",
+    argCount: 1,
+    args: [{ name: "radius", type: "number" }],
+  },
+  ellipse: {
+    short: "ellipse",
+    name: "Ellipse",
+    long: "Draw an ellipse centered on the turtle and rotated to its heading.",
+    description: "",
+    image: "command1.jpg",
+    color: "#7c3aed",
+    argCount: 2,
+    args: [
+      { name: "horizontal radius", type: "number" },
+      { name: "vertical radius", type: "number" },
+    ],
+  },
+  dot: {
+    short: "dot",
+    name: "Dot",
+    long: "Stamp a filled dot in the current stroke color.",
+    description: "",
+    image: "command1.jpg",
+    color: "#7c3aed",
+    argCount: 1,
+    args: [{ name: "diameter", type: "number" }],
+  },
+  seth: {
+    short: "seth",
+    name: "Set heading",
+    long: "Point the turtle at an absolute angle; zero points right.",
+    description: "The alias setheading is also accepted.",
+    image: "command1.jpg",
+    color: "#2563eb",
+    argCount: 1,
+    args: [{ name: "angle", type: "number:degree" }],
+  },
+  setalpha: {
+    short: "setalpha",
+    name: "Set opacity",
+    long: "Set drawing opacity from 0 (transparent) to 1 (opaque).",
+    description: "",
+    image: "command1.jpg",
+    color: "#059669",
+    argCount: 1,
+    args: [{ name: "opacity", type: "number:0..1" }],
+  },
+  setdash: {
+    short: "setdash",
+    name: "Set dash",
+    long: "Set alternating dash and gap lengths; use 0 0 for solid lines.",
+    description: "",
+    image: "command1.jpg",
+    color: "#059669",
+    argCount: 2,
+    args: [
+      { name: "dash length", type: "number" },
+      { name: "gap length", type: "number" },
+    ],
+  },
   setpos: {
     short: "setpos",
     name: "Set position",
@@ -150,3 +230,4 @@ export const commandDescriptions: Readonly<
     args: [],
   },
 };
+/* eslint-enable sort-keys */

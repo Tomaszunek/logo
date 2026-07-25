@@ -9,38 +9,34 @@ export class Caller {
   }
 
   public execute = (command: ICommandModel) => {
-    switch (command.name) {
-      case "repeat":
-        this.repeat(command);
-        break;
-      case "setpos":
-        if (command.value !== undefined && command.arg2 !== undefined) {
-          this.setpos(command.value, command.arg2);
-        }
-        break;
-      case "setsc":
-        this.setsc(command.color);
-        break;
-      case "setbc":
-        this.setbc(command.color);
-        break;
-      case "fd":
-      case "bk":
-      case "tl":
-      case "tr":
-      case "setsw":
-        this[command.name](command.value ?? 0);
-        break;
-      case "hideturtle":
-      case "showturtle":
-      case "home":
-      case "penup":
-      case "pendown":
-        this[command.name]();
-        break;
-      default:
-        break;
+    if (command.name === "repeat") {
+      this.repeat(command);
+      return;
     }
+
+    const pairAction = pairActions[command.name];
+    if (
+      pairAction !== undefined &&
+      command.value !== undefined &&
+      command.arg2 !== undefined
+    ) {
+      pairAction(this, command.value, command.arg2);
+      return;
+    }
+
+    const colorAction = colorActions[command.name];
+    if (colorAction !== undefined) {
+      colorAction(this, command.color);
+      return;
+    }
+
+    const numberAction = numberActions[command.name];
+    if (numberAction !== undefined) {
+      numberAction(this, command.value ?? 0);
+      return;
+    }
+
+    noArgumentActions[command.name]?.(this);
   };
 
   public fd = (distance: number) => {
@@ -57,6 +53,26 @@ export class Caller {
 
   public tr = (direction: number) => {
     this.turtle.rotate(direction);
+  };
+
+  public seth = (direction: number) => {
+    this.turtle.setHeading(direction);
+  };
+
+  public arc = (angle: number, radius: number) => {
+    this.turtle.drawArc(angle, radius);
+  };
+
+  public circle = (radius: number) => {
+    this.turtle.drawCircle(radius);
+  };
+
+  public ellipse = (radiusX: number, radiusY: number) => {
+    this.turtle.drawEllipse(radiusX, radiusY);
+  };
+
+  public dot = (size: number) => {
+    this.turtle.drawDot(size);
   };
 
   public repeat = (command: ICommandModel) => {
@@ -108,4 +124,59 @@ export class Caller {
   public setsw = (weight: number) => {
     this.turtle.setStrokeWeight(weight);
   };
+
+  public setalpha = (opacity: number) => {
+    this.turtle.setOpacity(opacity);
+  };
+
+  public setdash = (dash: number, gap: number) => {
+    this.turtle.setDash(dash, gap);
+  };
 }
+
+type NumberAction = (caller: Caller, value: number) => void;
+type PairAction = (caller: Caller, first: number, second: number) => void;
+type ColorAction = (caller: Caller, color?: string) => void;
+type NoArgumentAction = (caller: Caller) => void;
+
+const numberActions: Readonly<
+  Partial<Record<ICommandModel["name"], NumberAction>>
+> = {
+  bk: (caller, value) => { caller.bk(value); },
+  circle: (caller, value) => { caller.circle(value); },
+  dot: (caller, value) => { caller.dot(value); },
+  fd: (caller, value) => { caller.fd(value); },
+  setalpha: (caller, value) => { caller.setalpha(value); },
+  seth: (caller, value) => { caller.seth(value); },
+  setsw: (caller, value) => { caller.setsw(value); },
+  tl: (caller, value) => { caller.tl(value); },
+  tr: (caller, value) => { caller.tr(value); },
+};
+
+const pairActions: Readonly<
+  Partial<Record<ICommandModel["name"], PairAction>>
+> = {
+  arc: (caller, angle, radius) => { caller.arc(angle, radius); },
+  ellipse: (caller, radiusX, radiusY) => {
+    caller.ellipse(radiusX, radiusY);
+  },
+  setdash: (caller, dash, gap) => { caller.setdash(dash, gap); },
+  setpos: (caller, x, y) => { caller.setpos(x, y); },
+};
+
+const colorActions: Readonly<
+  Partial<Record<ICommandModel["name"], ColorAction>>
+> = {
+  setbc: (caller, color) => { caller.setbc(color); },
+  setsc: (caller, color) => { caller.setsc(color); },
+};
+
+const noArgumentActions: Readonly<
+  Partial<Record<ICommandModel["name"], NoArgumentAction>>
+> = {
+  hideturtle: (caller) => { caller.hideturtle(); },
+  home: (caller) => { caller.home(); },
+  pendown: (caller) => { caller.pendown(); },
+  penup: (caller) => { caller.penup(); },
+  showturtle: (caller) => { caller.showturtle(); },
+};

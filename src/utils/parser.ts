@@ -11,17 +11,33 @@ interface ParserError extends Error {
 }
 
 const commandByName: Readonly<Partial<Record<string, CommandTypes>>> = {
+  arc: "arc",
+  back: "bk",
+  backward: "bk",
   bk: "bk",
+  circle: "circle",
+  dot: "dot",
+  ellipse: "ellipse",
   fd: "fd",
+  forward: "fd",
   hideturtle: "hideturtle",
   home: "home",
+  left: "tl",
+  lt: "tl",
   pendown: "pendown",
   penup: "penup",
   repeat: "repeat",
+  right: "tr",
+  rt: "tr",
+  setalpha: "setalpha",
   setbc: "setbc",
+  setdash: "setdash",
+  seth: "seth",
+  setheading: "seth",
   setpos: "setpos",
   setsc: "setsc",
   setsw: "setsw",
+  setxy: "setpos",
   showturtle: "showturtle",
   tl: "tl",
   tr: "tr",
@@ -30,6 +46,10 @@ const commandByName: Readonly<Partial<Record<string, CommandTypes>>> = {
 const numberCommands = new Set<CommandTypes>([
   "bk",
   "fd",
+  "circle",
+  "dot",
+  "setalpha",
+  "seth",
   "setsw",
   "tl",
   "tr",
@@ -124,7 +144,12 @@ export class Parser {
       return command;
     }
 
-    if (name === "setpos") {
+    if (
+      name === "setpos" ||
+      name === "arc" ||
+      name === "ellipse" ||
+      name === "setdash"
+    ) {
       command.value = this.takeNumber();
       command.arg2 = this.takeNumber();
       return command;
