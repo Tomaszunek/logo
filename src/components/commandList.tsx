@@ -43,7 +43,10 @@ const CommandList: React.FC<IProps> = ({ descriptions }) => {
                 null :
                 <input aria-label={`${short} second value`} value={item.arg2} type="number" name="arg2" onChange={e => { onChangeInput(e, item, item.name); }} />}
               {(item.color !== undefined && item.color !== '') ?
-                <input aria-label={`${short} color`} type="color" value={item.color} onChange={e => { onChangeInput(e, item, item.name); }} /> :
+                <input aria-label={`${short} first color`} name="color" type="color" value={item.color} onChange={e => { onChangeInput(e, item, item.name); }} /> :
+                null}
+              {(item.color2 !== undefined && item.color2 !== '') ?
+                <input aria-label={`${short} second color`} name="color2" type="color" value={item.color2} onChange={e => { onChangeInput(e, item, item.name); }} /> :
                 null}
               <button
                 type="button"
@@ -67,8 +70,20 @@ const CommandList: React.FC<IProps> = ({ descriptions }) => {
 
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>, item: ICommandModel, type: CommandTypes) => {
     const command = { ...item };
-    if (type === "setbc" || type === "setsc") {
-      command.color = e.target.value;
+    if (
+      type === "setbc" ||
+      type === "setsc" ||
+      type === "gradientbg" ||
+      type === "setgradient" ||
+      type === "setradial"
+    ) {
+      if (e.target.name === "color2") {
+        command.color2 = e.target.value;
+      } else if (e.target.name === "color") {
+        command.color = e.target.value;
+      } else {
+        command.value = Number(e.target.value);
+      }
     } else if (twoNumberCommands.has(type)) {
       if (e.target.getAttribute("name") === "value") {
         command.value = Number(e.target.value);

@@ -20,6 +20,7 @@ export class Turtle {
   private readonly initialStrokeColor: string;
   private readonly initialPen: boolean;
   private readonly initialVisibility: boolean;
+  private paintStyle: PaintStyle;
   private currentImage: HTMLImageElement | null = null;
   private imageRequest = 0;
   private frameActive = false;
@@ -34,6 +35,7 @@ export class Turtle {
     this.dir = turtle.dir;
     this.strokeColor = turtle.strokeColor;
     this.initialStrokeColor = turtle.strokeColor;
+    this.paintStyle = { kind: "solid" };
     this.strokeWeight = turtle.strokeWeight;
     this.strokeWeightHome = turtle.strokeWeight;
     this.opacity = 1;
@@ -65,11 +67,11 @@ export class Turtle {
         context.lineCap = "round";
         context.lineJoin = "round";
         context.lineWidth = this.strokeWeight;
-        context.strokeStyle = this.strokeColor;
+        context.strokeStyle = this.resolvePaint(context);
         context.globalAlpha = this.opacity;
         context.setLineDash([...this.dash]);
         context.shadowBlur = this.glow;
-        context.shadowColor = this.strokeColor;
+        context.shadowColor = this.getGlowColor();
       }
       context.moveTo(this.x, this.y);
       context.lineTo(newX, newY);
@@ -220,7 +222,6 @@ export class Turtle {
 
     context.beginPath();
     context.arc(this.x, this.y, radius, 0, Math.PI * 2);
-    context.fillStyle = this.strokeColor;
     context.fill();
   };
 
@@ -467,11 +468,64 @@ export class Turtle {
     context.fillRect(0, 0, this.canvas.width, this.canvas.height);
   };
 
+  public setGradientBackground = (
+    color1: string,
+    color2: string,
+    angle: number,
+  ) => {
+    this.flushStroke();
+    if (this.canvas === null) {
+      return;
+    }
+
+    const context = this.canvas.getContext("2d");
+    if (context === null) {
+      return;
+    }
+
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.globalAlpha = 1;
+    context.shadowBlur = 0;
+    context.fillStyle = this.createLinearGradient(
+      context,
+      color1,
+      color2,
+      angle,
+    );
+    context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  };
+
   public setStrokeColor = (color: string) => {
-    if (color !== this.strokeColor) {
+    if (color !== this.strokeColor || this.paintStyle.kind !== "solid") {
       this.flushStroke();
     }
     this.strokeColor = color;
+    this.paintStyle = { kind: "solid" };
+  };
+
+  public setLinearGradient = (
+    color1: string,
+    color2: string,
+    angle: number,
+  ) => {
+    this.flushStroke();
+    this.strokeColor = color1;
+    this.paintStyle = { angle, color1, color2, kind: "linear" };
+  };
+
+  public setRadialGradient = (
+    color1: string,
+    color2: string,
+    radius: number,
+  ) => {
+    this.flushStroke();
+    this.strokeColor = color1;
+    this.paintStyle = {
+      color1,
+      color2,
+      kind: "radial",
+      radius: Math.max(0.25, Math.abs(radius)),
+    };
   };
 
   public setStrokeWeight = (weight: number) => {
@@ -523,14 +577,74 @@ export class Turtle {
     context.lineCap = "round";
     context.lineJoin = "round";
     context.lineWidth = this.strokeWeight;
-    context.strokeStyle = this.strokeColor;
-    context.fillStyle = this.strokeColor;
+    const paint = this.resolvePaint(context);
+    context.strokeStyle = paint;
+    context.fillStyle = paint;
     context.globalAlpha = this.opacity;
     context.setLineDash([...this.dash]);
     context.shadowBlur = this.glow;
-    context.shadowColor = this.strokeColor;
+    context.shadowColor = this.getGlowColor();
     return context;
   };
+
+  private readonly resolvePaint = (
+    context: CanvasRenderingContext2D,
+  ): string | CanvasGradient => {
+    if (this.paintStyle.kind === "linear") {
+      return this.createLinearGradient(
+        context,
+        this.paintStyle.color1,
+        this.paintStyle.color2,
+        this.paintStyle.angle,
+      );
+    }
+
+    if (this.paintStyle.kind === "radial") {
+      const gradient = context.createRadialGradient(
+        this.x,
+        this.y,
+        0,
+        this.x,
+        this.y,
+        this.paintStyle.radius,
+      );
+      gradient.addColorStop(0, this.paintStyle.color1);
+      gradient.addColorStop(1, this.paintStyle.color2);
+      return gradient;
+    }
+
+    return this.strokeColor;
+  };
+
+  private readonly createLinearGradient = (
+    context: CanvasRenderingContext2D,
+    color1: string,
+    color2: string,
+    angle: number,
+  ): CanvasGradient => {
+    const width = this.canvas?.width ?? 800;
+    const height = this.canvas?.height ?? 800;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const distance = Math.hypot(width, height) / 2;
+    const radians = (angle * Math.PI) / 180;
+    const offsetX = Math.cos(radians) * distance;
+    const offsetY = Math.sin(radians) * distance;
+    const gradient = context.createLinearGradient(
+      centerX - offsetX,
+      centerY - offsetY,
+      centerX + offsetX,
+      centerY + offsetY,
+    );
+    gradient.addColorStop(0, color1);
+    gradient.addColorStop(1, color2);
+    return gradient;
+  };
+
+  private readonly getGlowColor = (): string =>
+    this.paintStyle.kind === "solid"
+      ? this.strokeColor
+      : this.paintStyle.color2;
 
   private readonly flushStroke = () => {
     if (!this.pendingStroke || this.canvas === null) {
@@ -549,6 +663,7 @@ export class Turtle {
   private readonly resetForReplay = () => {
     this.home();
     this.strokeColor = this.initialStrokeColor;
+    this.paintStyle = { kind: "solid" };
     this.strokeWeight = this.strokeWeightHome;
     this.opacity = 1;
     this.dash = [0, 0];
@@ -562,6 +677,21 @@ interface Point {
   x: number;
   y: number;
 }
+
+type PaintStyle =
+  | { kind: "solid" }
+  | {
+      kind: "linear";
+      color1: string;
+      color2: string;
+      angle: number;
+    }
+  | {
+      kind: "radial";
+      color1: string;
+      color2: string;
+      radius: number;
+    };
 
 const clampInteger = (value: number, minimum: number, maximum: number): number =>
   Math.min(maximum, Math.max(minimum, Math.round(value)));

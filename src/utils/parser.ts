@@ -22,6 +22,7 @@ const commandByName: Readonly<Partial<Record<string, CommandTypes>>> = {
   fd: "fd",
   fillpoly: "fillpoly",
   forward: "fd",
+  gradientbg: "gradientbg",
   grid3d: "grid3d",
   hideturtle: "hideturtle",
   home: "home",
@@ -37,9 +38,11 @@ const commandByName: Readonly<Partial<Record<string, CommandTypes>>> = {
   setbc: "setbc",
   setdash: "setdash",
   setglow: "setglow",
+  setgradient: "setgradient",
   seth: "seth",
   setheading: "seth",
   setpos: "setpos",
+  setradial: "setradial",
   setsc: "setsc",
   setsw: "setsw",
   setxy: "setpos",
@@ -84,6 +87,12 @@ const twoNumberCommands = new Set<CommandTypes>([
   "sphere",
   "spiral",
   "star",
+]);
+
+const gradientCommands = new Set<CommandTypes>([
+  "gradientbg",
+  "setgradient",
+  "setradial",
 ]);
 
 const tokenize = (text: string): Token[] => {
@@ -174,13 +183,14 @@ export class Parser {
     }
 
     if (name === "setsc" || name === "setbc") {
-      const color = this.take();
-      if (!/^#?[0-9a-f]{6}$/iu.test(color.value)) {
-        throw parseError(color.start);
-      }
-      command.color = color.value.startsWith("#")
-        ? color.value.toLowerCase()
-        : `#${color.value.toLowerCase()}`;
+      command.color = this.takeColor();
+      return command;
+    }
+
+    if (gradientCommands.has(name)) {
+      command.color = this.takeColor();
+      command.color2 = this.takeColor();
+      command.value = this.takeNumber();
       return command;
     }
 
@@ -206,6 +216,16 @@ export class Parser {
       throw parseError(token.start);
     }
     return number;
+  };
+
+  private readonly takeColor = (): string => {
+    const color = this.take();
+    if (!/^#?[0-9a-f]{6}$/iu.test(color.value)) {
+      throw parseError(color.start);
+    }
+    return color.value.startsWith("#")
+      ? color.value.toLowerCase()
+      : `#${color.value.toLowerCase()}`;
   };
 
   private readonly expect = (expected: string) => {

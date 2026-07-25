@@ -6,5 +6,6 @@ export interface ICommandModel {
   value?: number;
   arg2?: number;
   color?: string;
+  color2?: string;
   commands?: ICommandModel[];
 }

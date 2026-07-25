@@ -20,6 +20,7 @@ const scalableFirstArguments = new Set<ICommandModel["name"]>([
   "ellipse",
   "fd",
   "grid3d",
+  "setradial",
   "sphere",
 ]);
 
@@ -48,6 +49,12 @@ const twoNumberCommands = new Set<ICommandModel["name"]>([
 ]);
 
 const colorCommands = new Set<ICommandModel["name"]>(["setbc", "setsc"]);
+
+const gradientCommands = new Set<ICommandModel["name"]>([
+  "gradientbg",
+  "setgradient",
+  "setradial",
+]);
 
 const noArgumentCommands = new Set<ICommandModel["name"]>([
   "hideturtle",
@@ -93,6 +100,12 @@ const serializeCommand = (command: Readonly<ICommandModel>): string => {
 
   if (colorCommands.has(command.name)) {
     return `${command.name} ${command.color?.replace("#", "") ?? "000000"}`;
+  }
+
+  if (gradientCommands.has(command.name)) {
+    const color1 = command.color?.replace("#", "") ?? "000000";
+    const color2 = command.color2?.replace("#", "") ?? "ffffff";
+    return `${command.name} ${color1} ${color2} ${command.value ?? 0}`;
   }
 
   if (noArgumentCommands.has(command.name)) {

@@ -3,11 +3,15 @@ import { Caller } from "./caller";
 import { Turtle } from "./turtle";
 
 const createHarness = () => {
+  const linearGradient = { addColorStop: vi.fn() };
+  const radialGradient = { addColorStop: vi.fn() };
   const context = {
     arc: vi.fn(),
     beginPath: vi.fn(),
     clearRect: vi.fn(),
     closePath: vi.fn(),
+    createLinearGradient: vi.fn(() => linearGradient),
+    createRadialGradient: vi.fn(() => radialGradient),
     ellipse: vi.fn(),
     fill: vi.fn(),
     fillRect: vi.fn(),
@@ -46,7 +50,14 @@ const createHarness = () => {
   });
   Reflect.set(turtle, "canvas", canvas);
 
-  return { caller: new Caller(turtle), canvas, context, turtle };
+  return {
+    caller: new Caller(turtle),
+    canvas,
+    context,
+    linearGradient,
+    radialGradient,
+    turtle,
+  };
 };
 
 describe("Turtle and Caller", () => {
@@ -175,6 +186,38 @@ describe("Turtle and Caller", () => {
     expect(context.stroke).toHaveBeenCalledTimes(7);
     expect(context.save).toHaveBeenCalledTimes(7);
     expect(context.restore).toHaveBeenCalledTimes(7);
+  });
+
+  it("renders linear, radial, and background gradients", () => {
+    const {
+      caller,
+      context,
+      linearGradient,
+      radialGradient,
+    } = createHarness();
+
+    caller.gradientbg("#071013", "#240046", 90);
+    caller.setgradient("#ff006e", "#3a86ff", 45);
+    caller.circle(80);
+    caller.setradial("#ffffff", "#8338ec", 160);
+    caller.fillpoly(6, 70);
+
+    expect(context.createLinearGradient).toHaveBeenCalledTimes(2);
+    expect(context.createRadialGradient).toHaveBeenCalledWith(
+      400,
+      400,
+      0,
+      400,
+      400,
+      160,
+    );
+    expect(linearGradient.addColorStop).toHaveBeenCalledWith(0, "#071013");
+    expect(linearGradient.addColorStop).toHaveBeenCalledWith(1, "#3a86ff");
+    expect(radialGradient.addColorStop).toHaveBeenCalledWith(0, "#ffffff");
+    expect(radialGradient.addColorStop).toHaveBeenCalledWith(1, "#8338ec");
+    expect(context.fillRect).toHaveBeenCalledWith(0, 0, 800, 800);
+    expect(context.stroke).toHaveBeenCalledTimes(2);
+    expect(context.fill).toHaveBeenCalledOnce();
   });
 
   it("executes repeat exactly the requested number of times", () => {

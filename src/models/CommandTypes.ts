@@ -27,4 +27,7 @@ export type CommandTypes =
   | "cube"
   | "sphere"
   | "grid3d"
-  | "setglow";
+  | "setglow"
+  | "setgradient"
+  | "setradial"
+  | "gradientbg";

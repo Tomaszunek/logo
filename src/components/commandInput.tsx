@@ -111,8 +111,8 @@ const CommandInput: React.FC<IProps> = ({ descriptions }) => {
         </button>
       </form>
       <p className="inputHint">
-        Build with star, spiral, polygon, cube, sphere, grid3d, and glow.
-        Colors accept hex values with or without #.
+        Try setgradient, setradial, or gradientbg for layered color.
+        Hex colors work with or without #.
       </p>
       {showPopup && <Popup massage={popupText} />}
     </div>

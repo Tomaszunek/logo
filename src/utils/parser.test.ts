@@ -99,6 +99,34 @@ describe("Parser", () => {
     expect(onError).not.toHaveBeenCalled();
   });
 
+  it("parses linear, radial, and background gradients", () => {
+    const { commands, onError } = parse(
+      "setgradient ff006e 3a86ff 45 setradial ffffff 8338ec 160 gradientbg 071013 240046 90",
+    );
+
+    expect(commands).toMatchObject([
+      {
+        name: "setgradient",
+        color: "#ff006e",
+        color2: "#3a86ff",
+        value: 45,
+      },
+      {
+        name: "setradial",
+        color: "#ffffff",
+        color2: "#8338ec",
+        value: 160,
+      },
+      {
+        name: "gradientbg",
+        color: "#071013",
+        color2: "#240046",
+        value: 90,
+      },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
   it("accepts uppercase commands and flexible whitespace", () => {
     const { commands, onError } = parse(
       "  REPEAT  4 [ FD 100\nTR 90 ]  ",
@@ -149,6 +177,9 @@ describe("Parser", () => {
     "setpos 10",
     "setsc 12345",
     "setbc not-a-color",
+    "setgradient ff0000 nope 45",
+    "setradial ff0000 00ff00 nope",
+    "gradientbg ff0000",
     "repeat 1.5 [fd 10]",
     "repeat -1 [fd 10]",
     "repeat 2 []",

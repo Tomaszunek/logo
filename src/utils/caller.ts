@@ -30,6 +30,21 @@ export class Caller {
       return;
     }
 
+    const gradientAction = gradientActions[command.name];
+    if (
+      gradientAction !== undefined &&
+      command.color !== undefined &&
+      command.color2 !== undefined
+    ) {
+      gradientAction(
+        this,
+        command.color,
+        command.color2,
+        command.value ?? 0,
+      );
+      return;
+    }
+
     const numberAction = numberActions[command.name];
     if (numberAction !== undefined) {
       numberAction(this, command.value ?? 0);
@@ -164,12 +179,30 @@ export class Caller {
   public setglow = (blur: number) => {
     this.turtle.setGlow(blur);
   };
+
+  public setgradient = (color1: string, color2: string, angle: number) => {
+    this.turtle.setLinearGradient(color1, color2, angle);
+  };
+
+  public setradial = (color1: string, color2: string, radius: number) => {
+    this.turtle.setRadialGradient(color1, color2, radius);
+  };
+
+  public gradientbg = (color1: string, color2: string, angle: number) => {
+    this.turtle.setGradientBackground(color1, color2, angle);
+  };
 }
 
 type NumberAction = (caller: Caller, value: number) => void;
 type PairAction = (caller: Caller, first: number, second: number) => void;
 type ColorAction = (caller: Caller, color?: string) => void;
 type NoArgumentAction = (caller: Caller) => void;
+type GradientAction = (
+  caller: Caller,
+  color1: string,
+  color2: string,
+  value: number,
+) => void;
 
 const numberActions: Readonly<
   Partial<Record<ICommandModel["name"], NumberAction>>
@@ -209,6 +242,20 @@ const colorActions: Readonly<
 > = {
   setbc: (caller, color) => { caller.setbc(color); },
   setsc: (caller, color) => { caller.setsc(color); },
+};
+
+const gradientActions: Readonly<
+  Partial<Record<ICommandModel["name"], GradientAction>>
+> = {
+  gradientbg: (caller, color1, color2, angle) => {
+    caller.gradientbg(color1, color2, angle);
+  },
+  setgradient: (caller, color1, color2, angle) => {
+    caller.setgradient(color1, color2, angle);
+  },
+  setradial: (caller, color1, color2, radius) => {
+    caller.setradial(color1, color2, radius);
+  },
 };
 
 const noArgumentActions: Readonly<
