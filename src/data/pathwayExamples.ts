@@ -4,6 +4,7 @@ import type {
   IPathwayExample,
 } from "../models";
 import { Parser } from "../utils/parser";
+import { biohazardScanlines } from "./biohazardScanlines";
 
 interface ExampleSpec {
   name: string;
@@ -176,12 +177,24 @@ const example = ({
   };
 };
 
+const scanlineCommands = biohazardScanlines
+  .flatMap(([y, ...segments]) =>
+    segments.map(([x, length]) => `setpos ${x} ${y} fd ${length}`),
+  )
+  .join(" ");
+
 export const exampleCollections: readonly IExampleCollection[] = [
   {
     id: "showstoppers",
     label: "Showstoppers",
     description:
       "Dense, surprising compositions that reveal how far commands can go.",
+  },
+  {
+    id: "symbols",
+    label: "Icons & symbols",
+    description:
+      "Recreate signs and emblems people recognize at a glance.",
   },
   {
     id: "first-steps",
@@ -277,6 +290,75 @@ export const pathwayExamples: readonly IPathwayExample[] = [
       "repeat 1 [gradientbg 071013 172554 45 hideturtle setblend screen setglow 12 setpalette ffb703 06d6a0 3a86ff f72585 setsw 4 repeat 36 [push penup fd 238 pendown polygon 8 34 star 8 25 pop tr 10] setgradient fef3c7 f59e0b 0 setsw 7 circle 190 setdash 12 8 circle 145 setdash 0 0 setalpha .65 repeat 24 [push penup fd 112 pendown dot 16 pop tr 15] setalpha 1 setradial ffffff f59e0b 70 fillpoly 24 66 setblend source-over setglow 0]",
     image: "celestial-clockwork.png",
     type: "showstoppers",
+  }),
+  example({
+    name: "Radiation warning",
+    source:
+      "repeat 1 [setbc ffd43b hideturtle setsc 111827 setsw 1 fillpoly 72 230 setsc ffd43b seth -30 repeat 3 [push penup fd 150 pendown tr 180 fillpoly 3 170 pop tr 120] fillpoly 48 78 setsc 111827 fillpoly 48 43]",
+    image: "radiation-warning.png",
+    type: "symbols",
+  }),
+  example({
+    name: "Biohazard warning",
+    source: `repeat 1 [setbc f8fafc hideturtle penup setpos 400 420 pendown seth -90 setsc ffe119 setsw 1 fillpoly 3 340 setsc 111827 setsw 24 polygon 3 340 setsw 3 seth 0 ${scanlineCommands}]`,
+    image: "biohazard.png",
+    type: "symbols",
+  }),
+  example({
+    name: "Yin yang",
+    source:
+      "repeat 1 [setbc 94a3b8 hideturtle setsc 111827 fillpoly 72 232 setsc f8fafc setsw 230 seth -90 arc 180 115 setsw 1 penup setpos 400 285 pendown fillpoly 48 115 setsc 111827 penup setpos 400 515 pendown fillpoly 48 115 penup setpos 400 285 pendown dot 34 setsc f8fafc penup setpos 400 515 pendown dot 34 setsc 111827 setsw 10 penup home pendown circle 232]",
+    image: "yin-yang.png",
+    type: "symbols",
+  }),
+  example({
+    name: "Atomic orbit",
+    source:
+      "repeat 1 [gradientbg 020617 172554 45 hideturtle setblend screen setgradient 22d3ee a78bfa 45 setglow 18 setsw 7 repeat 3 [ellipse 260 95 tr 60] setradial ffffff 3a86ff 58 fillpoly 32 54 setsc fef08a setglow 22 penup setpos 660 400 pendown dot 24 penup setpos 270 318 pendown dot 24 penup setpos 270 482 pendown dot 24 setblend source-over setglow 0]",
+    image: "atomic-orbit.png",
+    type: "symbols",
+  }),
+  example({
+    name: "Peace sign",
+    source:
+      "repeat 1 [gradientbg f8fafc dbeafe 90 hideturtle setgradient 1e3a8a 7c3aed 90 setsw 18 circle 235 push seth -90 fd 235 pop push seth 45 fd 235 pop push seth 135 fd 235 pop]",
+    image: "peace-sign.png",
+    type: "symbols",
+  }),
+  example({
+    name: "Warning sign",
+    source:
+      "repeat 1 [gradientbg fef08a f59e0b 90 hideturtle setsc 111827 setsw 20 seth -90 polygon 3 270 penup setpos 400 285 pendown seth 90 setsw 30 fd 150 penup setpos 400 505 pendown dot 34]",
+    image: "warning-sign.png",
+    type: "symbols",
+  }),
+  example({
+    name: "Power button",
+    source:
+      "repeat 1 [gradientbg 020617 0f172a 90 hideturtle setblend screen setgradient 22d3ee 3a86ff 90 setglow 24 setsw 28 seth -60 arc 300 220 penup setpos 400 155 pendown seth 90 fd 245 setblend source-over setglow 0]",
+    image: "power-button.png",
+    type: "symbols",
+  }),
+  example({
+    name: "Wi-Fi signal",
+    source:
+      "repeat 1 [gradientbg 020617 1e1b4b 45 hideturtle setblend screen setgradient 38bdf8 a78bfa 0 setglow 22 setsw 28 penup setpos 400 575 pendown seth 180 arc 180 95 seth 180 arc 180 175 seth 180 arc 180 255 setradial ffffff 38bdf8 36 fillpoly 32 34 setblend source-over setglow 0]",
+    image: "wifi-signal.png",
+    type: "symbols",
+  }),
+  example({
+    name: "Compass rose",
+    source:
+      "repeat 1 [gradientbg 082f49 0f172a 45 hideturtle setblend screen setgradient fef3c7 38bdf8 90 setglow 12 setsw 5 star 16 258 seth 11.25 star 8 205 setdash 8 8 circle 285 setdash 0 0 setradial ffffff f59e0b 55 fillpoly 16 52 setblend source-over setglow 0]",
+    image: "compass-rose.png",
+    type: "symbols",
+  }),
+  example({
+    name: "Flower of life",
+    source:
+      "repeat 1 [gradientbg 071013 172554 90 hideturtle setblend screen setgradient 22d3ee f0abfc 45 setglow 14 setsw 6 circle 105 repeat 6 [push fd 105 circle 105 pop tr 60] setalpha .75 circle 210 setdash 8 8 circle 275 setdash 0 0 setblend source-over setalpha 1 setglow 0]",
+    image: "flower-of-life.png",
+    type: "symbols",
   }),
   example({
     name: "Turtle compass",
