@@ -1,46 +1,57 @@
-import type { ICommandDescription } from 'src/models';
+import type { ICommandDescription } from "src/models";
 
 export class ErrorHandler {
-    private readonly errorTexts: IErrorText;
-    private readonly commandDescription: Readonly<Record<string, ICommandDescription>>;
-    public constructor(
-        errorHandlerTexts: IErrorText,
-        commandDescription: Readonly<Record<string, ICommandDescription>>,
-    ) {
-       this.errorTexts = errorHandlerTexts;
-       this.commandDescription = commandDescription;
+  private readonly errorTexts: IErrorText;
+  private readonly commandDescription: Readonly<
+    Record<string, ICommandDescription>
+  >;
+
+  public constructor(
+    errorHandlerTexts: IErrorText,
+    commandDescription: Readonly<Record<string, ICommandDescription>>,
+  ) {
+    this.errorTexts = errorHandlerTexts;
+    this.commandDescription = commandDescription;
+  }
+
+  public handleError(): string {
+    const { insideCommand, wrongCommand } = this.errorTexts;
+    const position = findDifference(insideCommand, wrongCommand);
+    const remaining = insideCommand.slice(position).trimStart();
+    const [token = "end of input"] = remaining.split(/\s+/u);
+    const knownCommands = Object.keys(this.commandDescription);
+    const normalizedToken = token.toLowerCase();
+    const contextStart = Math.max(0, position - 14);
+    const contextEnd = Math.min(insideCommand.length, position + 22);
+    const context = insideCommand.slice(contextStart, contextEnd);
+
+    if (knownCommands.includes(normalizedToken)) {
+      return `“${context}”\n${normalizedToken} is missing or has an invalid argument.`;
     }
 
-    public handleError(): string {
-        const { fullCommand, insideCommand, wrongCommand } = this.errorTexts;
-         const diff = findIndexDiffrenceInStrings(insideCommand, wrongCommand);
-         const allCommands = Object.keys(this.commandDescription);
-         const [wrongElement] = insideCommand.slice(diff).split(' ');
-         const indexOfStarting = fullCommand.indexOf(insideCommand) + diff;
-         const constDisplayerText = `${fullCommand.slice(indexOfStarting - 10, indexOfStarting + 10).replace(wrongElement, ` |[${  wrongElement   } ]|`)  }\n`
-        if(!isNaN(Number(wrongElement))) {
-            return `${constDisplayerText   } Command Error: Argument need command before call.`;
-        } else if(allCommands.includes(wrongElement)) {
-            return `${constDisplayerText   } Argument Error: Command need argument after call.`;
-        }
-            return `${constDisplayerText   } No command Error: We dont know your command. Sorry.`;
-
+    if (/^-?(?:\d+\.?\d*|\.\d+)$/u.test(token)) {
+      return `“${context}”\nThe number ${token} needs a command before it.`;
     }
-};
 
-export interface IErrorText {
-    fullCommand: string
-    insideCommand: string,
-    wrongCommand: string    
+    if (token === "end of input") {
+      return "The command is incomplete. Check its arguments and closing brackets.";
+    }
+
+    return `“${context}”\nUnknown command or invalid value: ${token}.`;
+  }
 }
 
-const findIndexDiffrenceInStrings = (text1: string, text2: string) => {
-    const longerLength = Math.max(text1.length, text2.length);
-    for (let i = 0; i < longerLength; i += 1)
-    {
-        if (text1[i] !== text2[i]) {
-            return i;
-        }
-    }
-    return -1;
+export interface IErrorText {
+  fullCommand: string;
+  insideCommand: string;
+  wrongCommand: string;
+}
+
+const findDifference = (text: string, parsedText: string): number => {
+  const limit = Math.min(text.length, parsedText.length);
+  let index = 0;
+  while (index < limit && text[index] === parsedText[index]) {
+    index += 1;
+  }
+  return index;
 };

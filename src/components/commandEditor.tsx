@@ -4,24 +4,30 @@ import { useCommandStore } from 'src/store/commandStore';
 
 const CommandEditor: React.FC = () => {
   const commands = useCommandStore((state) => state.commands);
-   const deleteCommand = useCommandStore((state) => state.deleteCommand);
+  const deleteCommand = useCommandStore((state) => state.deleteCommand);
 
-   const displayCommands = (cmds: readonly ICommandModel[]) =>
+  const displayCommands = (cmds: readonly ICommandModel[]) =>
     cmds.map((item) => {
-      const { name, value, id } = item;
+      const { name, value, color, id } = item;
       return (
-        <li key={id} data-id={id} role="listitem" tabIndex={0} className={name}>
-          <div className="tagName">
-            {name} {value}
-            {item.commands ? <ul>{displayCommands(item.commands)}</ul> : null}
-          </div>
+        <li key={id} data-id={id} className={name}>
+          <span className="tagName">
+            <strong>{name}</strong>
+            {value !== undefined && <span>{value}</span>}
+            {color !== undefined && <span>{color}</span>}
+          </span>
+          {item.commands ? (
+            <ul className="nestedCommands">{displayCommands(item.commands)}</ul>
+          ) : null}
           <button
             type="button"
             aria-label={`Remove ${name} command`}
             className="removeButton"
-            onClick={() => { deleteCommand(id); }}
+            onClick={() => {
+              deleteCommand(id);
+            }}
           >
-            x
+            <span aria-hidden="true">×</span>
           </button>
         </li>
       );
@@ -29,7 +35,24 @@ const CommandEditor: React.FC = () => {
 
   return (
     <div className="commandEditor">
-      <ul className="editorCont">{displayCommands(commands)}</ul>
+      <div className="panelHeader">
+        <div>
+          <p className="eyebrow">Program</p>
+          <h2>Command stack</h2>
+        </div>
+        <span className="commandCount">{commands.length} top-level</span>
+      </div>
+      {commands.length === 0 ? (
+        <div className="editorEmpty">
+          <span aria-hidden="true">✦</span>
+          <div>
+            <strong>Your first shape starts here</strong>
+            <p>Enter a command below or open Examples for instant inspiration.</p>
+          </div>
+        </div>
+      ) : (
+        <ul className="editorCont">{displayCommands(commands)}</ul>
+      )}
     </div>
   );
 };

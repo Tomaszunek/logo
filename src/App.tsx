@@ -1,27 +1,30 @@
 import * as React from "react";
 import Canvas from "./components/canvas";
 import CommandEditor from "./components/commandEditor";
-import CommandList from "./components/commandList";
 import CommandInput from "./components/commandInput";
-import HelperLayer from "./components/helperLayer";
-import TutorialPopup from "./components/tutorialPopup";
+import CommandList from "./components/commandList";
 import Header from "./components/header";
+import HelperLayer from "./components/helperLayer";
 import SkipLink from "./components/skipLink";
-
+import TutorialPopup from "./components/tutorialPopup";
 import { commandDescriptions } from "./data/commandDescriptions";
 import { pathwayExamples } from "./data/pathwayExamples";
 import { tutorialPages } from "./data/tutorialPages";
-
 import "./App.css";
-import "./vis-001.css";
 
 export const App: React.FC = () => {
   const [showHelper, setShowHelper] = React.useState(false);
-   const [activePanel, setActivePanel] = React.useState<"tips" | "examples">("tips");
+  const [activePanel, setActivePanel] = React.useState<"tips" | "examples">(
+    "tips",
+  );
 
-   const handleShowHelper = (panel: "tips" | "examples") => {
+  const handleShowHelper = (panel: "tips" | "examples") => {
     setShowHelper(true);
     setActivePanel(panel);
+  };
+
+  const closeHelper = () => {
+    setShowHelper(false);
   };
 
   return (
@@ -33,16 +36,16 @@ export const App: React.FC = () => {
           <HelperLayer
             visible={true}
             panel="examples"
-            onClose={() => { setShowHelper(false); }}
+            onClose={closeHelper}
             examplePaths={pathwayExamples}
             descriptions={commandDescriptions}
           />
         )}
         {showHelper && activePanel === "tips" && (
-          <TutorialPopup tutorialPages={tutorialPages} />
+          <TutorialPopup tutorialPages={tutorialPages} onClose={closeHelper} />
         )}
         <div className="editorContainer">
-          <section className="editorLine">
+          <section className="editorLine" aria-label="Logo workspace">
             <CommandEditor />
             <CommandInput descriptions={commandDescriptions} />
             <Canvas />
@@ -52,7 +55,10 @@ export const App: React.FC = () => {
           </aside>
         </div>
       </div>
-      <footer className="appFooter">© 2026 Logo Playground</footer>
+      <footer className="appFooter">
+        <span>© 2026 Logo Playground</span>
+        <span>Made for curious minds and bold geometry.</span>
+      </footer>
     </main>
   );
 };

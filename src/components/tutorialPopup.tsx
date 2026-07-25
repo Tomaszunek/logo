@@ -1,61 +1,72 @@
-import * as React from 'react';
-import type { ITutorialPage } from '../models'
-import { useState } from 'react';
+import * as React from "react";
+import type { ITutorialPage } from "../models";
 
-const TutorialPopup: React.FC<IProps> = ({ tutorialPages }) => {
-  const [siteNumber, setSiteNumber] = useState(0);
-   const [visibility, setVisibility] = useState(true);
+interface IProps {
+  tutorialPages: readonly ITutorialPage[];
+  onClose: () => void;
+}
 
-   const changeSite = (siteButton: 'left' | 'right') => {
-    if (siteButton === 'left') {
-      setSiteNumber(prev => prev - 1);
-    } else {
-      setSiteNumber(prev => prev + 1);
-    }
-  };
+const TutorialPopup: React.FC<IProps> = ({ tutorialPages, onClose }) => {
+  const [pageNumber, setPageNumber] = React.useState(0);
+  const tutorialPage = tutorialPages[pageNumber];
 
-   const displayContent = (tutorialPage: ITutorialPage | undefined) => {
-    if (tutorialPage === undefined) {return null;}
-    const { title, content, image, name } = tutorialPage;
-    return (
-      <div>
-        <div className="title">
-          <button
-            type="button"
-            aria-label="Close tutorial"
-            onClick={() => { setVisibility(prev=>!prev); }}
-          >
-            X
-          </button>
-          <p>{siteNumber + 1}) {title} - {name}</p>
-        </div>
-        <div className="content">
-          <img src={`./images/tutorial/${image}`} alt={image}/>
-          <div className="tip">{content}</div>
-        </div>
-      </div>
-    );
-  };
-
-   const style = { display: visibility ? 'grid' : 'none' };
-   const bbstyle = { display: siteNumber === 0 ? 'none' : 'block' };
-   const brstyle = {
-    display: siteNumber === tutorialPages.length - 1 ? 'none' : 'block'
-  };
+  const { title, content, image, name } = tutorialPage;
 
   return (
-    <div className="tutorialPopup" style={style}>
-      {displayContent(tutorialPages[siteNumber])}
-      <div className="tutorialNav">
-        <button type="button" style={bbstyle} onClick={() => { changeSite('left'); }}>{'< BACK'}</button>
-        <button type="button" style={brstyle} onClick={() => { changeSite('right'); }}>{'NEXT >'}</button>
-      </div>
+    <div className="modalBackdrop">
+      <section
+        className="tutorialPopup"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tutorial-title"
+      >
+        <div className="title">
+          <div>
+            <p className="eyebrow">
+              Quick guide · {pageNumber + 1} of {tutorialPages.length}
+            </p>
+            <h2 id="tutorial-title">
+              {title} — {name}
+            </h2>
+          </div>
+          <button
+            type="button"
+            className="modalClose"
+            aria-label="Close tutorial"
+            onClick={onClose}
+          >
+            ×
+          </button>
+        </div>
+        <div className="content">
+          <img src={`./images/tutorial/${image}`} alt="" />
+          <div className="tip">{content}</div>
+        </div>
+        <div className="tutorialNav">
+          <button
+            type="button"
+            className="button buttonGhost"
+            disabled={pageNumber === 0}
+            onClick={() => {
+              setPageNumber((previous) => previous - 1);
+            }}
+          >
+            ← Back
+          </button>
+          <button
+            type="button"
+            className="button buttonPrimary"
+            disabled={pageNumber === tutorialPages.length - 1}
+            onClick={() => {
+              setPageNumber((previous) => previous + 1);
+            }}
+          >
+            Next →
+          </button>
+        </div>
+      </section>
     </div>
   );
 };
 
 export default TutorialPopup;
-
-interface IProps {
-  tutorialPages: readonly ITutorialPage[];
-}
