@@ -4,7 +4,7 @@ import { useCommandStore } from "src/store/commandStore";
 
 const PathwayExample: React.FC<IProps> = ({ examplePath, onSelect }) => {
   const replaceCommands = useCommandStore((state) => state.replaceCommands);
-   const { name, path, image } = examplePath;
+   const { name, path, image, type } = examplePath;
    const setCommands = () => {
     const { command } = examplePath;
     replaceCommands([command]);
@@ -15,7 +15,7 @@ const PathwayExample: React.FC<IProps> = ({ examplePath, onSelect }) => {
       type="button"
       className="pathexample"
       onClick={setCommands}
-      aria-label={`Load ${name} example`}
+      aria-label={`Load ${name} ${type} example`}
     >
       <p>{name}</p>
       <img

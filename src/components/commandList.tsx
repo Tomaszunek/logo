@@ -11,11 +11,8 @@ const CommandList: React.FC<IProps> = ({ descriptions }) => {
   const editCommand = useCommandStore((state) => state.editCommand);
   const deleteCommand = useCommandStore((state) => state.deleteCommand);
 
-  const displayCommands = (items: readonly ICommandModel[]) => items.map((item: ICommandModel) => {
+    const displayCommands = (items: readonly ICommandModel[]) => items.map((item: ICommandModel) => {
       const itemDesc = descriptions[item.name];
-      if (itemDesc === undefined) {
-        return null;
-      }
       const { short, name, long } = itemDesc;
       return (
         <div className={`commandItem ${  item.name}`} key={item.id}>

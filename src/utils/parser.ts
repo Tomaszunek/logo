@@ -6,22 +6,26 @@ interface Token {
   start: number;
 }
 
-const commands = new Set<CommandTypes>([
-  "bk",
-  "fd",
-  "hideturtle",
-  "home",
-  "pendown",
-  "penup",
-  "repeat",
-  "setbc",
-  "setpos",
-  "setsc",
-  "setsw",
-  "showturtle",
-  "tl",
-  "tr",
-]);
+interface ParserError extends Error {
+  position: number;
+}
+
+const commandByName: Readonly<Partial<Record<string, CommandTypes>>> = {
+  bk: "bk",
+  fd: "fd",
+  hideturtle: "hideturtle",
+  home: "home",
+  pendown: "pendown",
+  penup: "penup",
+  repeat: "repeat",
+  setbc: "setbc",
+  setpos: "setpos",
+  setsc: "setsc",
+  setsw: "setsw",
+  showturtle: "showturtle",
+  tl: "tl",
+  tr: "tr",
+};
 
 const numberCommands = new Set<CommandTypes>([
   "bk",
@@ -52,6 +56,14 @@ const tokenize = (text: string): Token[] => {
   return result;
 };
 
+const parseError = (position: number): ParserError =>
+  Object.assign(new Error("Invalid Logo command"), { position });
+
+const isParserError = (error: unknown): error is ParserError =>
+  error instanceof Error &&
+  "position" in error &&
+  typeof error.position === "number";
+
 export class Parser {
   public text: string;
   public index: number;
@@ -67,24 +79,24 @@ export class Parser {
     try {
       const parsed = this.parseSequence(false);
       if (this.index !== this.tokens.length) {
-        throw new ParseError(this.tokens[this.index]?.start ?? this.text.length);
+        throw parseError(this.tokens[this.index].start);
       }
       return parsed;
     } catch (error: unknown) {
       const position =
-        error instanceof ParseError ? error.position : this.text.length;
+        isParserError(error) ? error.position : this.text.length;
       onError(this.text, this.text.slice(0, position).trimEnd());
       return [];
     }
   }
 
-  private parseSequence = (insideRepeat: boolean): ICommandModel[] => {
+  private readonly parseSequence = (insideRepeat: boolean): ICommandModel[] => {
     const parsed: ICommandModel[] = [];
 
     while (this.index < this.tokens.length) {
       if (this.peek() === "]") {
         if (!insideRepeat) {
-          throw new ParseError(this.currentPosition());
+          throw parseError(this.currentPosition());
         }
         break;
       }
@@ -94,15 +106,13 @@ export class Parser {
     return parsed;
   };
 
-  private parseCommand = (): ICommandModel => {
+  private readonly parseCommand = (): ICommandModel => {
     const commandToken = this.take();
     const normalizedName = commandToken.value.toLowerCase();
-
-    if (!commands.has(normalizedName as CommandTypes)) {
-      throw new ParseError(commandToken.start);
+    const name = commandByName[normalizedName];
+    if (name === undefined) {
+      throw parseError(commandToken.start);
     }
-
-    const name = normalizedName as CommandTypes;
     const command: ICommandModel = { id: 0, name };
 
     if (noArgumentCommands.has(name)) {
@@ -123,7 +133,7 @@ export class Parser {
     if (name === "setsc" || name === "setbc") {
       const color = this.take();
       if (!/^#?[0-9a-f]{6}$/iu.test(color.value)) {
-        throw new ParseError(color.start);
+        throw parseError(color.start);
       }
       command.color = color.value.startsWith("#")
         ? color.value.toLowerCase()
@@ -133,12 +143,12 @@ export class Parser {
 
     const repeatCount = this.takeNumber();
     if (!Number.isInteger(repeatCount) || repeatCount < 0) {
-      throw new ParseError(this.previousPosition());
+      throw parseError(this.previousPosition());
     }
     this.expect("[");
     const nestedCommands = this.parseSequence(true);
     if (nestedCommands.length === 0) {
-      throw new ParseError(this.currentPosition());
+      throw parseError(this.currentPosition());
     }
     this.expect("]");
     command.value = repeatCount;
@@ -146,42 +156,41 @@ export class Parser {
     return command;
   };
 
-  private takeNumber = (): number => {
+  private readonly takeNumber = (): number => {
     const token = this.take();
     const number = Number(token.value);
     if (!Number.isFinite(number)) {
-      throw new ParseError(token.start);
+      throw parseError(token.start);
     }
     return number;
   };
 
-  private expect = (expected: string) => {
+  private readonly expect = (expected: string) => {
     const token = this.take();
     if (token.value !== expected) {
-      throw new ParseError(token.start);
+      throw parseError(token.start);
     }
   };
 
-  private take = (): Token => {
-    const token = this.tokens[this.index];
-    if (token === undefined) {
-      throw new ParseError(this.text.length);
+  private readonly take = (): Token => {
+    if (this.index >= this.tokens.length) {
+      throw parseError(this.text.length);
     }
+    const token = this.tokens[this.index];
     this.index += 1;
     return token;
   };
 
-  private peek = (): string | undefined => this.tokens[this.index]?.value;
+  private readonly peek = (): string | undefined =>
+    this.index < this.tokens.length
+      ? this.tokens[this.index].value
+      : undefined;
 
-  private currentPosition = (): number =>
-    this.tokens[this.index]?.start ?? this.text.length;
+  private readonly currentPosition = (): number =>
+    this.index < this.tokens.length
+      ? this.tokens[this.index].start
+      : this.text.length;
 
-  private previousPosition = (): number =>
-    this.tokens[Math.max(0, this.index - 1)]?.start ?? this.text.length;
-}
-
-class ParseError extends Error {
-  public constructor(public readonly position: number) {
-    super("Invalid Logo command");
-  }
+  private readonly previousPosition = (): number =>
+    this.tokens[Math.max(0, this.index - 1)].start;
 }

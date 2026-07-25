@@ -46,7 +46,7 @@ const CommandInput: React.FC<IProps> = ({ descriptions }) => {
     }, 5000);
   };
 
-  const submitCommand = (event: React.FormEvent<HTMLFormElement>) => {
+  const submitCommand = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     const value = input.trim();
     if (value === "") {

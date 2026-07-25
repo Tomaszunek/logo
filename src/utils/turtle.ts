@@ -67,7 +67,7 @@ export class Turtle {
   };
 
   public drawTurtle = () => {
-    const canvas = this.canvas;
+    const { canvas } = this;
     if (canvas === null || !this.visible) {
       return;
     }
@@ -136,10 +136,8 @@ export class Turtle {
       return;
     }
 
-    context.save();
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    context.restore();
     this.resetForReplay();
   };
 
@@ -172,11 +170,9 @@ export class Turtle {
       return;
     }
 
-    context.save();
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.fillStyle = color;
     context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    context.restore();
   };
 
   public setStrokeColor = (color: string) => {
@@ -187,7 +183,7 @@ export class Turtle {
     this.strokeWeight = Math.max(0.25, weight);
   };
 
-  private resetForReplay = () => {
+  private readonly resetForReplay = () => {
     this.home();
     this.strokeColor = this.initialStrokeColor;
     this.strokeWeight = this.strokeWeightHome;

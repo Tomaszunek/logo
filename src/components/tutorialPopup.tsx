@@ -10,10 +10,6 @@ const TutorialPopup: React.FC<IProps> = ({ tutorialPages, onClose }) => {
   const [pageNumber, setPageNumber] = React.useState(0);
   const tutorialPage = tutorialPages[pageNumber];
 
-  if (tutorialPage === undefined) {
-    return null;
-  }
-
   const { title, content, image, name } = tutorialPage;
 
   return (

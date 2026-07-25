@@ -36,12 +36,12 @@ const HelperWindow: React.FC<IProps> = ({
       }
 
       return (
-        <div key={type}>
+        <section key={type} className="exampleGroup">
+          <h3>{type} collection</h3>
           <div className={`commandType ${type}`}>
-            {" "}
-            {displayExample(examples)}{" "}
+            {displayExample(examples)}
           </div>
-        </div>
+        </section>
       );
     });
   };
@@ -83,8 +83,7 @@ const HelperWindow: React.FC<IProps> = ({
 
   return (
     <div style={itemStyle} className={`helperWindow ${site}`}>
-      {" "}
-      {site === "right" ? displayAll() : displayCommands()}{" "}
+      {site === "right" ? displayAll() : displayCommands()}
     </div>
   );
 };

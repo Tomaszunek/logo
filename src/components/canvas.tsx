@@ -52,7 +52,7 @@ const Canvas: React.FC = () => {
     }
 
     const link = document.createElement("a");
-    const timestamp = new Date().toISOString().slice(0, 19).replaceAll(":", "-");
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/gu, "-");
     link.download = `logo-playground-${timestamp}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();

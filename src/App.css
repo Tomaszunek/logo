@@ -1,110 +1,821 @@
-/* Theme variables */
 :root {
-  --primary-color: #0055aa;
-  --secondary-color: #ffdd00;
-  --bg-light: #f8f9fa;
-  --text-dark: #222;
-  --border-radius: 4px;
-
-  /* Spacing utilities */
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 2rem;
+  --ink: #e8edf7;
+  --ink-muted: #8f9bb3;
+  --surface: rgba(14, 22, 40, 0.86);
+  --surface-raised: #111b30;
+  --surface-soft: #17233b;
+  --line: rgba(156, 174, 208, 0.16);
+  --accent: #79f2c0;
+  --accent-strong: #38d99c;
+  --violet: #8b7cff;
+  --danger: #ff6b81;
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+  color: var(--ink);
 }
 
-/* Layout */
+* {
+  box-sizing: border-box;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+}
+
 .App {
   display: grid;
-  grid-template-rows: auto 1fr auto; /* header, main, footer */
-  grid-template-columns: 1fr;
   min-height: 100vh;
-  background-color: var(--bg-light);
+  grid-template-rows: auto 1fr auto;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(121, 242, 192, 0.12), transparent 26rem),
+    radial-gradient(circle at 88% 20%, rgba(139, 124, 255, 0.12), transparent 30rem),
+    #070c16;
 }
+
 .appHeader {
+  position: sticky;
+  z-index: 4;
+  top: 0;
+  display: flex;
+  min-height: 78px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 12px clamp(18px, 4vw, 64px);
+  border-bottom: 1px solid var(--line);
+  background: rgba(7, 12, 22, 0.78);
+  backdrop-filter: blur(18px);
+}
+
+.leftSide,
+.rightSide,
+.canvasActions,
+.canvasMeta,
+.panelHeader,
+.commandTitle,
+.commandFields,
+.appFooter {
   display: flex;
   align-items: center;
-  padding: 0.5rem 1rem;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.appFooter {
-  text-align: center;
-  font-size: 0.9rem;
-  padding: 0.5rem 0;
-  background-color: white;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+.leftSide {
+  gap: 13px;
 }
 
-header {
-  img {
-    height: 1.5rem;
-    margin-right: 0.5rem;
-  }
-  h1 {
-    font-size: 1.5rem;
-    margin: 0;
-  }
+.rightSide,
+.canvasActions,
+.commandFields {
+  gap: 9px;
 }
 
-/* Main content container */
+.logoMark {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border: 1px solid rgba(121, 242, 192, 0.28);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(121, 242, 192, 0.16), rgba(139, 124, 255, 0.12));
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.09);
+}
+
+.appLogo {
+  width: 29px;
+  height: auto;
+}
+
+.brandCopy h1,
+.panelHeader h2,
+.composerHeading h2,
+.modalHeader h2,
+.tutorialPopup h2 {
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+.brandCopy h1 {
+  font-size: 1.08rem;
+}
+
+.brandCopy p,
+.modalHeader p,
+.inputHint,
+.inspectorIntro,
+.canvasMeta,
+.editorEmpty p {
+  margin: 3px 0 0;
+  color: var(--ink-muted);
+}
+
+.brandCopy p {
+  font-size: 0.77rem;
+}
+
+.button {
+  min-height: 39px;
+  padding: 0 15px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  font-size: 0.82rem;
+  font-weight: 720;
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, opacity 160ms ease;
+}
+
+.button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.button:focus-visible,
+input:focus-visible,
+.removeButton:focus-visible,
+.modalClose:focus-visible,
+.pathexample:focus-visible {
+  outline: 3px solid rgba(121, 242, 192, 0.35);
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.36;
+}
+
+.buttonPrimary {
+  color: #06140f;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  box-shadow: 0 8px 24px rgba(56, 217, 156, 0.16);
+}
+
+.buttonGhost {
+  border-color: var(--line);
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.035);
+}
+
 .appMain {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md) var(--spacing-lg);
+  width: min(1560px, 100%);
+  margin: 0 auto;
+  padding: clamp(20px, 3vw, 42px);
 }
 
 .editorContainer {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: var(--spacing-lg);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(310px, 360px);
+  gap: clamp(18px, 2vw, 28px);
+  align-items: start;
 }
 
-/* Editor section */
 .editorLine {
-  flex: 2 1 0;
+  display: grid;
+  min-width: 0;
+  gap: 18px;
+}
+
+.commandEditor,
+.commandComposer,
+.canvasPanel,
+.commandListLine {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.commandEditor,
+.commandComposer,
+.commandListLine {
+  padding: 20px;
+}
+
+.commandListLine {
+  position: sticky;
+  top: 98px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+.panelHeader,
+.composerHeading {
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.panelHeader h2,
+.composerHeading h2 {
+  font-size: 1.06rem;
+}
+
+.eyebrow {
+  margin: 0 0 5px;
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 780;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.commandCount {
+  flex: none;
+  padding: 5px 9px;
+  border: 1px solid rgba(121, 242, 192, 0.15);
+  border-radius: 999px;
+  color: #b8ffe1;
+  background: rgba(121, 242, 192, 0.07);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.editorEmpty {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-top: 16px;
+  padding: 18px;
+  border: 1px dashed rgba(156, 174, 208, 0.25);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.editorEmpty > span {
+  color: var(--violet);
+  font-size: 1.4rem;
+}
+
+.editorEmpty strong {
+  font-size: 0.85rem;
+}
+
+.editorEmpty p {
+  font-size: 0.75rem;
+}
+
+.editorCont,
+.nestedCommands {
   display: flex;
   flex-wrap: wrap;
-	  min-width: 0;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-md) var(--spacing-sm);
-  min-width: 0;
-}
-.commandListLine {
-  flex: 1 1 0;
-  background-color: #e9ecef;
-  padding: var(--spacing-md);
-  min-width: 0;
+  gap: 8px;
+  margin: 15px 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-/* Canvas container */
-canvas {
+.editorCont {
+  max-height: 210px;
+  overflow-y: auto;
+}
+
+.editorCont li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 4px 5px 4px 10px;
+  border: 1px solid rgba(139, 124, 255, 0.18);
+  border-radius: 10px;
+  background: rgba(139, 124, 255, 0.08);
+  color: #d8d2ff;
+}
+
+.editorCont li.repeat {
+  flex-basis: 100%;
+  align-items: flex-start;
+  background: rgba(139, 124, 255, 0.12);
+}
+
+.tagName {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.72rem;
+}
+
+.tagName strong {
+  color: var(--accent);
+}
+
+.nestedCommands {
+  flex: 1;
+  margin: 0;
+}
+
+.removeButton,
+.modalClose {
+  display: grid;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  color: var(--ink-muted);
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+}
+
+.removeButton:hover,
+.modalClose:hover {
+  color: white;
+  background: rgba(255, 107, 129, 0.18);
+}
+
+.composerHeading code {
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: #c7bfff;
+  background: rgba(139, 124, 255, 0.07);
+  font-size: 0.67rem;
+}
+
+.commandForm {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 7px 7px 7px 14px;
+  border: 1px solid rgba(121, 242, 192, 0.24);
+  border-radius: 13px;
+  background: #090f1c;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.015);
+}
+
+.commandPrompt {
+  color: var(--accent);
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-weight: 800;
+}
+
+.commandInput {
   width: 100%;
-  height: auto;
-  max-width: 800px;
-  border: 1px solid #ddd;
-  border-radius: var(--border-radius);
-  aspect-ratio: 1 / 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  color: var(--ink);
+  background: transparent;
+  font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.86rem;
 }
 
-/* Media queries */
-@media screen and (min-width: 768px) {
-  .editorLine {
-    flex-wrap: nowrap;
+.commandInput::placeholder {
+  color: #5f6b83;
+}
+
+.runButton {
+  min-height: 36px;
+}
+
+.inputHint,
+.inspectorIntro {
+  font-size: 0.72rem;
+}
+
+.canvasPanel {
+  background: linear-gradient(160deg, rgba(17, 27, 48, 0.95), rgba(9, 15, 28, 0.94));
+}
+
+.canvasToolbar {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.canvasStage {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  padding: clamp(14px, 2.5vw, 34px);
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 44%, rgba(121, 242, 192, 0.08), transparent 45%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.026) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.026) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.026) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.026) 75%);
+  background-position: 0 0, 0 0, 0 12px, 12px -12px, -12px 0;
+  background-size: auto, 24px 24px, 24px 24px, 24px 24px, 24px 24px;
+}
+
+.canvasStage::after {
+  position: absolute;
+  inset: 5%;
+  border: 1px solid rgba(121, 242, 192, 0.08);
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
+
+.canvasStage canvas {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: min(800px, 100%);
+  height: auto;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  aspect-ratio: 1;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.24);
+}
+
+.canvasMeta {
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--line);
+  font-size: 0.67rem;
+}
+
+.statusDot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+}
+
+.inspectorIntro {
+  margin-bottom: 17px;
+}
+
+.commendList {
+  display: grid;
+  gap: 9px;
+}
+
+.commandItem {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.commandItem .heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  padding: 11px;
+}
+
+.commandTitle {
+  min-width: 0;
+  gap: 8px;
+}
+
+.commandTitle code {
+  color: var(--accent);
+  font-weight: 780;
+}
+
+.commandTitle span {
+  overflow: hidden;
+  color: var(--ink-muted);
+  font-size: 0.68rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.commandFields input[type="number"] {
+  width: 64px;
+  min-height: 30px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #0a1120;
+  text-align: center;
+}
+
+.commandFields input[type="color"] {
+  width: 34px;
+  height: 30px;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #0a1120;
+}
+
+.commandFields .remove {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  color: var(--ink-muted);
+  background: rgba(255, 107, 129, 0.08);
+  cursor: pointer;
+}
+
+.commandFields .remove:hover {
+  color: white;
+  background: rgba(255, 107, 129, 0.2);
+}
+
+.description {
+  padding: 0 11px 10px;
+}
+
+.description p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.64rem;
+}
+
+.nestedInspector {
+  display: grid;
+  gap: 7px;
+  padding: 0 8px 8px 17px;
+  border-left: 2px solid rgba(139, 124, 255, 0.3);
+}
+
+.inspectorEmpty {
+  padding: 30px 18px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.modalBackdrop {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  padding: clamp(12px, 3vw, 36px);
+  place-items: center;
+  background: rgba(2, 6, 13, 0.78);
+  backdrop-filter: blur(12px);
+}
+
+.helperLayer,
+.tutorialPopup {
+  width: min(1240px, 100%);
+  max-height: min(860px, calc(100vh - 32px));
+  overflow: hidden;
+  border: 1px solid rgba(156, 174, 208, 0.2);
+  border-radius: 20px;
+  background: #0c1424;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.55);
+}
+
+.modalHeader,
+.tutorialPopup .title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.modalClose {
+  width: 36px;
+  height: 36px;
+  font-size: 1.25rem;
+}
+
+.helperWindow {
+  max-height: calc(min(860px, 100vh - 32px) - 120px);
+  overflow-y: auto;
+  padding: 20px 24px 30px;
+}
+
+.helperWindow > div + div {
+  margin-top: 24px;
+}
+
+.exampleGroup + .exampleGroup {
+  margin-top: 28px;
+}
+
+.exampleGroup h3 {
+  margin: 0 0 12px;
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.helperWindow .commandType {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+.pathexample {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.03);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.pathexample:hover {
+  transform: translateY(-2px);
+  border-color: rgba(121, 242, 192, 0.38);
+  background: rgba(121, 242, 192, 0.06);
+}
+
+.pathexample p {
+  margin: 0 0 9px;
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.pathexample img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 9px;
+  background: white;
+  object-fit: cover;
+}
+
+.pathexample .path {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 9px 0 0;
+  color: var(--ink-muted);
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 0.58rem;
+  font-weight: 400;
+  line-height: 1.4;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.tutorialPopup {
+  width: min(860px, 100%);
+}
+
+.tutorialPopup .content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr);
+  align-items: center;
+  min-height: 360px;
+  padding: 24px;
+}
+
+.tutorialPopup .content img {
+  width: 100%;
+  max-height: 460px;
+  border-radius: 12px;
+  object-fit: contain;
+}
+
+.tutorialPopup .tip {
+  padding: 26px;
+  color: var(--ink);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.tutorialNav {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-top: 1px solid var(--line);
+}
+
+.popup {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 107, 129, 0.3);
+  border-radius: 10px;
+  color: #ffc0ca;
+  background: rgba(255, 107, 129, 0.08);
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+}
+
+.appFooter {
+  justify-content: space-between;
+  gap: 24px;
+  padding: 18px clamp(18px, 4vw, 64px);
+  border-top: 1px solid var(--line);
+  color: var(--ink-muted);
+  font-size: 0.7rem;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 10px;
+  left: -9999px;
+  padding: 10px 14px;
+  border-radius: 9px;
+  color: #06140f;
+  background: var(--accent);
+}
+
+.skip-link:focus {
+  left: 10px;
+}
+
+.srOnly {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  margin: -1px;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 1050px) {
+  .editorContainer {
+    grid-template-columns: 1fr;
+  }
+
+  .commandListLine {
+    position: static;
+    max-height: none;
   }
 }
 
-/* Skip link */
-.skip-link {
-  position: absolute;
-  left: -9999px;
-  top: 0;
-  background: white;
-  color: black;
-  padding: 0.5rem;
-  z-index: 1000;
-}
-.skip-link:focus {
-  left: 10px;
+@media (max-width: 700px) {
+  .appHeader {
+    position: static;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .rightSide {
+    width: 100%;
+  }
+
+  .rightSide .button {
+    flex: 1;
+  }
+
+  .brandCopy p,
+  .composerHeading code {
+    display: none;
+  }
+
+  .appMain {
+    padding: 14px;
+  }
+
+  .commandEditor,
+  .commandComposer,
+  .commandListLine {
+    padding: 16px;
+  }
+
+  .canvasToolbar,
+  .panelHeader,
+  .canvasMeta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .canvasActions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .canvasActions .button {
+    flex: 1;
+  }
+
+  .commandForm {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .runButton {
+    grid-column: 1 / -1;
+  }
+
+  .tutorialPopup .content {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+
+  .tutorialPopup .tip {
+    padding: 18px 2px;
+  }
+
+  .appFooter {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
