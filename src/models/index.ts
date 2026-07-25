@@ -1,5 +1,5 @@
-export * from './Command';
-export * from './CommandTypes';
-export * from './CommandDescription';
-export * from './PathwayExample';
-export * from './TutorialPage';
+export type * from './Command';
+export type * from './CommandTypes';
+export type * from './CommandDescription';
+export type * from './PathwayExample';
+export type * from './TutorialPage';

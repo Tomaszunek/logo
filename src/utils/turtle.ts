@@ -15,7 +15,7 @@ export class Turtle {
 
     public canvas: HTMLCanvasElement | null;
     private currentImage: HTMLImageElement | null = null;
-    constructor(turtle: ITurtleInstance) {        
+    public constructor(turtle: ITurtleInstance) {
         this.x = turtle.homeX;
         this.y = turtle.homeY;
         this.homeX = turtle.homeX;
@@ -32,11 +32,9 @@ export class Turtle {
     public drawLine = (dist :number) => {
         if(this.canvas === null) {return};    
         const ctx = this.canvas.getContext("2d");
-        let newX: number;
-        let newY: number;
         if(ctx === null) {return};
-        newX = this.x + (Math.cos(this.dir * Math.PI / 180) * dist);
-        newY = this.y + (Math.sin(this.dir * Math.PI / 180) * dist);
+        const newX = this.x + (Math.cos(this.dir * Math.PI / 180) * dist);
+         const newY = this.y + (Math.sin(this.dir * Math.PI / 180) * dist);
         if(this.pen) {
             ctx.beginPath();
             ctx.moveTo(this.x, this.y);
@@ -57,7 +55,7 @@ export class Turtle {
         if(this.canvas === null) {return};
         const ctx = this.canvas.getContext("2d");
         if(ctx === null) {return};
-        if(this.visible === false) {return;}
+        if(!this.visible) {return;}
         const baseImage = new Image();
         // Store reference for potential cancellation
         this.currentImage = baseImage;
@@ -123,18 +121,19 @@ export class Turtle {
     }
 
 
-    // no need to use save and restore between calls as it sets the transform rather 
-    // than multiply it like ctx.rotate ctx.translate ctx.scale and ctx.transform
+    // No need to use save and restore between calls as it sets the transform rather
+    // Than multiply it like ctx.rotate ctx.translate ctx.scale and ctx.transform
     // Also combining the scale and origin into the one call makes it quicker
-    // x,y position of image center
-    // cx,cy position of image center rotation
-    // scale scale of image
-    // rotation in radians.
+    // X,y position of image center
+    // Cx,cy position of image center rotation
+    // Scale scale of image
+    // Rotation in radians.
     public drawImageCenter(image: HTMLImageElement, x:number, y:number, cx:number, cy:number, scale:number, rotation:number){
         if(this.canvas === null) {return};    
         const ctx = this.canvas.getContext("2d");
         if(ctx === null) {return}; 
-        ctx.setTransform(scale, 0, 0, scale, x, y); // sets scale and origin
+        // Set scale and origin.
+        ctx.setTransform(scale, 0, 0, scale, x, y);
         ctx.rotate(rotation);
         image.onload = () => {
             ctx.drawImage(image, -cx, -cy); 

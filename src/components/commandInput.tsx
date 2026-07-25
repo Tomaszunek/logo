@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ICommandDescription } from 'src/models';
+import type { ICommandDescription } from 'src/models';
 import { useCommandStore } from 'src/store/commandStore';
 
 import { Parser } from 'src/utils/parser';
@@ -12,22 +12,20 @@ interface IProps {
 
 const CommandInput: React.FC<IProps> = ({ descriptions }) => {
   const addCommand = useCommandStore((state) => state.addCommand);
-  const timeoutRef = React.useRef<number | null>(null);
+   const timeoutRef = React.useRef<number | null>(null);
 
   // Cleanup any pending error popup timer on unmount
-  React.useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
+  React.useEffect(() => () => {
+      if (timeoutRef.current !== null) {
         clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
       }
-    };
-  }, []);
+    }, []);
   const [showPopup, setShowPopup] = React.useState(false);
-  const [popupText, setPopupText] = React.useState('');
-  const inputRef = React.useRef<HTMLInputElement>(null);
+   const [popupText, setPopupText] = React.useState('');
+   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const onError = (insideCommand: string, wrongCommand: string) => {
+   const onError = (insideCommand: string, wrongCommand: string) => {
     const errorHandler = new ErrorHandler(
       {
         fullCommand: inputRef.current ? inputRef.current.value : '',
@@ -41,7 +39,7 @@ const CommandInput: React.FC<IProps> = ({ descriptions }) => {
     setPopupText(errorHandler);
 
     // Clear any existing timer before setting a new one
-    if (timeoutRef.current) {
+    if (timeoutRef.current !== null) {
       clearTimeout(timeoutRef.current);
     }
     timeoutRef.current = window.setTimeout(() => {
@@ -51,17 +49,17 @@ const CommandInput: React.FC<IProps> = ({ descriptions }) => {
     }, 5000);
   };
 
-  const onInputChange = (e: React.KeyboardEvent) => {
+   const onInputChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      const parser = new Parser((e.target as HTMLInputElement).value.trim()).parse(onError);
-      if (parser && parser.length > 0) {
+      const parser = new Parser(e.currentTarget.value.trim()).parse(onError);
+      if (parser.length > 0) {
         for (const item of parser) {
           addCommand(item);
         }
-        if (!inputRef.current) return;
+        if (!inputRef.current) {return;}
         inputRef.current.value = '';
       } else {
-        // no valid commands
+        // No valid commands
       }
     }
   };
@@ -74,7 +72,7 @@ const CommandInput: React.FC<IProps> = ({ descriptions }) => {
         aria-label="Command input"
         autoFocus={true}
         ref={inputRef}
-        onKeyPress={onInputChange}
+        onKeyDown={onInputChange}
       />
       {showPopup && (
         <Popup massage={popupText} />

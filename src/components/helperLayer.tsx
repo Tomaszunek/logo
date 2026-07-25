@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { IPathwayExample } from 'src/models';
+import type { ICommandDescription, IPathwayExample } from 'src/models';
 import HelperWindow from './helperWindow';
-import { ICommandDescription } from 'src/models';
 
 interface HelperLayerProps {
-  examplePaths: ReadonlyArray<IPathwayExample>;
+  examplePaths: readonly IPathwayExample[];
   descriptions: Readonly<Record<string, ICommandDescription>>;
   visible: boolean;
   panel: 'tips' | 'examples';
@@ -12,7 +11,7 @@ interface HelperLayerProps {
 }
 
 const HelperLayer: React.FC<HelperLayerProps> = ({ examplePaths, descriptions, visible, panel, onClose }) => {
-  if (!visible) return null;
+  if (!visible) {return null;}
   const site = panel === 'tips' ? 'left' : 'right';
   return (
     <div className="helperLayer">

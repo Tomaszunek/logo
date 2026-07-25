@@ -17,9 +17,9 @@ import "./vis-001.css";
 
 export const App: React.FC = () => {
   const [showHelper, setShowHelper] = React.useState(false);
-  const [activePanel, setActivePanel] = React.useState<"tips" | "examples">("tips");
+   const [activePanel, setActivePanel] = React.useState<"tips" | "examples">("tips");
 
-  const handleShowHelper = (panel: "tips" | "examples") => {
+   const handleShowHelper = (panel: "tips" | "examples") => {
     setShowHelper(true);
     setActivePanel(panel);
   };
@@ -33,7 +33,7 @@ export const App: React.FC = () => {
           <HelperLayer
             visible={true}
             panel="examples"
-            onClose={() => setShowHelper(false)}
+            onClose={() => { setShowHelper(false); }}
             examplePaths={pathwayExamples}
             descriptions={commandDescriptions}
           />

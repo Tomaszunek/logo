@@ -1,4 +1,4 @@
-import { ICommandDescription } from "../models";
+import type { ICommandDescription } from "../models";
 
 export const commandDescriptions: Readonly<
   Record<string, ICommandDescription>

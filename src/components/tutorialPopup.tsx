@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { ITutorialPage } from '../models'
+import type { ITutorialPage } from '../models'
 import { useState } from 'react';
 
 const TutorialPopup: React.FC<IProps> = ({ tutorialPages }) => {
   const [siteNumber, setSiteNumber] = useState(0);
-  const [visibility, setVisibility] = useState(true);
+   const [visibility, setVisibility] = useState(true);
 
-  const changeSite = (e: React.MouseEvent<HTMLButtonElement>, siteButton: 'left' | 'right') => {
+   const changeSite = (siteButton: 'left' | 'right') => {
     if (siteButton === 'left') {
       setSiteNumber(prev => prev - 1);
     } else {
@@ -14,8 +14,8 @@ const TutorialPopup: React.FC<IProps> = ({ tutorialPages }) => {
     }
   };
 
-  const displayContent = (tutorialPage: ITutorialPage) => {
-    if (!tutorialPage) return null;
+   const displayContent = (tutorialPage: ITutorialPage | undefined) => {
+    if (tutorialPage === undefined) {return null;}
     const { title, content, image, name } = tutorialPage;
     return (
       <div>
@@ -23,7 +23,7 @@ const TutorialPopup: React.FC<IProps> = ({ tutorialPages }) => {
           <button
             type="button"
             aria-label="Close tutorial"
-            onClick={() => setVisibility(prev=>!prev)}
+            onClick={() => { setVisibility(prev=>!prev); }}
           >
             X
           </button>
@@ -37,18 +37,18 @@ const TutorialPopup: React.FC<IProps> = ({ tutorialPages }) => {
     );
   };
 
-  const style = { display: visibility ? 'grid' : 'none' };
-  const bbstyle = { display: siteNumber === 0 ? 'none' : 'block' };
-  const brstyle = {
-    display: siteNumber !== tutorialPages.length - 1 ? 'block' : 'none'
+   const style = { display: visibility ? 'grid' : 'none' };
+   const bbstyle = { display: siteNumber === 0 ? 'none' : 'block' };
+   const brstyle = {
+    display: siteNumber === tutorialPages.length - 1 ? 'none' : 'block'
   };
 
   return (
     <div className="tutorialPopup" style={style}>
       {displayContent(tutorialPages[siteNumber])}
       <div className="tutorialNav">
-        <button type="button" style={bbstyle} onClick={(e) => changeSite(e, 'left')}>{'< BACK'}</button>
-        <button type="button" style={brstyle} onClick={(e) => changeSite(e, 'right')}>{'NEXT >'}</button>
+        <button type="button" style={bbstyle} onClick={() => { changeSite('left'); }}>{'< BACK'}</button>
+        <button type="button" style={brstyle} onClick={() => { changeSite('right'); }}>{'NEXT >'}</button>
       </div>
     </div>
   );
@@ -57,5 +57,5 @@ const TutorialPopup: React.FC<IProps> = ({ tutorialPages }) => {
 export default TutorialPopup;
 
 interface IProps {
-  tutorialPages: ReadonlyArray<ITutorialPage>;
+  tutorialPages: readonly ITutorialPage[];
 }

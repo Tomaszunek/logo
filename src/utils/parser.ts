@@ -1,70 +1,122 @@
-import { ICommandModel} from 'src/models/Command'
-import { CommandTypes } from 'src/models/CommandTypes';
+import type { ICommandModel } from "src/models/Command";
+import type { CommandTypes } from "src/models/CommandTypes";
+
+const isCommandType = (
+  value: string | undefined,
+): value is CommandTypes => {
+  switch (value) {
+    case "bk":
+    case "fd":
+    case "hideturtle":
+    case "home":
+    case "load":
+    case "pendown":
+    case "penup":
+    case "repeat":
+    case "save":
+    case "setbc":
+    case "setpos":
+    case "setsc":
+    case "setsw":
+    case "showturtle":
+    case "tl":
+    case "tr":
+      return true;
+    case undefined:
+      return false;
+    default:
+      return false;
+  }
+};
+
 export class Parser {
-    public text:string;
-    public index: number;
-    constructor(text: string) {
-        this.text = text;
-        this.index = 0;
+  public text: string;
+  public index: number;
+
+  public constructor(text: string) {
+    this.text = text;
+    this.index = 0;
+  }
+
+  public parse(cb: (text: string, text2: string) => void): ICommandModel[] {
+    const commandArray: ICommandModel[] = [];
+    const repeat = /repeat [0-9]+ \[.+\]/iu;
+    const movingArg = /(?:fd|bk|tl|tr|setsw) [0-9]+/iu;
+    const twoArg = /setpos [0-9]+ [0-9]+/iu;
+    const saveLoad = /(?:save|load) [a-z]{2,}/iu;
+    const colorArg = /(?:setsc|setbc) [0-9a-f]{6}/iu;
+    const noArg = /(?:hideturtle|showturtle|penup|pendown|home)/iu;
+    const finalRe = new RegExp(
+      [
+        repeat.source,
+        movingArg.source,
+        twoArg.source,
+        saveLoad.source,
+        colorArg.source,
+        noArg.source,
+      ].join("|"),
+      "giu",
+    );
+    const regexArray = this.text.match(finalRe);
+    const matchedText = regexArray?.join(" ");
+
+    if (regexArray === null || matchedText?.length !== this.text.length) {
+      cb(this.text, matchedText ?? "");
+      return commandArray;
     }
 
-    public parse(cb: (text: string ,text2: string) => void) {
-        const commandArray = new Array<ICommandModel>();
-        const repeat = new RegExp(/(repeat [0-9]+ \[.+\])/ig);
-        const movingArg = new RegExp(/((fd|bk|tl|tr|setsw) [0-9]+)/ig);
-        const twoArg = new RegExp(/(setpos [0-9]+ [0-9]+)/ig);
-        const saveLoad = new RegExp(/((save|load) [a-z]{2,})/ig);
-        const colorArg = new RegExp(/((setsc|setbc) [0-9,a-f]{6})/ig);
-        const noArg = new RegExp(/(hideturtle|showturtle|penup|pendown|home)/ig);
-        const finalRe = new RegExp(repeat.source + "|" + movingArg.source + "|" + twoArg.source + "|" + saveLoad.source + "|" + colorArg.source + "|" + noArg.source, "ig");
-        const regexArray = this.text.match(finalRe);
-        if(regexArray && regexArray.join(' ').length === this.text.length) {
-            for(const command of regexArray) {                
-                const commandArr = command.split(' ');
-                let commandElem : ICommandModel = {id: 0, name: commandArr[0] as CommandTypes};
-                if(repeat.test(command)){
-                    const sob = command.indexOf('[');
-                    const firstPart = command.slice(0, sob - 1).split(' ');
-                    const secondPart = command.slice(sob + 1, command.length - 1);
-                    const parser = new Parser(secondPart).parse(cb);
-                    if(parser && parser.length >= 1) { 
-                        commandElem = {
-                            ...commandElem,
-                            value: Number(firstPart[1]),
-                            commands: parser                        
-                        }
-                    } else {
-                        return;
-                    }                    
-                } else if(command.match(movingArg)) {
-                    commandElem = {
-                        ...commandElem,
-                        value: Number(commandArr[1])
-                    }
-                } else if(command.match(saveLoad)) {
-                    commandElem = { 
-                        ...commandElem,
-                        filename: commandArr[1]
-                    }
-                } else if(command.match(colorArg)) {
-                    commandElem = { 
-                        ...commandElem,
-                        color: '#' + commandArr[1]
-                    }
-                } else if(twoArg.test(command)){
-                    commandElem = { 
-                        ...commandElem,
-                        value: Number(commandArr[1]),
-                        arg2: Number(commandArr[2])
-                    }
-                } else {
-                    commandElem.name = command as CommandTypes;
-                }
-                commandArray.push(commandElem);
-            }
-        } else {
-            cb(this.text, regexArray ? regexArray.join(' ') : '');
+    for (const command of regexArray) {
+      const commandParts = command.split(" ");
+      const [commandName] = commandParts;
+
+      if (!isCommandType(commandName)) {
+        cb(this.text, matchedText);
+        return [];
+      }
+
+      let commandElement: ICommandModel = { id: 0, name: commandName };
+
+      if (repeat.test(command)) {
+        const openingBracket = command.indexOf("[");
+        const firstPart = command.slice(0, openingBracket - 1).split(" ");
+        const secondPart = command.slice(openingBracket + 1, command.length - 1);
+        const nestedCommands = new Parser(secondPart).parse(cb);
+
+        if (nestedCommands.length === 0) {
+          return [];
         }
-        return commandArray;
+
+        commandElement = {
+          ...commandElement,
+          commands: nestedCommands,
+          value: Number(firstPart[1]),
+        };
+      } else if (movingArg.test(command)) {
+        commandElement = {
+          ...commandElement,
+          value: Number(commandParts[1]),
+        };
+      } else if (saveLoad.test(command)) {
+        commandElement = {
+          ...commandElement,
+          filename: commandParts[1],
+        };
+      } else if (colorArg.test(command)) {
+        commandElement = {
+          ...commandElement,
+          color: `#${commandParts[1]}`,
+        };
+      } else if (twoArg.test(command)) {
+        commandElement = {
+          ...commandElement,
+          arg2: Number(commandParts[2]),
+          value: Number(commandParts[1]),
+        };
+      }
+
+      commandArray.push(commandElement);
     }
+
+    return commandArray;
+  }
 }

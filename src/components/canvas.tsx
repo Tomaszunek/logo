@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ICommandModel } from "src/models";
+import type { ICommandModel } from "src/models";
 import { useCommandStore } from "src/store/commandStore";
 import { Turtle } from "../utils/turtle";
 import { Caller } from "src/utils/caller";
@@ -11,34 +11,33 @@ const Canvas: React.FC = () => {
   const callerRef = React.useRef<Caller | null>(null);
 
   // Lazy initialization of Turtle and Caller
-  if (!turtleRef.current) {
-    turtleRef.current = new Turtle({
-      canvas: null,
-      homeX: 400,
-      homeY: 400,
-      dir: 0,
-      strokeColor: "#000000",
-      strokeWeight: 1,
-      pen: true,
-      visible: true,
-    });
-  }
-  if (!callerRef.current) {
-    callerRef.current = new Caller(turtleRef.current);
-  }
+  turtleRef.current ??= new Turtle({
+    canvas: null,
+    homeX: 400,
+    homeY: 400,
+    dir: 0,
+    strokeColor: "#000000",
+    strokeWeight: 1,
+    pen: true,
+    visible: true,
+  });
+  callerRef.current ??= new Caller(turtleRef.current);
 
   React.useEffect(() => {
-    if (!canvasRef.current) return;
-    const turtle = turtleRef.current!;
-    const caller = callerRef.current!;
+    const canvas = canvasRef.current;
+    const turtle = turtleRef.current;
+    const caller = callerRef.current;
+    if (canvas === null || turtle === null || caller === null) {
+      return undefined;
+    }
 
     // Attach canvas to the turtle instance
-    turtle.canvas = canvasRef.current;
+    turtle.canvas = canvas;
 
     // Clear any existing drawing before applying new commands
     turtle.clearCanvas();
 
-    commands.forEach((command: ICommandModel) => caller.execute(command));
+    commands.forEach((command: ICommandModel) => { caller.execute(command); });
 
     turtle.drawTurtle();
 
