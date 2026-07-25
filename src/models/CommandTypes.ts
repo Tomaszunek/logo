@@ -19,4 +19,12 @@ export type CommandTypes =
   | "ellipse"
   | "dot"
   | "setalpha"
-  | "setdash";
+  | "setdash"
+  | "polygon"
+  | "fillpoly"
+  | "star"
+  | "spiral"
+  | "cube"
+  | "sphere"
+  | "grid3d"
+  | "setglow";

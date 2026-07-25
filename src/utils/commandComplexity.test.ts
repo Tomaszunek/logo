@@ -28,6 +28,16 @@ describe("getCommandComplexity", () => {
     ).toEqual({ operations: 3, exceedsLimit: false });
   });
 
+  it("weights complex drawing primitives by their internal canvas work", () => {
+    const scene: ICommandModel[] = [
+      { id: 0, name: "star", value: 9, arg2: 120 },
+      { id: 0, name: "sphere", value: 90, arg2: 8 },
+      { id: 0, name: "grid3d", value: 260, arg2: 12 },
+    ];
+
+    expect(getCommandComplexity(scene).operations).toBe(64);
+  });
+
   it("counts exact repeat and nested-repeat execution cost", () => {
     const square = command("repeat", 4, [
       command("fd", 100),

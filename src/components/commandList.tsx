@@ -6,6 +6,20 @@ interface IProps {
   descriptions: Readonly<Record<string, ICommandDescription>>;
 }
 
+const twoNumberCommands = new Set<CommandTypes>([
+  "arc",
+  "cube",
+  "ellipse",
+  "fillpoly",
+  "grid3d",
+  "polygon",
+  "setdash",
+  "setpos",
+  "sphere",
+  "spiral",
+  "star",
+]);
+
 const CommandList: React.FC<IProps> = ({ descriptions }) => {
   const commands = useCommandStore((state) => state.commands);
   const editCommand = useCommandStore((state) => state.editCommand);
@@ -55,12 +69,7 @@ const CommandList: React.FC<IProps> = ({ descriptions }) => {
     const command = { ...item };
     if (type === "setbc" || type === "setsc") {
       command.color = e.target.value;
-    } else if (
-      type === "setpos" ||
-      type === "arc" ||
-      type === "ellipse" ||
-      type === "setdash"
-    ) {
+    } else if (twoNumberCommands.has(type)) {
       if (e.target.getAttribute("name") === "value") {
         command.value = Number(e.target.value);
       } else {

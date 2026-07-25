@@ -81,6 +81,24 @@ describe("Parser", () => {
     ]);
   });
 
+  it("parses complex scene and pseudo-3D commands", () => {
+    const { commands, onError } = parse(
+      "polygon 6 80 fillpoly 5 40 star 9 120 spiral -4 7 cube 100 45 sphere 90 8 grid3d 260 12 setglow 24",
+    );
+
+    expect(commands).toMatchObject([
+      { name: "polygon", value: 6, arg2: 80 },
+      { name: "fillpoly", value: 5, arg2: 40 },
+      { name: "star", value: 9, arg2: 120 },
+      { name: "spiral", value: -4, arg2: 7 },
+      { name: "cube", value: 100, arg2: 45 },
+      { name: "sphere", value: 90, arg2: 8 },
+      { name: "grid3d", value: 260, arg2: 12 },
+      { name: "setglow", value: 24 },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
   it("accepts uppercase commands and flexible whitespace", () => {
     const { commands, onError } = parse(
       "  REPEAT  4 [ FD 100\nTR 90 ]  ",

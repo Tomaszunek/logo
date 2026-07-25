@@ -16,22 +16,27 @@ const commandByName: Readonly<Partial<Record<string, CommandTypes>>> = {
   backward: "bk",
   bk: "bk",
   circle: "circle",
+  cube: "cube",
   dot: "dot",
   ellipse: "ellipse",
   fd: "fd",
+  fillpoly: "fillpoly",
   forward: "fd",
+  grid3d: "grid3d",
   hideturtle: "hideturtle",
   home: "home",
   left: "tl",
   lt: "tl",
   pendown: "pendown",
   penup: "penup",
+  polygon: "polygon",
   repeat: "repeat",
   right: "tr",
   rt: "tr",
   setalpha: "setalpha",
   setbc: "setbc",
   setdash: "setdash",
+  setglow: "setglow",
   seth: "seth",
   setheading: "seth",
   setpos: "setpos",
@@ -39,6 +44,9 @@ const commandByName: Readonly<Partial<Record<string, CommandTypes>>> = {
   setsw: "setsw",
   setxy: "setpos",
   showturtle: "showturtle",
+  sphere: "sphere",
+  spiral: "spiral",
+  star: "star",
   tl: "tl",
   tr: "tr",
 };
@@ -49,6 +57,7 @@ const numberCommands = new Set<CommandTypes>([
   "circle",
   "dot",
   "setalpha",
+  "setglow",
   "seth",
   "setsw",
   "tl",
@@ -61,6 +70,20 @@ const noArgumentCommands = new Set<CommandTypes>([
   "pendown",
   "penup",
   "showturtle",
+]);
+
+const twoNumberCommands = new Set<CommandTypes>([
+  "arc",
+  "cube",
+  "ellipse",
+  "fillpoly",
+  "grid3d",
+  "polygon",
+  "setdash",
+  "setpos",
+  "sphere",
+  "spiral",
+  "star",
 ]);
 
 const tokenize = (text: string): Token[] => {
@@ -144,12 +167,7 @@ export class Parser {
       return command;
     }
 
-    if (
-      name === "setpos" ||
-      name === "arc" ||
-      name === "ellipse" ||
-      name === "setdash"
-    ) {
+    if (twoNumberCommands.has(name)) {
       command.value = this.takeNumber();
       command.arg2 = this.takeNumber();
       return command;

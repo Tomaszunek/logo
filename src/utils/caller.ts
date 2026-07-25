@@ -75,6 +75,34 @@ export class Caller {
     this.turtle.drawDot(size);
   };
 
+  public polygon = (sides: number, radius: number) => {
+    this.turtle.drawPolygon(sides, radius, false);
+  };
+
+  public fillpoly = (sides: number, radius: number) => {
+    this.turtle.drawPolygon(sides, radius, true);
+  };
+
+  public star = (points: number, radius: number) => {
+    this.turtle.drawStar(points, radius);
+  };
+
+  public spiral = (turns: number, spacing: number) => {
+    this.turtle.drawSpiral(turns, spacing);
+  };
+
+  public cube = (size: number, depth: number) => {
+    this.turtle.drawCube(size, depth);
+  };
+
+  public sphere = (radius: number, detail: number) => {
+    this.turtle.drawSphere(radius, detail);
+  };
+
+  public grid3d = (size: number, divisions: number) => {
+    this.turtle.drawPerspectiveGrid(size, divisions);
+  };
+
   public repeat = (command: ICommandModel) => {
     if (command.value !== undefined && command.value !== 0) {
       for (let index = 0; index < command.value; index += 1) {
@@ -132,6 +160,10 @@ export class Caller {
   public setdash = (dash: number, gap: number) => {
     this.turtle.setDash(dash, gap);
   };
+
+  public setglow = (blur: number) => {
+    this.turtle.setGlow(blur);
+  };
 }
 
 type NumberAction = (caller: Caller, value: number) => void;
@@ -147,6 +179,7 @@ const numberActions: Readonly<
   dot: (caller, value) => { caller.dot(value); },
   fd: (caller, value) => { caller.fd(value); },
   setalpha: (caller, value) => { caller.setalpha(value); },
+  setglow: (caller, value) => { caller.setglow(value); },
   seth: (caller, value) => { caller.seth(value); },
   setsw: (caller, value) => { caller.setsw(value); },
   tl: (caller, value) => { caller.tl(value); },
@@ -157,11 +190,18 @@ const pairActions: Readonly<
   Partial<Record<ICommandModel["name"], PairAction>>
 > = {
   arc: (caller, angle, radius) => { caller.arc(angle, radius); },
+  cube: (caller, size, depth) => { caller.cube(size, depth); },
   ellipse: (caller, radiusX, radiusY) => {
     caller.ellipse(radiusX, radiusY);
   },
+  fillpoly: (caller, sides, radius) => { caller.fillpoly(sides, radius); },
+  grid3d: (caller, size, divisions) => { caller.grid3d(size, divisions); },
+  polygon: (caller, sides, radius) => { caller.polygon(sides, radius); },
   setdash: (caller, dash, gap) => { caller.setdash(dash, gap); },
   setpos: (caller, x, y) => { caller.setpos(x, y); },
+  sphere: (caller, radius, detail) => { caller.sphere(radius, detail); },
+  spiral: (caller, turns, spacing) => { caller.spiral(turns, spacing); },
+  star: (caller, points, radius) => { caller.star(points, radius); },
 };
 
 const colorActions: Readonly<

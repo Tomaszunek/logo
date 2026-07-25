@@ -15,21 +15,36 @@ const round = (value: number): number => Math.round(value * 100) / 100;
 const scalableFirstArguments = new Set<ICommandModel["name"]>([
   "bk",
   "circle",
+  "cube",
   "dot",
   "ellipse",
   "fd",
+  "grid3d",
+  "sphere",
 ]);
 
 const scalableSecondArguments = new Set<ICommandModel["name"]>([
   "arc",
+  "cube",
   "ellipse",
+  "fillpoly",
+  "polygon",
+  "spiral",
+  "star",
 ]);
 
 const twoNumberCommands = new Set<ICommandModel["name"]>([
   "arc",
+  "cube",
   "ellipse",
+  "fillpoly",
   "setdash",
   "setpos",
+  "grid3d",
+  "polygon",
+  "sphere",
+  "spiral",
+  "star",
 ]);
 
 const colorCommands = new Set<ICommandModel["name"]>(["setbc", "setsc"]);

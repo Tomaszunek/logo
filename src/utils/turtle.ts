@@ -12,6 +12,7 @@ export class Turtle {
   public strokeWeightHome: number;
   public opacity: number;
   public dash: readonly [number, number];
+  public glow: number;
   public pen: boolean;
   public visible: boolean;
 
@@ -37,6 +38,7 @@ export class Turtle {
     this.strokeWeightHome = turtle.strokeWeight;
     this.opacity = 1;
     this.dash = [0, 0];
+    this.glow = 0;
     this.pen = turtle.pen;
     this.initialPen = turtle.pen;
     this.visible = turtle.visible;
@@ -66,6 +68,8 @@ export class Turtle {
         context.strokeStyle = this.strokeColor;
         context.globalAlpha = this.opacity;
         context.setLineDash([...this.dash]);
+        context.shadowBlur = this.glow;
+        context.shadowColor = this.strokeColor;
       }
       context.moveTo(this.x, this.y);
       context.lineTo(newX, newY);
@@ -118,6 +122,7 @@ export class Turtle {
 
       context.save();
       context.globalAlpha = 1;
+      context.shadowBlur = 0;
       context.translate(this.x, this.y);
       context.rotate((this.dir * Math.PI) / 180 + Math.PI / 2);
       context.drawImage(image, -12, -16);
@@ -219,6 +224,194 @@ export class Turtle {
     context.fill();
   };
 
+  public drawPolygon = (sides: number, radius: number, filled: boolean) => {
+    const context = this.getDrawingContext();
+    const pointCount = clampInteger(Math.abs(sides), 3, 360);
+    const safeRadius = Math.abs(radius);
+    if (context === null || safeRadius === 0) {
+      return;
+    }
+
+    context.save();
+    context.translate(this.x, this.y);
+    context.rotate((this.dir * Math.PI) / 180);
+    context.beginPath();
+    for (let index = 0; index < pointCount; index += 1) {
+      const angle = (index * Math.PI * 2) / pointCount;
+      const x = Math.cos(angle) * safeRadius;
+      const y = Math.sin(angle) * safeRadius;
+      if (index === 0) {
+        context.moveTo(x, y);
+      } else {
+        context.lineTo(x, y);
+      }
+    }
+    context.closePath();
+    if (filled) {
+      context.fill();
+    }
+    context.stroke();
+    context.restore();
+  };
+
+  public drawStar = (points: number, radius: number) => {
+    const context = this.getDrawingContext();
+    const pointCount = clampInteger(Math.abs(points), 3, 180);
+    const safeRadius = Math.abs(radius);
+    if (context === null || safeRadius === 0) {
+      return;
+    }
+
+    context.save();
+    context.translate(this.x, this.y);
+    context.rotate((this.dir * Math.PI) / 180);
+    context.beginPath();
+    for (let index = 0; index < pointCount * 2; index += 1) {
+      const angle = (index * Math.PI) / pointCount;
+      const pointRadius = index % 2 === 0 ? safeRadius : safeRadius * 0.42;
+      const x = Math.cos(angle) * pointRadius;
+      const y = Math.sin(angle) * pointRadius;
+      if (index === 0) {
+        context.moveTo(x, y);
+      } else {
+        context.lineTo(x, y);
+      }
+    }
+    context.closePath();
+    context.stroke();
+    context.restore();
+  };
+
+  public drawSpiral = (turns: number, spacing: number) => {
+    const context = this.getDrawingContext();
+    const safeTurns = Math.min(100, Math.abs(turns));
+    const safeSpacing = Math.abs(spacing);
+    if (context === null || safeTurns === 0 || safeSpacing === 0) {
+      return;
+    }
+
+    const direction = turns < 0 ? -1 : 1;
+    const segments = Math.max(12, Math.ceil(safeTurns * 72));
+    context.save();
+    context.translate(this.x, this.y);
+    context.rotate((this.dir * Math.PI) / 180);
+    context.beginPath();
+    context.moveTo(0, 0);
+    for (let index = 1; index <= segments; index += 1) {
+      const progress = index / segments;
+      const angle = direction * progress * safeTurns * Math.PI * 2;
+      const radius = progress * safeTurns * safeSpacing;
+      context.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+    }
+    context.stroke();
+    context.restore();
+  };
+
+  public drawCube = (size: number, depth: number) => {
+    const context = this.getDrawingContext();
+    const half = Math.abs(size) / 2;
+    const safeDepth = Math.abs(depth);
+    if (context === null || half === 0 || safeDepth === 0) {
+      return;
+    }
+
+    const offset = safeDepth / Math.sqrt(2);
+    const front: readonly Point[] = [
+      { x: -half, y: -half },
+      { x: half, y: -half },
+      { x: half, y: half },
+      { x: -half, y: half },
+    ];
+    const back = front.map(({ x, y }) => ({
+      x: x + offset,
+      y: y - offset,
+    }));
+
+    context.save();
+    context.translate(this.x, this.y);
+    context.rotate((this.dir * Math.PI) / 180);
+    context.beginPath();
+    traceClosedShape(context, front);
+    traceClosedShape(context, back);
+    front.forEach((point, index) => {
+      const backPoint = back[index];
+      context.moveTo(point.x, point.y);
+      context.lineTo(backPoint.x, backPoint.y);
+    });
+    context.stroke();
+    context.restore();
+  };
+
+  public drawSphere = (radius: number, detail: number) => {
+    const context = this.getDrawingContext();
+    const safeRadius = Math.abs(radius);
+    const rings = clampInteger(Math.abs(detail), 2, 32);
+    if (context === null || safeRadius === 0) {
+      return;
+    }
+
+    context.save();
+    context.translate(this.x, this.y);
+    context.rotate((this.dir * Math.PI) / 180);
+    context.beginPath();
+    context.arc(0, 0, safeRadius, 0, Math.PI * 2);
+
+    for (let index = 1; index < rings; index += 1) {
+      const normalized = -1 + (index * 2) / rings;
+      const ringRadius = safeRadius * Math.sqrt(1 - normalized ** 2);
+      context.ellipse(
+        0,
+        normalized * safeRadius,
+        ringRadius,
+        Math.max(0.25, ringRadius * 0.18),
+        0,
+        0,
+        Math.PI * 2,
+      );
+    }
+
+    for (let index = 1; index < rings; index += 1) {
+      const width = safeRadius * Math.abs(Math.cos((index * Math.PI) / rings));
+      if (width > 0.25) {
+        context.ellipse(0, 0, width, safeRadius, 0, 0, Math.PI * 2);
+      }
+    }
+
+    context.stroke();
+    context.restore();
+  };
+
+  public drawPerspectiveGrid = (size: number, divisions: number) => {
+    const context = this.getDrawingContext();
+    const safeSize = Math.abs(size);
+    const count = clampInteger(Math.abs(divisions), 2, 64);
+    if (context === null || safeSize === 0) {
+      return;
+    }
+
+    context.save();
+    context.translate(this.x, this.y);
+    context.rotate((this.dir * Math.PI) / 180);
+    context.beginPath();
+
+    for (let index = 0; index <= count; index += 1) {
+      const x = -safeSize + (index * safeSize * 2) / count;
+      context.moveTo(0, 0);
+      context.lineTo(x, safeSize);
+    }
+
+    for (let index = 1; index <= count; index += 1) {
+      const progress = index / count;
+      const y = safeSize * progress ** 1.7;
+      const halfWidth = safeSize * progress;
+      context.moveTo(-halfWidth, y);
+      context.lineTo(halfWidth, y);
+    }
+
+    context.stroke();
+    context.restore();
+  };
+
   public clearCanvas = () => {
     this.cancelImageLoading();
     this.frameActive = false;
@@ -269,6 +462,7 @@ export class Turtle {
 
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.globalAlpha = 1;
+    context.shadowBlur = 0;
     context.fillStyle = color;
     context.fillRect(0, 0, this.canvas.width, this.canvas.height);
   };
@@ -307,6 +501,14 @@ export class Turtle {
     this.dash = safeDash;
   };
 
+  public setGlow = (blur: number) => {
+    const safeGlow = Math.min(100, Math.max(0, blur));
+    if (safeGlow !== this.glow) {
+      this.flushStroke();
+    }
+    this.glow = safeGlow;
+  };
+
   private readonly getDrawingContext = (): CanvasRenderingContext2D | null => {
     this.flushStroke();
     if (!this.pen || this.canvas === null) {
@@ -325,6 +527,8 @@ export class Turtle {
     context.fillStyle = this.strokeColor;
     context.globalAlpha = this.opacity;
     context.setLineDash([...this.dash]);
+    context.shadowBlur = this.glow;
+    context.shadowColor = this.strokeColor;
     return context;
   };
 
@@ -348,10 +552,31 @@ export class Turtle {
     this.strokeWeight = this.strokeWeightHome;
     this.opacity = 1;
     this.dash = [0, 0];
+    this.glow = 0;
     this.pen = this.initialPen;
     this.visible = this.initialVisibility;
   };
 }
+
+interface Point {
+  x: number;
+  y: number;
+}
+
+const clampInteger = (value: number, minimum: number, maximum: number): number =>
+  Math.min(maximum, Math.max(minimum, Math.round(value)));
+
+const traceClosedShape = (
+  context: CanvasRenderingContext2D,
+  points: readonly Point[],
+) => {
+  const [first] = points;
+  context.moveTo(first.x, first.y);
+  points.slice(1).forEach(({ x, y }) => {
+    context.lineTo(x, y);
+  });
+  context.closePath();
+};
 
 export interface ITurtleInstance {
   canvas: HTMLCanvasElement | null;

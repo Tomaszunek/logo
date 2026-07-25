@@ -4,23 +4,30 @@ import { Turtle } from "./turtle";
 
 const createHarness = () => {
   const context = {
-    beginPath: vi.fn(),
     arc: vi.fn(),
+    beginPath: vi.fn(),
     clearRect: vi.fn(),
+    closePath: vi.fn(),
     ellipse: vi.fn(),
     fill: vi.fn(),
     fillRect: vi.fn(),
-    lineTo: vi.fn(),
-    moveTo: vi.fn(),
-    setTransform: vi.fn(),
-    setLineDash: vi.fn(),
-    stroke: vi.fn(),
     fillStyle: "",
     globalAlpha: 1,
     lineCap: "butt",
     lineJoin: "miter",
+    lineTo: vi.fn(),
     lineWidth: 1,
+    moveTo: vi.fn(),
+    restore: vi.fn(),
+    rotate: vi.fn(),
+    save: vi.fn(),
+    setLineDash: vi.fn(),
+    setTransform: vi.fn(),
+    shadowBlur: 0,
+    shadowColor: "",
+    stroke: vi.fn(),
     strokeStyle: "",
+    translate: vi.fn(),
   };
   const canvas = {
     width: 800,
@@ -147,6 +154,27 @@ describe("Turtle and Caller", () => {
 
     expect(context.globalAlpha).toBe(0.35);
     expect(context.setLineDash).toHaveBeenLastCalledWith([8, 4]);
+  });
+
+  it("draws scene primitives and applies neon glow", () => {
+    const { caller, context } = createHarness();
+
+    caller.setglow(18);
+    caller.polygon(6, 80);
+    caller.fillpoly(5, 40);
+    caller.star(9, 120);
+    caller.spiral(-4, 7);
+    caller.cube(100, 45);
+    caller.sphere(90, 8);
+    caller.grid3d(260, 12);
+
+    expect(context.shadowBlur).toBe(18);
+    expect(context.shadowColor).toBe("#111827");
+    expect(context.fill).toHaveBeenCalledOnce();
+    expect(context.closePath).toHaveBeenCalledTimes(5);
+    expect(context.stroke).toHaveBeenCalledTimes(7);
+    expect(context.save).toHaveBeenCalledTimes(7);
+    expect(context.restore).toHaveBeenCalledTimes(7);
   });
 
   it("executes repeat exactly the requested number of times", () => {
