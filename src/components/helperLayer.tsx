@@ -24,8 +24,11 @@ const HelperLayer: React.FC<HelperLayerProps> = ({ examplePaths, descriptions, v
         <div className="modalHeader">
           <div>
             <p className="eyebrow">Inspiration gallery</p>
-            <h2 id="examples-title">Start from an example</h2>
-            <p>Pick a design to load its editable command stack.</p>
+            <h2 id="examples-title">Learn by remixing</h2>
+            <p>
+              Choose a technique, then load any recipe as an editable command
+              stack.
+            </p>
           </div>
           <button
             type="button"
