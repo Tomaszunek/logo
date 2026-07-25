@@ -52,9 +52,11 @@ const Canvas: React.FC = () => {
     }
 
     setRenderWarning("");
+    turtle.beginFrame();
     commands.forEach((command: ICommandModel) => {
       caller.execute(command);
     });
+    turtle.endFrame();
     turtle.drawTurtle();
 
     return () => {

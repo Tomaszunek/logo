@@ -35,8 +35,19 @@ negative coordinates, nested repeats, and both forms of hex colors.
 - [ ] Add browser-based visual regression snapshots for several canonical
   designs.
 
-Current automated baseline: 29 passing tests across parser, complexity, and
+Current automated baseline: 31 passing tests across parser, complexity, and
 Turtle/Caller behavior.
+
+## Rendering engine progress
+
+- [x] Batch same-style line segments into one canvas path during deterministic
+  replay.
+- [x] Flush paths before stroke-color, stroke-width, or background changes so
+  command ordering and visual output remain exact.
+- [x] Remove retired `save`/`load` cases from the command type, model, and
+  execution engine.
+- [ ] Move very large renders to incremental or worker-based execution if the
+  gallery grows beyond the current safety budget.
 
 ## Next: align and regenerate the example gallery
 

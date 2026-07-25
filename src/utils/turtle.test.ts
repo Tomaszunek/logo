@@ -101,6 +101,42 @@ describe("Turtle and Caller", () => {
     expect(turtle.dir % 360).toBe(0);
   });
 
+  it("batches same-style segments into one canvas stroke per frame", () => {
+    const { caller, context, turtle } = createHarness();
+
+    turtle.beginFrame();
+    caller.execute({
+      id: 0,
+      name: "repeat",
+      value: 4,
+      commands: [
+        { id: 1, name: "fd", value: 100 },
+        { id: 2, name: "tr", value: 90 },
+      ],
+    });
+    turtle.endFrame();
+
+    expect(context.lineTo).toHaveBeenCalledTimes(4);
+    expect(context.beginPath).toHaveBeenCalledOnce();
+    expect(context.stroke).toHaveBeenCalledOnce();
+  });
+
+  it("flushes a batch before a style or background change", () => {
+    const { caller, context, turtle } = createHarness();
+
+    turtle.beginFrame();
+    caller.fd(20);
+    caller.setsc("#ff00aa");
+    caller.fd(20);
+    caller.setbc("#102030");
+    turtle.endFrame();
+
+    expect(context.stroke).toHaveBeenCalledTimes(2);
+    expect(context.stroke.mock.invocationCallOrder[1]).toBeLessThan(
+      context.fillRect.mock.invocationCallOrder[0] ?? 0,
+    );
+  });
+
   it("resets all transient state before a replay", () => {
     const { caller, context, turtle } = createHarness();
 

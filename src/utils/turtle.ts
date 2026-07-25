@@ -19,6 +19,8 @@ export class Turtle {
   private readonly initialVisibility: boolean;
   private currentImage: HTMLImageElement | null = null;
   private imageRequest = 0;
+  private frameActive = false;
+  private pendingStroke = false;
 
   public constructor(turtle: ITurtleInstance) {
     this.x = turtle.homeX;
@@ -52,18 +54,35 @@ export class Turtle {
     const newY = this.y + Math.sin(radians) * distance;
 
     if (this.pen) {
-      context.beginPath();
+      if (!this.frameActive || !this.pendingStroke) {
+        context.beginPath();
+        context.lineCap = "round";
+        context.lineJoin = "round";
+        context.lineWidth = this.strokeWeight;
+        context.strokeStyle = this.strokeColor;
+      }
       context.moveTo(this.x, this.y);
       context.lineTo(newX, newY);
-      context.lineCap = "round";
-      context.lineJoin = "round";
-      context.lineWidth = this.strokeWeight;
-      context.strokeStyle = this.strokeColor;
-      context.stroke();
+      if (this.frameActive) {
+        this.pendingStroke = true;
+      } else {
+        context.stroke();
+      }
     }
 
     this.x = newX;
     this.y = newY;
+  };
+
+  public beginFrame = () => {
+    this.flushStroke();
+    this.frameActive = true;
+    this.pendingStroke = false;
+  };
+
+  public endFrame = () => {
+    this.flushStroke();
+    this.frameActive = false;
   };
 
   public drawTurtle = () => {
@@ -127,6 +146,8 @@ export class Turtle {
 
   public clearCanvas = () => {
     this.cancelImageLoading();
+    this.frameActive = false;
+    this.pendingStroke = false;
     if (this.canvas === null) {
       return;
     }
@@ -161,6 +182,7 @@ export class Turtle {
   };
 
   public setBackgroundColor = (color: string) => {
+    this.flushStroke();
     if (this.canvas === null) {
       return;
     }
@@ -176,11 +198,32 @@ export class Turtle {
   };
 
   public setStrokeColor = (color: string) => {
+    if (color !== this.strokeColor) {
+      this.flushStroke();
+    }
     this.strokeColor = color;
   };
 
   public setStrokeWeight = (weight: number) => {
-    this.strokeWeight = Math.max(0.25, weight);
+    const safeWeight = Math.max(0.25, weight);
+    if (safeWeight !== this.strokeWeight) {
+      this.flushStroke();
+    }
+    this.strokeWeight = safeWeight;
+  };
+
+  private readonly flushStroke = () => {
+    if (!this.pendingStroke || this.canvas === null) {
+      return;
+    }
+
+    const context = this.canvas.getContext("2d");
+    if (context === null) {
+      return;
+    }
+
+    context.stroke();
+    this.pendingStroke = false;
   };
 
   private readonly resetForReplay = () => {
