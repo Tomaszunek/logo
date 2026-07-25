@@ -30,4 +30,6 @@ export type CommandTypes =
   | "setglow"
   | "setgradient"
   | "setradial"
-  | "gradientbg";
+  | "gradientbg"
+  | "setsoftness"
+  | "setflow";

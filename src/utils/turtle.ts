@@ -13,6 +13,8 @@ export class Turtle {
   public opacity: number;
   public dash: readonly [number, number];
   public glow: number;
+  public softness: number;
+  public flow: number;
   public pen: boolean;
   public visible: boolean;
 
@@ -41,6 +43,8 @@ export class Turtle {
     this.opacity = 1;
     this.dash = [0, 0];
     this.glow = 0;
+    this.softness = 0;
+    this.flow = 1;
     this.pen = turtle.pen;
     this.initialPen = turtle.pen;
     this.visible = turtle.visible;
@@ -62,6 +66,14 @@ export class Turtle {
     const newY = this.y + Math.sin(radians) * distance;
 
     if (this.pen) {
+      if (this.softness > 0) {
+        this.flushStroke();
+        this.drawSoftSegment(context, this.x, this.y, newX, newY);
+        this.x = newX;
+        this.y = newY;
+        return;
+      }
+
       if (!this.frameActive || !this.pendingStroke) {
         context.beginPath();
         context.lineCap = "round";
@@ -217,6 +229,11 @@ export class Turtle {
 
     const radius = Math.abs(size) / 2;
     if (radius === 0) {
+      return;
+    }
+
+    if (this.softness > 0) {
+      this.drawSoftSegment(context, this.x, this.y, this.x, this.y, radius);
       return;
     }
 
@@ -563,6 +580,22 @@ export class Turtle {
     this.glow = safeGlow;
   };
 
+  public setSoftness = (softness: number) => {
+    const safeSoftness = Math.min(1, Math.max(0, softness));
+    if (safeSoftness !== this.softness) {
+      this.flushStroke();
+    }
+    this.softness = safeSoftness;
+  };
+
+  public setFlow = (flow: number) => {
+    const safeFlow = Math.min(1, Math.max(0, flow));
+    if (safeFlow !== this.flow) {
+      this.flushStroke();
+    }
+    this.flow = safeFlow;
+  };
+
   private readonly getDrawingContext = (): CanvasRenderingContext2D | null => {
     this.flushStroke();
     if (!this.pen || this.canvas === null) {
@@ -585,6 +618,47 @@ export class Turtle {
     context.shadowBlur = this.glow;
     context.shadowColor = this.getGlowColor();
     return context;
+  };
+
+  private readonly drawSoftSegment = (
+    context: CanvasRenderingContext2D,
+    startX: number,
+    startY: number,
+    endX: number,
+    endY: number,
+    brushRadius = this.strokeWeight / 2,
+  ) => {
+    if (this.flow === 0) {
+      return;
+    }
+
+    const radius = Math.max(0.125, brushRadius);
+    const distance = Math.hypot(endX - startX, endY - startY);
+    const preferredSpacing = Math.max(0.5, radius * 0.28);
+    const steps = Math.min(
+      4096,
+      Math.max(1, Math.ceil(distance / preferredSpacing)),
+    );
+    const transparent = transparentHex(this.strokeColor);
+    const solidStop = Math.max(0, 1 - this.softness);
+
+    context.globalAlpha = this.opacity * this.flow;
+    context.shadowBlur = this.glow;
+    context.shadowColor = this.getGlowColor();
+
+    for (let index = 0; index <= steps; index += 1) {
+      const progress = index / steps;
+      const x = startX + (endX - startX) * progress;
+      const y = startY + (endY - startY) * progress;
+      const gradient = context.createRadialGradient(x, y, 0, x, y, radius);
+      gradient.addColorStop(0, this.strokeColor);
+      if (solidStop > 0) {
+        gradient.addColorStop(solidStop, this.strokeColor);
+      }
+      gradient.addColorStop(1, transparent);
+      context.fillStyle = gradient;
+      context.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+    }
   };
 
   private readonly resolvePaint = (
@@ -668,6 +742,8 @@ export class Turtle {
     this.opacity = 1;
     this.dash = [0, 0];
     this.glow = 0;
+    this.softness = 0;
+    this.flow = 1;
     this.pen = this.initialPen;
     this.visible = this.initialVisibility;
   };
@@ -706,6 +782,13 @@ const traceClosedShape = (
     context.lineTo(x, y);
   });
   context.closePath();
+};
+
+const transparentHex = (color: string): string => {
+  const red = Number.parseInt(color.slice(1, 3), 16);
+  const green = Number.parseInt(color.slice(3, 5), 16);
+  const blue = Number.parseInt(color.slice(5, 7), 16);
+  return `rgba(${red}, ${green}, ${blue}, 0)`;
 };
 
 export interface ITurtleInstance {

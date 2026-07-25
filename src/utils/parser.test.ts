@@ -127,6 +127,21 @@ describe("Parser", () => {
     expect(onError).not.toHaveBeenCalled();
   });
 
+  it("parses soft-brush controls", () => {
+    const { commands, onError } = parse(
+      "setsw 48 setsoftness .8 setflow .35 fd 120 setsoftness 0",
+    );
+
+    expect(commands).toMatchObject([
+      { name: "setsw", value: 48 },
+      { name: "setsoftness", value: 0.8 },
+      { name: "setflow", value: 0.35 },
+      { name: "fd", value: 120 },
+      { name: "setsoftness", value: 0 },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
   it("accepts uppercase commands and flexible whitespace", () => {
     const { commands, onError } = parse(
       "  REPEAT  4 [ FD 100\nTR 90 ]  ",

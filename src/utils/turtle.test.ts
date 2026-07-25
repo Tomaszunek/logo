@@ -220,6 +220,27 @@ describe("Turtle and Caller", () => {
     expect(context.fill).toHaveBeenCalledOnce();
   });
 
+  it("draws a soft pen with an opaque core and transparent edge", () => {
+    const { caller, context, radialGradient, turtle } = createHarness();
+
+    caller.setsw(40);
+    caller.setsoftness(0.75);
+    caller.setflow(0.6);
+    caller.fd(20);
+
+    expect(context.stroke).not.toHaveBeenCalled();
+    expect(context.createRadialGradient).toHaveBeenCalled();
+    expect(context.fillRect.mock.calls.length).toBeGreaterThan(1);
+    expect(context.globalAlpha).toBe(0.6);
+    expect(radialGradient.addColorStop).toHaveBeenCalledWith(0, "#111827");
+    expect(radialGradient.addColorStop).toHaveBeenCalledWith(0.25, "#111827");
+    expect(radialGradient.addColorStop).toHaveBeenCalledWith(
+      1,
+      "rgba(17, 24, 39, 0)",
+    );
+    expect(turtle.x).toBe(420);
+  });
+
   it("executes repeat exactly the requested number of times", () => {
     const { caller, context, turtle } = createHarness();
 

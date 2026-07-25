@@ -180,6 +180,14 @@ export class Caller {
     this.turtle.setGlow(blur);
   };
 
+  public setsoftness = (softness: number) => {
+    this.turtle.setSoftness(softness);
+  };
+
+  public setflow = (flow: number) => {
+    this.turtle.setFlow(flow);
+  };
+
   public setgradient = (color1: string, color2: string, angle: number) => {
     this.turtle.setLinearGradient(color1, color2, angle);
   };
@@ -212,9 +220,11 @@ const numberActions: Readonly<
   dot: (caller, value) => { caller.dot(value); },
   fd: (caller, value) => { caller.fd(value); },
   setalpha: (caller, value) => { caller.setalpha(value); },
+  setflow: (caller, value) => { caller.setflow(value); },
   setglow: (caller, value) => { caller.setglow(value); },
   seth: (caller, value) => { caller.seth(value); },
   setsw: (caller, value) => { caller.setsw(value); },
+  setsoftness: (caller, value) => { caller.setsoftness(value); },
   tl: (caller, value) => { caller.tl(value); },
   tr: (caller, value) => { caller.tr(value); },
 };

@@ -111,8 +111,8 @@ const CommandInput: React.FC<IProps> = ({ descriptions }) => {
         </button>
       </form>
       <p className="inputHint">
-        Try setgradient, setradial, or gradientbg for layered color.
-        Hex colors work with or without #.
+        Airbrush with setsw, setsoftness, and setflow. Use setsoftness 0
+        to return to solid lines.
       </p>
       {showPopup && <Popup massage={popupText} />}
     </div>
