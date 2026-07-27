@@ -756,6 +756,83 @@ input:focus-visible,
   padding: 0 11px 10px;
 }
 
+.parameterAnimation {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0 11px 12px;
+}
+
+.parameterAnimationTrack {
+  padding-top: 9px;
+  border-top: 1px solid var(--line);
+}
+
+.animationProperty {
+  grid-column: 1 / -1;
+  color: var(--accent);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.parameterAnimation label {
+  display: grid;
+  gap: 4px;
+  color: var(--ink-muted);
+  font-size: 0.59rem;
+  font-weight: 700;
+}
+
+.parameterAnimation input,
+.parameterAnimation select {
+  width: 100%;
+  min-height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #0a1120;
+  font: inherit;
+}
+
+.parameterAnimation input {
+  padding: 0 8px;
+}
+
+.parameterAnimation select {
+  padding: 0 7px;
+}
+
+.animationSetup,
+.animationRemove {
+  border: 1px dashed rgba(121, 242, 192, 0.28);
+  border-radius: 8px;
+  color: var(--accent);
+  background: rgba(121, 242, 192, 0.05);
+  font-size: 0.63rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.animationSetup {
+  padding: 7px 9px;
+}
+
+.animationSetups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 11px 10px;
+}
+
+.animationSetups:empty {
+  display: none;
+}
+
+.animationRemove {
+  min-height: 32px;
+}
+
 .description p {
   margin: 0;
   color: var(--ink-muted);

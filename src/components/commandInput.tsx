@@ -111,8 +111,8 @@ const CommandInput: React.FC<IProps> = ({ descriptions }) => {
         </button>
       </form>
       <p className="inputHint">
-        Use setpalette for automatic color cycles, setseed for repeatable
-        particles, and push/pop for branching forms.
+        Any numeric parameter can use anim[start finish ms easing mode cycles].
+        Two-number commands can animate either or both positions.
       </p>
       {showPopup && <Popup massage={popupText} />}
     </div>

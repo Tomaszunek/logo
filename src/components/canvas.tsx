@@ -3,7 +3,14 @@ import type { ICommandModel } from "src/models";
 import { useCommandStore } from "src/store/commandStore";
 import { useSettingsStore } from "src/store/settingsStore";
 import { Caller } from "src/utils/caller";
-import { expandPlaybackCommands } from "src/utils/commandPlayback";
+import {
+  expandPlaybackCommands,
+  getAnimatedCommandAtTime,
+  getCommandAnimationDuration,
+  getCommandAnimations,
+  getFinalAnimatedCommand,
+  hasInfiniteAnimation,
+} from "src/utils/commandPlayback";
 import {
   getCommandComplexity,
   MAX_COMMAND_OPERATIONS,
@@ -42,8 +49,10 @@ interface PlaybackState {
   action: RunningAction | null;
   frameId: number | null;
   index: number;
+  isInfiniteScene: boolean;
   lastTimestamp: number | null;
   sampleStride: number;
+  sceneElapsedMs: number;
   steps: readonly ICommandModel[];
 }
 
@@ -132,6 +141,14 @@ const getActionKind = (name: ICommandModel["name"]): ActionKind => {
 };
 
 const getActionLabel = (command: Readonly<ICommandModel>): string => {
+  const animations = getCommandAnimations(command);
+  if (animations.length > 0) {
+    const properties = animations
+      .map(({ property }) => property)
+      .join(", ");
+    return `${command.name} · ${properties}`;
+  }
+
   const argumentsList = [
     command.value,
     command.arg2,
@@ -149,6 +166,11 @@ const getActionDuration = (
   kind: ActionKind,
   isSampledProgram: boolean,
 ): number => {
+  const animationDuration = getCommandAnimationDuration(command);
+  if (animationDuration > 0) {
+    return animationDuration;
+  }
+
   const durationScale = isSampledProgram ? 0.35 : 1;
   const value = Math.abs(command.value ?? 0);
 
@@ -258,8 +280,10 @@ const Canvas: React.FC = () => {
     action: null,
     frameId: null,
     index: 0,
+    isInfiniteScene: false,
     lastTimestamp: null,
     sampleStride: 1,
+    sceneElapsedMs: 0,
     steps: [],
   });
   const actionTokenRef = React.useRef(0);
@@ -367,7 +391,9 @@ const Canvas: React.FC = () => {
     const playback = playbackRef.current;
     playback.action = null;
     playback.index = 0;
+    playback.isInfiniteScene = steps.some(hasInfiniteAnimation);
     playback.lastTimestamp = null;
+    playback.sceneElapsedMs = 0;
     playback.sampleStride = Math.max(
       1,
       Math.ceil(steps.length / MAX_DETAILED_ACTIONS),
@@ -380,7 +406,7 @@ const Canvas: React.FC = () => {
       turtle.clearCanvas();
       turtle.beginFrame();
       steps.forEach((command) => {
-        caller.execute(command);
+        caller.execute(getFinalAnimatedCommand(command));
       });
       turtle.endFrame();
       playback.index = steps.length;
@@ -413,6 +439,49 @@ const Canvas: React.FC = () => {
       };
     }
 
+    if (playback.isInfiniteScene) {
+      const renderSceneAtTime = (elapsedMs: number) => {
+        turtle.clearCanvas();
+        turtle.beginFrame();
+        steps.forEach((command) => {
+          caller.execute(getAnimatedCommandAtTime(command, elapsedMs));
+        });
+        turtle.endFrame();
+        playback.index = steps.length;
+        setCompletedSteps(steps.length);
+        updateTurtlePose();
+      };
+
+      const token = actionTokenRef.current + 1;
+      actionTokenRef.current = token;
+      setActiveAction({
+        kind: "shape",
+        label: "live animation scene",
+        token,
+      });
+
+      tickRef.current = (timestamp: number) => {
+        if (statusRef.current !== "playing") {
+          return;
+        }
+
+        const previousTimestamp = playback.lastTimestamp ?? timestamp;
+        const elapsed = Math.min(100, timestamp - previousTimestamp);
+        playback.lastTimestamp = timestamp;
+        playback.sceneElapsedMs += elapsed * speedRef.current;
+        renderSceneAtTime(playback.sceneElapsedMs);
+        playback.frameId = window.requestAnimationFrame(tickRef.current);
+      };
+
+      renderSceneAtTime(0);
+      setStatus("playing");
+      playback.frameId = window.requestAnimationFrame(tickRef.current);
+      return () => {
+        cancelPlaybackFrame();
+        turtle.canvas = null;
+      };
+    }
+
     const beginAction = (command: ICommandModel) => {
       const kind = getActionKind(command.name);
       const token = actionTokenRef.current + 1;
@@ -436,6 +505,7 @@ const Canvas: React.FC = () => {
       });
 
       if (
+        getCommandAnimations(command).length === 0 &&
         kind !== "draw" &&
         kind !== "move" &&
         kind !== "turn"
@@ -456,7 +526,17 @@ const Canvas: React.FC = () => {
       const progressDelta = nextProgress - action.progress;
       const { command, from, kind } = action;
 
-      if (kind === "draw" && progressDelta > 0) {
+      if (getCommandAnimations(command).length > 0) {
+        turtle.clearCanvas();
+        turtle.beginFrame();
+        for (let index = 0; index < playback.index; index += 1) {
+          caller.execute(getFinalAnimatedCommand(steps[index]));
+        }
+        caller.execute(
+          getAnimatedCommandAtTime(command, nextProgress * action.duration),
+        );
+        turtle.endFrame();
+      } else if (kind === "draw" && progressDelta > 0) {
         const distance = getMovementDistance(command) * progressDelta;
         turtle.beginFrame();
         if (action.lineStarted) {
@@ -508,16 +588,26 @@ const Canvas: React.FC = () => {
 
       applyActionProgress(1);
       const { command, from, kind } = action;
-      if (kind === "draw") {
+      if (
+        kind === "draw" &&
+        getCommandAnimations(command).length === 0
+      ) {
         const radians = (from.direction * Math.PI) / 180;
         const distance = getMovementDistance(command);
         turtle.setPosition(
           from.x + Math.cos(radians) * distance,
           from.y + Math.sin(radians) * distance,
         );
-      } else if (kind === "turn") {
+      } else if (
+        kind === "turn" &&
+        getCommandAnimations(command).length === 0
+      ) {
         turtle.dir = getTurnTarget(command, from.direction);
-      } else if (kind === "move" && command.name === "home") {
+      } else if (
+        kind === "move" &&
+        command.name === "home" &&
+        getCommandAnimations(command).length === 0
+      ) {
         turtle.setPosition(turtle.homeX, turtle.homeY);
         turtle.dir = 0;
       }
@@ -540,6 +630,7 @@ const Canvas: React.FC = () => {
         activePlayback.action === null &&
         activePlayback.index < steps.length &&
         activePlayback.index % activePlayback.sampleStride !== 0 &&
+        getCommandAnimations(steps[activePlayback.index]).length === 0 &&
         instantSteps < MAX_INSTANT_STEPS_PER_FRAME
       ) {
         const command = steps[activePlayback.index];
@@ -619,10 +710,23 @@ const Canvas: React.FC = () => {
     cancelPlaybackFrame();
     turtle.clearCanvas();
     playback.action = null;
-    playback.index = 0;
+    playback.index = playback.isInfiniteScene ? playback.steps.length : 0;
     playback.lastTimestamp = null;
-    setActiveAction(null);
-    setCompletedSteps(0);
+    playback.sceneElapsedMs = 0;
+    if (playback.isInfiniteScene) {
+      const token = actionTokenRef.current + 1;
+      actionTokenRef.current = token;
+      setActiveAction({
+        kind: "shape",
+        label: "live animation scene",
+        token,
+      });
+    } else {
+      setActiveAction(null);
+    }
+    setCompletedSteps(
+      playback.isInfiniteScene ? playback.steps.length : 0,
+    );
     updateTurtlePose();
     setStatus("playing");
     playback.frameId = window.requestAnimationFrame(tickRef.current);
@@ -664,7 +768,7 @@ const Canvas: React.FC = () => {
     turtle.clearCanvas();
     turtle.beginFrame();
     playback.steps.forEach((command) => {
-      caller.execute(command);
+      caller.execute(getFinalAnimatedCommand(command));
     });
     turtle.endFrame();
     playback.action = null;
@@ -684,8 +788,9 @@ const Canvas: React.FC = () => {
     }
 
     if (
-      playbackStatus === "playing" ||
-      playbackStatus === "paused"
+      !playbackRef.current.isInfiniteScene &&
+      (playbackStatus === "playing" ||
+        playbackStatus === "paused")
     ) {
       finishNow();
     }

@@ -104,9 +104,11 @@ export const commandDescriptions: Readonly<
   },
   cube: {
     short: "cube",
-    name: "Wireframe cube",
-    long: "Draw a rotatable pseudo-3D wireframe cube.",
-    description: "",
+    name: "Animated wireframe cube",
+    long:
+      "Draw a pseudo-3D box with independent width, height, depth, and rotation tracks.",
+    description:
+      "Use cube width anim[...] height anim[...] depth anim[...] rotation anim[...]. Add repeat or pingpong plus a cycle count or infinite.",
     image: "command1.jpg",
     color: "#06b6d4",
     argCount: 2,
@@ -349,8 +351,9 @@ export const commandDescriptions: Readonly<
   fd: {
     short: "fd",
     name: "forward",
-    long: "Turtle will go forward.",
-    description: "",
+    long: "Move forward once or animate a distance range over time.",
+    description:
+      "Use fd anim[start finish milliseconds easing] for authored motion.",
     image: "fd.gif",
     color: "#ff0000",
     argCount: 1,

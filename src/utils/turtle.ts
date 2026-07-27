@@ -338,20 +338,31 @@ export class Turtle {
     context.restore();
   };
 
-  public drawCube = (size: number, depth: number) => {
+  public drawCube = (
+    width: number,
+    height: number,
+    depth: number,
+    rotation = 0,
+  ) => {
     const context = this.getDrawingContext();
-    const half = Math.abs(size) / 2;
+    const halfWidth = Math.abs(width) / 2;
+    const halfHeight = Math.abs(height) / 2;
     const safeDepth = Math.abs(depth);
-    if (context === null || half === 0 || safeDepth === 0) {
+    if (
+      context === null ||
+      halfWidth === 0 ||
+      halfHeight === 0 ||
+      safeDepth === 0
+    ) {
       return;
     }
 
     const offset = safeDepth / Math.sqrt(2);
     const front: readonly Point[] = [
-      { x: -half, y: -half },
-      { x: half, y: -half },
-      { x: half, y: half },
-      { x: -half, y: half },
+      { x: -halfWidth, y: -halfHeight },
+      { x: halfWidth, y: -halfHeight },
+      { x: halfWidth, y: halfHeight },
+      { x: -halfWidth, y: halfHeight },
     ];
     const back = front.map(({ x, y }) => ({
       x: x + offset,
@@ -360,7 +371,7 @@ export class Turtle {
 
     context.save();
     context.translate(this.x, this.y);
-    context.rotate((this.dir * Math.PI) / 180);
+    context.rotate(((this.dir + rotation) * Math.PI) / 180);
     context.beginPath();
     traceClosedShape(context, front);
     traceClosedShape(context, back);

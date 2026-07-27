@@ -204,6 +204,20 @@ describe("Turtle and Caller", () => {
     expect(context.restore).toHaveBeenCalledTimes(7);
   });
 
+  it("applies an independent rotation offset to cubes", () => {
+    const { caller, context } = createHarness();
+
+    caller.execute({
+      arg2: 80,
+      id: 1,
+      name: "cube",
+      rotation: 45,
+      value: 200,
+    });
+
+    expect(context.rotate).toHaveBeenCalledWith(Math.PI / 4);
+  });
+
   it("renders linear, radial, and background gradients", () => {
     const {
       caller,

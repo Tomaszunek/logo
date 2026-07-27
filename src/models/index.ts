@@ -1,4 +1,8 @@
-export { blendModes } from './Command';
+export {
+  animationEasings,
+  animationModes,
+  blendModes,
+} from './Command';
 export type * from './Command';
 export type * from './CommandTypes';
 export type * from './CommandDescription';
