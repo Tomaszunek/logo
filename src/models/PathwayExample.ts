@@ -6,11 +6,13 @@ export interface IPathwayExample {
   command: ICommandModel;
   image: string;
   type: ExampleCategory;
+  animationFocus?: string;
   performanceFocus?: string;
 }
 
 export type ExampleCategory =
   | "showstoppers"
+  | "motion"
   | "symbols"
   | "first-steps"
   | "geometry"
