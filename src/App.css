@@ -1025,6 +1025,12 @@ input:focus-visible,
   background: rgba(251, 191, 36, 0.09);
 }
 
+.exampleTags .motionBadge {
+  border-color: rgba(34, 211, 238, 0.32);
+  color: #a5f3fc;
+  background: rgba(34, 211, 238, 0.1);
+}
+
 .pathexample .path {
   display: -webkit-box;
   overflow: hidden;

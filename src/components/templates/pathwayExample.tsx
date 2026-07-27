@@ -17,7 +17,8 @@ const getCommandNames = (
 
 const PathwayExample: React.FC<IProps> = ({ examplePath, onSelect }) => {
   const replaceCommands = useCommandStore((state) => state.replaceCommands);
-  const { name, path, image, type } = examplePath;
+  const { animationFocus, name, path, image, performanceFocus, type } =
+    examplePath;
   const commandNames = getCommandNames(examplePath.command);
   const operationCount = getCommandComplexity([examplePath.command]).operations;
   const setCommands = () => {
@@ -38,13 +39,19 @@ const PathwayExample: React.FC<IProps> = ({ examplePath, onSelect }) => {
         alt={`${name} Logo drawing preview`}
       />
       <span className="exampleTags" aria-label="Commands demonstrated">
-        {examplePath.performanceFocus !== undefined && (
+        {animationFocus !== undefined && (
+          <>
+            <code className="motionBadge">LIVE</code>
+            <code className="motionBadge">{animationFocus}</code>
+          </>
+        )}
+        {performanceFocus !== undefined && (
           <>
             <code className="performanceBadge">
               {operationCount.toLocaleString()} ops
             </code>
             <code className="performanceBadge">
-              {examplePath.performanceFocus}
+              {performanceFocus}
             </code>
           </>
         )}

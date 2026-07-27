@@ -24,9 +24,16 @@
     <script type="module">
       import { pathwayExamples } from "/src/data/pathwayExamples.ts";
       import { Caller } from "/src/utils/caller.ts";
+      import {
+        expandPlaybackCommands,
+        getAnimatedCommandAtTime,
+      } from "/src/utils/commandPlayback.ts";
       import { Turtle } from "/src/utils/turtle.ts";
 
-      const name = new URLSearchParams(window.location.search).get("name");
+      const parameters = new URLSearchParams(window.location.search);
+      const name = parameters.get("name");
+      const requestedTime = Number(parameters.get("time") ?? 0);
+      const time = Number.isFinite(requestedTime) ? requestedTime : 0;
       const example = pathwayExamples.find((item) => item.name === name);
       const canvas = document.querySelector("canvas");
 
@@ -47,7 +54,9 @@
       const caller = new Caller(turtle);
 
       turtle.beginFrame();
-      caller.execute(example.command);
+      expandPlaybackCommands([example.command]).forEach((command) => {
+        caller.execute(getAnimatedCommandAtTime(command, time));
+      });
       turtle.endFrame();
       document.documentElement.dataset.ready = "true";
     </script>

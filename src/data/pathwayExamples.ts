@@ -11,6 +11,7 @@ interface ExampleSpec {
   source: string;
   image: string;
   type: IPathwayExample["type"];
+  animationFocus?: string;
   performanceFocus?: string;
   scale?: number;
   start?: readonly [x: number, y: number];
@@ -105,6 +106,68 @@ const serializeDefaultArgument = (
   return command.blend ?? command.value ?? 0;
 };
 
+const serializeAnimation = (
+  animation: NonNullable<ICommandModel["animation"]>,
+): string => {
+  const cycle =
+    animation.mode === "once"
+      ? ""
+      : ` ${animation.mode} ${animation.cycles}`;
+  return `anim[${animation.start} ${animation.finish} ${animation.durationMs} ${animation.easing}${cycle}]`;
+};
+
+const getSerializedProperty = (
+  command: Readonly<ICommandModel>,
+  property: "arg2" | "depth" | "height" | "rotation" | "value" | "width",
+  fallback: number,
+): string | number => {
+  if (command.animation?.property === property) {
+    return serializeAnimation(command.animation);
+  }
+
+  const animation = command.animations?.find(
+    (candidate) => candidate.property === property,
+  );
+  if (animation !== undefined) {
+    return serializeAnimation(animation);
+  }
+
+  return command[property] ?? fallback;
+};
+
+const getSerializedDefaultArgument = (
+  command: Readonly<ICommandModel>,
+): string | number => {
+  if (command.animation?.property === "value") {
+    return serializeAnimation(command.animation);
+  }
+  return serializeDefaultArgument(command);
+};
+
+const serializeCubeCommand = (
+  command: Readonly<ICommandModel>,
+): string => {
+  if (command.animations === undefined) {
+    const rotation =
+      command.animation?.property === "rotation"
+        ? ` ${serializeAnimation(command.animation)}`
+        : "";
+    return `cube ${command.value ?? 220} ${command.arg2 ?? 90}${rotation}`;
+  }
+
+  return [
+    "cube",
+    "width",
+    getSerializedProperty(command, "width", command.value ?? 220),
+    "height",
+    getSerializedProperty(command, "height", command.value ?? 220),
+    "depth",
+    getSerializedProperty(command, "depth", command.arg2 ?? 90),
+    "rotation",
+    getSerializedProperty(command, "rotation", 0),
+  ].join(" ");
+};
+
 const serializeCommand = (command: Readonly<ICommandModel>): string => {
   if (command.name === "repeat") {
     const nestedCommands = command.commands
@@ -113,8 +176,12 @@ const serializeCommand = (command: Readonly<ICommandModel>): string => {
     return `repeat ${command.value ?? 0} [${nestedCommands ?? ""}]`;
   }
 
+  if (command.name === "cube") {
+    return serializeCubeCommand(command);
+  }
+
   if (twoNumberCommands.has(command.name)) {
-    return `${command.name} ${command.value ?? 0} ${command.arg2 ?? 0}`;
+    return `${command.name} ${getSerializedProperty(command, "value", 0)} ${getSerializedProperty(command, "arg2", 0)}`;
   }
 
   if (colorCommands.has(command.name)) {
@@ -124,14 +191,14 @@ const serializeCommand = (command: Readonly<ICommandModel>): string => {
   if (gradientCommands.has(command.name)) {
     const color1 = command.color?.replace("#", "") ?? "000000";
     const color2 = command.color2?.replace("#", "") ?? "ffffff";
-    return `${command.name} ${color1} ${color2} ${command.value ?? 0}`;
+    return `${command.name} ${color1} ${color2} ${getSerializedProperty(command, "value", 0)}`;
   }
 
   if (noArgumentCommands.has(command.name)) {
     return command.name;
   }
 
-  return `${command.name} ${serializeDefaultArgument(command)}`;
+  return `${command.name} ${getSerializedDefaultArgument(command)}`;
 };
 
 const example = ({
@@ -190,6 +257,12 @@ export const exampleCollections: readonly IExampleCollection[] = [
     label: "Showstoppers",
     description:
       "Dense, surprising compositions that reveal how far commands can go.",
+  },
+  {
+    id: "motion",
+    label: "Motion studio",
+    description:
+      "Load living scenes with synchronized easing, loops, morphs, and multi-track animation.",
   },
   {
     id: "performance",
@@ -297,6 +370,110 @@ export const pathwayExamples: readonly IPathwayExample[] = [
       "repeat 1 [gradientbg 071013 172554 45 hideturtle setblend screen setglow 12 setpalette ffb703 06d6a0 3a86ff f72585 setsw 4 repeat 36 [push penup fd 238 pendown polygon 8 34 star 8 25 pop tr 10] setgradient fef3c7 f59e0b 0 setsw 7 circle 190 setdash 12 8 circle 145 setdash 0 0 setalpha .65 repeat 24 [push penup fd 112 pendown dot 16 pop tr 15] setalpha 1 setradial ffffff f59e0b 70 fillpoly 24 66 setblend source-over setglow 0]",
     image: "celestial-clockwork.png",
     type: "showstoppers",
+  }),
+  example({
+    name: "Kinetic neon orrery",
+    source:
+      "repeat 1 [gradientbg 02030a 20104f anim[0 180 10000 linear repeat infinite] hideturtle setblend screen setalpha .58 setglow anim[8 24 2400 ease-in-out pingpong infinite] setsw 3 setpalette 22d3ee 818cf8 e879f9 fbbf24 tr anim[0 360 12000 linear repeat infinite] repeat 12 [push penup fd 225 pendown ellipse anim[24 72 2200 ease-in-out pingpong infinite] 15 sphere anim[12 29 1800 ease-in-out pingpong infinite] 7 pop tr 30] setradial ffffff 38bdf8 anim[45 110 2600 ease-in-out pingpong infinite] sphere anim[55 94 2600 ease-in-out pingpong infinite] 14 setalpha .32 setdash 8 10 ellipse anim[155 285 4200 ease-in-out pingpong infinite] anim[42 118 3100 ease-in-out pingpong infinite]]",
+    image: "kinetic-neon-orrery.png",
+    type: "motion",
+    animationFocus: "Synchronized orbit",
+  }),
+  example({
+    name: "Morphing hypercube array",
+    source:
+      "repeat 1 [gradientbg 020617 240046 anim[25 155 9000 linear repeat infinite] hideturtle setblend lighter setalpha .52 setglow 18 setsw 3 setgradient 22d3ee e879f9 anim[0 180 7000 linear repeat infinite] cube width anim[105 275 2800 ease-in-out pingpong infinite] height anim[260 95 2200 ease-in-out pingpong infinite] depth anim[35 150 3400 ease-in-out pingpong infinite] rotation anim[0 360 6000 linear repeat infinite] setalpha .28 setglow 10 repeat 8 [tr 45 push penup fd 245 pendown cube width anim[42 105 1900 ease-in-out pingpong infinite] height anim[108 38 2500 ease-in-out pingpong infinite] depth anim[20 74 2100 ease-in-out pingpong infinite] rotation anim[360 0 4300 linear repeat infinite] pop] setradial ffffff 818cf8 72 sphere anim[28 66 1800 ease-in-out pingpong infinite] 10]",
+    image: "morphing-hypercube-array.png",
+    type: "motion",
+    animationFocus: "Four-track morph",
+  }),
+  example({
+    name: "Chromatic tidal bloom",
+    source:
+      "repeat 1 [gradientbg 030712 172554 anim[0 180 11000 linear repeat infinite] hideturtle setblend screen setalpha anim[.22 .68 2600 ease-in-out pingpong infinite] setglow anim[6 22 2600 ease-in-out pingpong infinite] setsw anim[1.2 4.5 2200 ease-in-out pingpong infinite] setpalette 22d3ee a78bfa f472b6 fbbf24 repeat 36 [ellipse anim[65 285 4200 ease-in-out pingpong infinite] anim[16 105 3100 ease-in-out pingpong infinite] tr 10] setalpha .72 setradial ffffff f472b6 anim[45 105 2400 ease-in-out pingpong infinite] fillpoly 24 anim[38 88 2400 ease-in-out pingpong infinite] setblend lighter setalpha .34 tr anim[0 360 8500 linear repeat infinite] star 18 anim[115 275 3600 ease-in-out pingpong infinite]]",
+    image: "chromatic-tidal-bloom.png",
+    type: "motion",
+    animationFocus: "Breathing geometry",
+  }),
+  example({
+    name: "Particle pulse reactor",
+    source:
+      "repeat 1 [gradientbg 02030a 111827 90 hideturtle setseed 202607 setblend screen setsymmetry 16 setalpha anim[.12 .48 1800 ease-in-out pingpong infinite] setflow .55 setglow anim[3 18 1800 ease-in-out pingpong infinite] setpalette 22d3ee 818cf8 e879f9 f472b6 spray anim[35 240 3000 ease-in-out pingpong infinite] 480 setsymmetry 8 setalpha .6 tr anim[0 360 7200 linear repeat infinite] repeat 8 [push penup fd 145 pendown spray anim[18 58 2100 ease-in-out pingpong infinite] 220 dot anim[5 20 1600 ease-in-out pingpong infinite] pop tr 45] setsymmetry 1 setradial ffffff fbbf24 anim[30 78 1800 ease-in-out pingpong infinite] fillpoly 24 anim[22 60 1800 ease-in-out pingpong infinite]]",
+    image: "particle-pulse-reactor.png",
+    type: "motion",
+    animationFocus: "Particle heartbeat",
+  }),
+  example({
+    name: "Lissajous signal garden",
+    source:
+      "repeat 1 [gradientbg 020617 1e1b4b anim[45 135 8000 ease-in-out pingpong infinite] hideturtle setblend screen setglow 20 setsw 3 setpalette 67e8f9 a78bfa f472b6 fef08a push penup setpos anim[150 650 4200 ease-in-out pingpong infinite] anim[260 540 2800 ease-in-out pingpong infinite] pendown star 12 anim[38 92 2100 ease-in-out pingpong infinite] sphere anim[25 58 1700 ease-in-out pingpong infinite] 8 pop push penup setpos anim[650 150 3500 ease-in-out pingpong infinite] anim[540 260 4900 ease-in-out pingpong infinite] pendown ellipse anim[42 120 2400 ease-in-out pingpong infinite] anim[18 66 3100 ease-in-out pingpong infinite] dot anim[8 28 1500 ease-in-out pingpong infinite] pop setalpha .28 setdash 7 11 tr anim[0 360 9000 linear repeat infinite] repeat 18 [ellipse anim[100 310 5200 ease-in-out pingpong infinite] 42 tr 10]]",
+    image: "lissajous-signal-garden.png",
+    type: "motion",
+    animationFocus: "Dual-axis motion",
+  }),
+  example({
+    name: "Quantum compass engine",
+    source:
+      "repeat 1 [gradientbg 030712 172554 90 hideturtle setblend lighter setgradient 22d3ee e879f9 anim[0 360 10000 linear repeat infinite] setglow anim[8 20 2600 ease-in-out pingpong infinite] setsw 3 seth anim[0 360 12000 linear repeat infinite] repeat 24 [push penup fd anim[95 255 3600 ease-in-out pingpong infinite] pendown star 8 anim[16 46 2200 ease-in-out pingpong infinite] dot anim[4 14 1400 ease-in-out pingpong infinite] pop tr 15] setalpha .42 setdash anim[2 18 2400 ease-in-out pingpong infinite] anim[18 3 2400 ease-in-out pingpong infinite] circle anim[105 235 3600 ease-in-out pingpong infinite] setdash 0 0 setalpha .8 setradial ffffff 38bdf8 anim[32 86 2200 ease-in-out pingpong infinite] polygon 12 anim[28 72 2200 ease-in-out pingpong infinite]]",
+    image: "quantum-compass-engine.png",
+    type: "motion",
+    animationFocus: "Radial choreography",
+  }),
+  example({
+    name: "Liquid spiral clock",
+    source:
+      "repeat 1 [gradientbg 02030a 240046 anim[0 180 12000 linear repeat infinite] hideturtle setblend screen setalpha .48 setglow anim[5 19 2300 ease-in-out pingpong infinite] setsw anim[1 5 2300 ease-in-out pingpong infinite] setpalette 22d3ee 818cf8 e879f9 fb7185 fbbf24 tr anim[0 360 15000 linear repeat infinite] repeat 12 [push penup fd 150 pendown spiral anim[-2.5 5.5 4200 ease-in-out pingpong infinite] anim[2 9 2700 ease-in-out pingpong infinite] pop tr 30] setalpha .62 repeat 18 [ellipse anim[78 260 4400 ease-in-out pingpong infinite] anim[18 72 3300 ease-in-out pingpong infinite] tr 10] setradial ffffff f472b6 anim[38 92 2500 ease-in-out pingpong infinite] dot anim[22 70 2500 ease-in-out pingpong infinite]]",
+    image: "liquid-spiral-clock.png",
+    type: "motion",
+    animationFocus: "Counter-rotation",
+  }),
+  example({
+    name: "Breathing crystal skyline",
+    source:
+      "repeat 1 [gradientbg 020617 172554 anim[45 135 9500 linear repeat infinite] hideturtle setblend screen setalpha .24 setglow 7 setgradient 22d3ee 818cf8 anim[0 180 8000 linear repeat infinite] push penup setpos 400 255 pendown grid3d anim[190 365 4200 ease-in-out pingpong infinite] 28 pop setalpha .58 setglow anim[7 18 2400 ease-in-out pingpong infinite] repeat 8 [tr 45 push penup fd 220 pendown cube width anim[45 112 2200 ease-in-out pingpong infinite] height anim[125 42 2900 ease-in-out pingpong infinite] depth anim[25 82 2500 ease-in-out pingpong infinite] rotation anim[0 360 6200 linear repeat infinite] pop] setalpha .75 setradial ffffff 38bdf8 anim[42 105 2600 ease-in-out pingpong infinite] sphere anim[38 82 2600 ease-in-out pingpong infinite] 12]",
+    image: "breathing-crystal-skyline.png",
+    type: "motion",
+    animationFocus: "Living 3D scene",
+  }),
+  example({
+    name: "Infinite prism reactor",
+    source:
+      "repeat 1 [gradientbg 02030a 240046 anim[0 360 12000 linear repeat infinite] hideturtle setseed 7314 setblend screen setsc 94a3b8 setalpha anim[.08 .22 4000 ease-in-out pingpong infinite] spray anim[280 390 3200 ease-in-out pingpong infinite] anim[500 1100 2400 ease-in-out pingpong infinite] setalpha .28 setgradient 00f5d4 ff006e anim[0 360 6000 linear repeat infinite] setglow anim[8 30 1800 ease-in-out pingpong infinite] setsw anim[1 4 1400 ease-in-out pingpong infinite] push penup setpos 400 400 pendown seth anim[0 360 9000 linear repeat infinite] repeat 12 [ellipse anim[120 310 3000 ease-in-out pingpong infinite] anim[28 105 1900 ease-in-out pingpong infinite] tr 30] pop setalpha .18 setgradient fbbf24 818cf8 anim[360 0 7000 linear repeat infinite] push penup setpos 400 400 pendown seth anim[360 0 11000 linear repeat infinite] repeat 9 [star anim[5 11 2600 ease-in-out pingpong infinite] anim[120 230 3400 ease-in-out pingpong infinite] tr 40] pop setalpha .55 setgradient 22d3ee e879f9 anim[0 360 4200 linear repeat infinite] push penup setpos 400 400 pendown seth anim[0 360 8000 linear repeat infinite] repeat 16 [push penup fd anim[140 245 2200 ease-in-out pingpong infinite] pendown cube width anim[25 72 1500 ease-in-out pingpong infinite] height anim[78 30 1900 ease-in-out pingpong infinite] depth anim[18 55 1700 ease-in-out pingpong infinite] rotation anim[0 360 2400 linear repeat infinite] pop tr 22.5] pop setalpha .82 setradial ffffff 22d3ee anim[60 165 1800 ease-in-out pingpong infinite] fillpoly anim[6 20 2600 ease-in-out pingpong infinite] anim[45 105 1500 ease-in-out pingpong infinite] setalpha .62 setgradient ffffff 818cf8 anim[0 360 3000 linear repeat infinite] sphere anim[72 138 2100 ease-in-out pingpong infinite] 18 setalpha .9 setgradient fef08a f472b6 anim[360 0 2200 linear repeat infinite] star anim[8 24 1800 ease-in-out pingpong infinite] anim[32 82 1300 ease-in-out pingpong infinite] setblend source-over setalpha 1 setglow 0]",
+    image: "infinite-prism-reactor.png",
+    type: "motion",
+    animationFocus: "Layered motion system",
+  }),
+  example({
+    name: "Nebula cube carousel",
+    source:
+      "repeat 1 [gradientbg 020617 312e81 anim[0 180 6000 linear pingpong infinite] hideturtle setseed 42 setblend screen setalpha .16 setsc ffffff spray anim[260 390 2800 ease-in-out pingpong infinite] anim[350 850 2200 ease-in-out pingpong infinite] setalpha .7 setgradient 22d3ee e879f9 anim[0 360 5000 linear repeat infinite] setsw anim[1 5 1400 ease-in-out pingpong infinite] setglow anim[8 28 1800 ease-in-out pingpong infinite] push penup setpos 400 400 pendown seth anim[0 360 7000 linear repeat infinite] ellipse anim[170 300 2400 ease-in-out pingpong infinite] anim[45 115 1700 ease-in-out pingpong infinite] pop push penup setpos 400 400 pendown seth anim[0 360 9000 linear repeat infinite] repeat 12 [push penup fd anim[150 265 2200 ease-in-out pingpong infinite] pendown cube width anim[35 85 1500 ease-in-out pingpong infinite] height anim[85 35 1900 ease-in-out pingpong infinite] depth anim[20 60 1700 ease-in-out pingpong infinite] rotation anim[0 360 2600 linear repeat infinite] pop tr 30] pop push penup setpos 400 400 pendown setradial ffffff 22d3ee anim[70 150 1800 ease-in-out pingpong infinite] sphere anim[65 125 2100 ease-in-out pingpong infinite] 16 pop setblend source-over setalpha 1 setglow 0]",
+    image: "nebula-cube-carousel.png",
+    type: "motion",
+    animationFocus: "Orbital cube swarm",
+  }),
+  example({
+    name: "Radial escape sequence",
+    source:
+      "repeat 1 [gradientbg 020617 0f172a anim[35 145 9000 ease-in-out pingpong infinite] hideturtle setseed 8088 setblend screen setalpha .18 setsc 94a3b8 spray anim[20 390 3000 ease-out repeat infinite] anim[160 820 2400 ease-out repeat infinite] setalpha .52 setgradient 22d3ee e879f9 anim[0 360 7000 linear repeat infinite] setglow anim[6 22 1900 ease-in-out pingpong infinite] setsw anim[1 4 1500 ease-in-out pingpong infinite] seth anim[0 360 16000 linear repeat infinite] repeat 16 [push penup fd anim[0 330 2800 ease-out repeat infinite] pendown cube width anim[12 58 2800 ease-out repeat infinite] height anim[18 72 2800 ease-out repeat infinite] depth anim[8 42 2800 ease-out repeat infinite] rotation anim[0 360 2800 linear repeat infinite] dot anim[3 14 2800 ease-out repeat infinite] pop tr 22.5] setalpha .7 setgradient fef08a f472b6 anim[0 360 5000 linear repeat infinite] push penup setpos anim[400 70 3100 ease-out repeat infinite] anim[400 90 3100 ease-out repeat infinite] pendown star 7 anim[5 42 3100 ease-out repeat infinite] pop setgradient 67e8f9 818cf8 anim[360 0 5600 linear repeat infinite] push penup setpos anim[400 730 3700 ease-out repeat infinite] anim[400 110 3700 ease-out repeat infinite] pendown polygon 8 anim[5 38 3700 ease-out repeat infinite] pop setgradient f472b6 fbbf24 anim[0 360 6200 linear repeat infinite] push penup setpos anim[400 710 4300 ease-out repeat infinite] anim[400 710 4300 ease-out repeat infinite] pendown star 9 anim[5 46 4300 ease-out repeat infinite] pop setgradient a78bfa 22d3ee anim[360 0 6800 linear repeat infinite] push penup setpos anim[400 85 4900 ease-out repeat infinite] anim[400 690 4900 ease-out repeat infinite] pendown sphere anim[6 44 4900 ease-out repeat infinite] 8 pop setalpha .3 setdash 7 12 push penup setpos 400 400 pendown circle anim[20 370 3200 ease-out repeat infinite] pop setdash 0 0 setblend source-over setalpha 1 setglow 0]",
+    image: "radial-escape-sequence.png",
+    type: "motion",
+    animationFocus: "Center-to-edge launch",
+  }),
+  example({
+    name: "Neon crosswind traffic",
+    source:
+      "repeat 1 [gradientbg 020617 18103a anim[25 155 10000 ease-in-out pingpong infinite] hideturtle setseed 517 setblend screen setalpha .22 setdash 10 16 setsw 2 setgradient 22d3ee 818cf8 anim[0 180 8000 linear repeat infinite] push penup setpos 30 145 pendown seth 0 fd 740 pop push penup setpos 30 285 pendown seth 0 fd 740 pop push penup setpos 30 430 pendown seth 0 fd 740 pop push penup setpos 30 590 pendown seth 0 fd 740 pop setdash 0 0 setalpha .72 setglow anim[7 22 1800 ease-in-out pingpong infinite] setgradient 22d3ee e879f9 anim[0 360 5400 linear repeat infinite] push penup setpos anim[-90 890 4600 ease-in-out repeat infinite] 145 pendown cube width anim[38 78 2100 ease-in-out pingpong infinite] height anim[82 36 1700 ease-in-out pingpong infinite] depth anim[22 58 1900 ease-in-out pingpong infinite] rotation anim[0 360 2600 linear repeat infinite] pop setgradient fef08a f472b6 anim[360 0 6100 linear repeat infinite] push penup setpos anim[890 -90 6200 ease-in-out repeat infinite] 285 pendown sphere anim[24 54 2100 ease-in-out pingpong infinite] 10 pop setgradient 67e8f9 a78bfa anim[0 360 4900 linear repeat infinite] push penup setpos anim[-100 900 5700 ease-in-out repeat infinite] 430 pendown seth anim[-35 35 1800 ease-in-out pingpong infinite] ellipse anim[28 78 2400 ease-in-out pingpong infinite] anim[12 32 1900 ease-in-out pingpong infinite] pop setgradient fbbf24 fb7185 anim[360 0 7200 linear repeat infinite] push penup setpos anim[900 -100 5100 ease-in-out repeat infinite] 590 pendown star 7 anim[18 48 1600 ease-in-out pingpong infinite] pop setgradient ffffff 38bdf8 anim[0 360 6600 linear repeat infinite] push penup setpos anim[-80 880 7000 ease-in-out repeat infinite] anim[730 70 7000 ease-in-out repeat infinite] pendown polygon 6 anim[16 46 2200 ease-in-out pingpong infinite] pop setgradient e879f9 22d3ee anim[360 0 5800 linear repeat infinite] push penup setpos 650 anim[-80 880 4300 ease-in-out repeat infinite] pendown cube width 42 height anim[24 76 1800 ease-in-out pingpong infinite] depth 34 rotation anim[0 360 2300 linear repeat infinite] pop setalpha .35 setsc 67e8f9 push penup setpos anim[-100 900 3900 linear repeat infinite] 720 pendown spray 42 180 pop setblend source-over setalpha 1 setglow 0]",
+    image: "neon-crosswind-traffic.png",
+    type: "motion",
+    animationFocus: "Directional lane motion",
+  }),
+  example({
+    name: "Galactica solar ballet",
+    source:
+      "repeat 1 [gradientbg 01030a 0f172a anim[0 90 18000 linear repeat infinite] hideturtle setseed 1977 setblend screen setalpha .32 setsc 94a3b8 spray 385 720 setalpha .2 setdash 5 10 setsw 1 setgradient 38bdf8 818cf8 anim[0 180 12000 linear repeat infinite] push penup setpos 400 400 pendown circle 62 circle 100 circle 145 circle 190 circle 245 circle 305 pop setdash 0 0 setalpha .5 setpalette 64748b 94a3b8 cbd5e1 repeat 48 [push penup fd 216 pendown dot 3 pop tr 7.5] setalpha 1 setblend lighter setglow anim[14 30 2200 ease-in-out pingpong infinite] push penup setpos 400 400 pendown setradial ffffff f97316 anim[38 72 2200 ease-in-out pingpong infinite] sphere anim[44 59 2200 ease-in-out pingpong infinite] 18 setalpha .45 setgradient fef08a f97316 anim[0 360 5000 linear repeat infinite] star 18 anim[54 72 2200 ease-in-out pingpong infinite] pop setglow 8 setalpha .9 push penup setpos 400 400 pendown seth anim[0 360 4000 linear repeat infinite] penup fd 62 pendown setradial f8fafc 64748b 12 sphere 8 7 pop push penup setpos 400 400 pendown seth anim[0 360 6500 linear repeat infinite] penup fd 100 pendown setradial fef3c7 f59e0b 18 sphere 13 9 pop push penup setpos 400 400 pendown seth anim[0 360 9000 linear repeat infinite] penup fd 145 pendown setradial ffffff 2563eb 21 sphere 16 11 setgradient 67e8f9 22c55e anim[0 360 4200 linear repeat infinite] ellipse 16 7 push seth anim[0 360 1800 linear repeat infinite] penup fd 27 pendown setradial f8fafc 94a3b8 7 sphere 5 5 pop pop push penup setpos 400 400 pendown seth anim[0 360 12000 linear repeat infinite] penup fd 190 pendown setradial fef2f2 dc2626 16 sphere 11 8 pop push penup setpos 400 400 pendown seth anim[0 360 18000 linear repeat infinite] penup fd 245 pendown setradial fef3c7 d97706 34 sphere 27 14 setalpha .55 setgradient fef08a f97316 0 ellipse 25 8 pop push penup setpos 400 400 pendown seth anim[0 360 24000 linear repeat infinite] penup fd 305 pendown setradial fef3c7 ca8a04 28 sphere 22 12 setalpha .7 setgradient fef3c7 a78bfa anim[0 360 7000 linear repeat infinite] setsw 3 ellipse 40 11 ellipse 48 14 pop setblend screen setalpha .88 setglow 22 setsw 5 setgradient ffffff 22d3ee 0 push penup setpos anim[-120 920 7200 ease-out repeat infinite] anim[90 610 7200 ease-out repeat infinite] pendown seth 27 star 5 13 bk 85 pop setalpha .72 setglow 16 setsw 4 setgradient fef3c7 f472b6 0 push penup setpos anim[930 -130 9200 ease-out repeat infinite] anim[140 700 9200 ease-out repeat infinite] pendown seth 152 star 5 10 bk 68 pop setalpha .66 setglow 14 setsw 3 setgradient ffffff a78bfa 90 push penup setpos 720 anim[-100 900 11000 ease-out repeat infinite] pendown seth 96 dot 12 bk 55 pop setglow 5 setalpha .7 setgradient cbd5e1 64748b anim[0 360 5000 linear repeat infinite] push penup setpos anim[-80 880 9800 linear repeat infinite] 245 pendown seth anim[0 360 2400 linear repeat infinite] fillpoly 7 11 pop push penup setpos anim[880 -80 12600 linear repeat infinite] 545 pendown seth anim[360 0 3100 linear repeat infinite] fillpoly 9 14 pop setblend source-over setalpha 1 setglow 0 setsw 2]",
+    image: "galactica-solar-ballet.png",
+    type: "motion",
+    animationFocus: "Planets & comet flybys",
   }),
   example({
     name: "Prismatic thread reactor",
