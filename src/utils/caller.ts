@@ -24,6 +24,10 @@ export class Caller {
       return;
     }
 
+    if (this.executeCube(command)) {
+      return;
+    }
+
     const pairAction = pairActions[command.name];
     if (
       pairAction !== undefined &&
@@ -116,8 +120,17 @@ export class Caller {
     this.turtle.drawSpiral(turns, spacing);
   };
 
-  public cube = (size: number, depth: number) => {
-    this.turtle.drawCube(size, depth);
+  public cube = (size: number, depth: number, rotation = 0) => {
+    this.turtle.drawCube(size, size, depth, rotation);
+  };
+
+  public cubeDimensions = (
+    width: number,
+    height: number,
+    depth: number,
+    rotation = 0,
+  ) => {
+    this.turtle.drawCube(width, height, depth, rotation);
   };
 
   public sphere = (radius: number, detail: number) => {
@@ -237,6 +250,31 @@ export class Caller {
   public gradientbg = (color1: string, color2: string, angle: number) => {
     this.turtle.setGradientBackground(color1, color2, angle);
   };
+
+  private readonly executeCube = (command: Readonly<ICommandModel>): boolean => {
+    if (command.name !== "cube") {
+      return false;
+    }
+
+    const width = command.width ?? command.value;
+    const height = command.height ?? command.value;
+    const depth = command.depth ?? command.arg2;
+    if (
+      width === undefined ||
+      height === undefined ||
+      depth === undefined
+    ) {
+      return false;
+    }
+
+    this.cubeDimensions(
+      width,
+      height,
+      depth,
+      command.rotation ?? 0,
+    );
+    return true;
+  };
 }
 
 type NumberAction = (caller: Caller, value: number) => void;
@@ -273,7 +311,6 @@ const pairActions: Readonly<
   Partial<Record<ICommandModel["name"], PairAction>>
 > = {
   arc: (caller, angle, radius) => { caller.arc(angle, radius); },
-  cube: (caller, size, depth) => { caller.cube(size, depth); },
   ellipse: (caller, radiusX, radiusY) => {
     caller.ellipse(radiusX, radiusY);
   },

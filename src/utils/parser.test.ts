@@ -23,6 +23,340 @@ describe("Parser", () => {
     expect(onError).not.toHaveBeenCalled();
   });
 
+  it("parses an explicit animated forward range", () => {
+    const { commands, onError } = parse(
+      "fd anim[20 200 1200 linear] tr 90 fd 30",
+    );
+
+    expect(commands).toMatchObject([
+      {
+        animation: {
+          cycles: 1,
+          durationMs: 1200,
+          easing: "linear",
+          finish: 200,
+          mode: "once",
+          property: "value",
+          start: 20,
+        },
+        name: "fd",
+        value: 200,
+      },
+      { name: "tr", value: 90 },
+      { name: "fd", value: 30 },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it("parses animated forward ranges inside repeat blocks", () => {
+    const { commands, onError } = parse(
+      "repeat 2 [fd anim[0 120 500 ease-out] tr 90]",
+    );
+
+    expect(commands).toMatchObject([
+      {
+        commands: [
+          {
+            animation: {
+              cycles: 1,
+              durationMs: 500,
+              easing: "ease-out",
+              finish: 120,
+              mode: "once",
+              property: "value",
+              start: 0,
+            },
+            name: "fd",
+            value: 120,
+          },
+          { name: "tr", value: 90 },
+        ],
+        name: "repeat",
+        value: 2,
+      },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it("parses animated ranges for one-number commands", () => {
+    const { commands, onError } = parse(
+      "tr anim[0 360 900 linear repeat 2] circle anim[20 120 700 ease-out pingpong 3] setsw anim[2 24 500 ease-in-out] gradientbg 020617 172554 anim[0 180 1200 linear]",
+    );
+
+    expect(commands).toMatchObject([
+      {
+        animation: {
+          cycles: 2,
+          finish: 360,
+          mode: "repeat",
+          property: "value",
+          start: 0,
+        },
+        name: "tr",
+        value: 360,
+      },
+      {
+        animation: {
+          cycles: 3,
+          finish: 120,
+          mode: "pingpong",
+          property: "value",
+          start: 20,
+        },
+        name: "circle",
+        value: 120,
+      },
+      {
+        animation: {
+          cycles: 1,
+          finish: 24,
+          mode: "once",
+          property: "value",
+          start: 2,
+        },
+        name: "setsw",
+        value: 24,
+      },
+      {
+        animation: {
+          finish: 180,
+          property: "value",
+          start: 0,
+        },
+        color: "#020617",
+        color2: "#172554",
+        name: "gradientbg",
+        value: 180,
+      },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it("animates either parameter of two-number commands", () => {
+    const { commands, onError } = parse(
+      "ellipse anim[30 180 1000 ease-in-out] 45 setpos 100 anim[200 600 800 ease-out] star anim[5 14 900 linear] anim[40 180 1200 ease-in-out pingpong infinite]",
+    );
+
+    expect(commands).toMatchObject([
+      {
+        animations: [
+          {
+            finish: 180,
+            property: "value",
+            start: 30,
+          },
+        ],
+        arg2: 45,
+        name: "ellipse",
+        value: 180,
+      },
+      {
+        animations: [
+          {
+            finish: 600,
+            property: "arg2",
+            start: 200,
+          },
+        ],
+        arg2: 600,
+        name: "setpos",
+        value: 100,
+      },
+      {
+        animations: [
+          {
+            finish: 14,
+            property: "value",
+            start: 5,
+          },
+          {
+            cycles: "infinite",
+            finish: 180,
+            mode: "pingpong",
+            property: "arg2",
+            start: 40,
+          },
+        ],
+        arg2: 180,
+        name: "star",
+        value: 14,
+      },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "bk",
+    "circle",
+    "dot",
+    "fd",
+    "setalpha",
+    "setflow",
+    "setglow",
+    "seth",
+    "setseed",
+    "setsoftness",
+    "setsw",
+    "setsymmetry",
+    "tl",
+    "tr",
+  ])("%s accepts a numeric animation range", (name) => {
+    const { commands, onError } = parse(
+      `${name} anim[0 10 100 linear]`,
+    );
+
+    expect(commands).toMatchObject([
+      {
+        animation: { finish: 10, property: "value", start: 0 },
+        name,
+        value: 10,
+      },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it.each(["gradientbg", "setgradient", "setradial"])(
+    "%s accepts an animated numeric parameter after its colors",
+    (name) => {
+      const { commands, onError } = parse(
+        `${name} ff0000 0000ff anim[0 180 500 linear]`,
+      );
+
+      expect(commands).toMatchObject([
+        {
+          animation: {
+            finish: 180,
+            property: "value",
+            start: 0,
+          },
+          color: "#ff0000",
+          color2: "#0000ff",
+          name,
+          value: 180,
+        },
+      ]);
+      expect(onError).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([
+    "arc",
+    "ellipse",
+    "fillpoly",
+    "grid3d",
+    "polygon",
+    "setdash",
+    "setpos",
+    "sphere",
+    "spiral",
+    "spray",
+    "star",
+  ])("%s accepts animation ranges in both numeric slots", (name) => {
+    const { commands, onError } = parse(
+      `${name} anim[1 10 100 linear] anim[2 20 200 ease-out]`,
+    );
+
+    expect(commands).toMatchObject([
+      {
+        animations: [
+          { finish: 10, property: "value", start: 1 },
+          { finish: 20, property: "arg2", start: 2 },
+        ],
+        arg2: 20,
+        name,
+        value: 10,
+      },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it("parses animated cube rotation with default or explicit dimensions", () => {
+    const { commands, onError } = parse(
+      "cube anim[0 360 4000 linear] cube 180 70 anim[-45 45 900 ease-in-out]",
+    );
+
+    expect(commands).toMatchObject([
+      {
+        animation: {
+          cycles: 1,
+          durationMs: 4000,
+          easing: "linear",
+          finish: 360,
+          mode: "once",
+          property: "rotation",
+          start: 0,
+        },
+        arg2: 90,
+        name: "cube",
+        rotation: 360,
+        value: 220,
+      },
+      {
+        animation: {
+          cycles: 1,
+          durationMs: 900,
+          easing: "ease-in-out",
+          finish: 45,
+          mode: "once",
+          property: "rotation",
+          start: -45,
+        },
+        arg2: 70,
+        name: "cube",
+        rotation: 45,
+        value: 180,
+      },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it("parses independent cube tracks with finite and infinite cycles", () => {
+    const { commands, onError } = parse(
+      "cube width anim[120 260 1600 ease-in-out pingpong infinite] height anim[220 100 1200 ease-in-out pingpong 6] depth 80 rotation anim[0 360 4000 linear repeat infinite]",
+    );
+
+    expect(commands).toMatchObject([
+      {
+        animations: [
+          {
+            cycles: "infinite",
+            durationMs: 1600,
+            easing: "ease-in-out",
+            finish: 260,
+            mode: "pingpong",
+            property: "width",
+            start: 120,
+          },
+          {
+            cycles: 6,
+            durationMs: 1200,
+            easing: "ease-in-out",
+            finish: 100,
+            mode: "pingpong",
+            property: "height",
+            start: 220,
+          },
+          {
+            cycles: "infinite",
+            durationMs: 4000,
+            easing: "linear",
+            finish: 360,
+            mode: "repeat",
+            property: "rotation",
+            start: 0,
+          },
+        ],
+        depth: 80,
+        height: 100,
+        name: "cube",
+        rotation: 360,
+        value: 260,
+        width: 260,
+      },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
   it("parses every no-argument command", () => {
     const { commands } = parse(
       "penup pendown hideturtle showturtle home",
@@ -221,6 +555,11 @@ describe("Parser", () => {
     "unknown 10",
     "fd",
     "fd nope",
+    "fd anim[0 100 0 linear]",
+    "fd anim[0 100 500 bounce]",
+    "fd anim[0 100 500 linear",
+    "cube anim[0 360 0 linear]",
+    "cube 200 anim[0 360 500 linear]",
     "setpos 10",
     "setsc 12345",
     "setbc not-a-color",
