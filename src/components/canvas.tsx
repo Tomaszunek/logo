@@ -273,6 +273,7 @@ const Canvas: React.FC = () => {
   const animationsEnabled = useSettingsStore(
     (state) => state.animationsEnabled,
   );
+  const panelRef = React.useRef<HTMLElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const turtleRef = React.useRef<Turtle | null>(null);
   const callerRef = React.useRef<Caller | null>(null);
@@ -294,6 +295,7 @@ const Canvas: React.FC = () => {
     React.useState<ActiveAction | null>(null);
   const [announcement, setAnnouncement] = React.useState("");
   const [completedSteps, setCompletedSteps] = React.useState(0);
+  const [isFullscreen, setIsFullscreen] = React.useState(false);
   const [playbackStatus, setPlaybackStatus] =
     React.useState<PlaybackStatus>("idle");
   const [prefersReducedMotion, setPrefersReducedMotion] = React.useState(false);
@@ -356,6 +358,17 @@ const Canvas: React.FC = () => {
   React.useEffect(() => {
     speedRef.current = speed;
   }, [speed]);
+
+  React.useEffect(() => {
+    const updateFullscreenState = () => {
+      setIsFullscreen(document.fullscreenElement === panelRef.current);
+    };
+
+    document.addEventListener("fullscreenchange", updateFullscreenState);
+    return () => {
+      document.removeEventListener("fullscreenchange", updateFullscreenState);
+    };
+  }, []);
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
@@ -808,8 +821,36 @@ const Canvas: React.FC = () => {
     setAnnouncement("Canvas cleared.");
   };
 
+  const toggleFullscreen = () => {
+    const panel = panelRef.current;
+    if (panel === null) {
+      return;
+    }
+
+    const fullscreenOperation =
+      document.fullscreenElement === panel
+        ? document.exitFullscreen()
+        : panel.requestFullscreen();
+
+    fullscreenOperation
+      .then(() => {
+        setAnnouncement(
+          document.fullscreenElement === panel
+            ? "Canvas shown full screen. Press Escape to exit."
+            : "Canvas exited full screen.",
+        );
+      })
+      .catch(() => {
+        setAnnouncement("Full screen could not be opened.");
+      });
+  };
+
   return (
-    <section className="canvasPanel" aria-labelledby="canvas-title">
+    <section
+      ref={panelRef}
+      className="canvasPanel"
+      aria-labelledby="canvas-title"
+    >
       <div className="panelHeader canvasToolbar">
         <div>
           <p className="eyebrow">Live output</p>
@@ -819,6 +860,14 @@ const Canvas: React.FC = () => {
           <span className="commandCount">
             {commands.length} {commands.length === 1 ? "step" : "steps"}
           </span>
+          <button
+            type="button"
+            className="button buttonGhost fullscreenButton"
+            aria-pressed={isFullscreen}
+            onClick={toggleFullscreen}
+          >
+            {isFullscreen ? "Exit full screen" : "Full screen"}
+          </button>
           <button
             type="button"
             className="button buttonGhost"
