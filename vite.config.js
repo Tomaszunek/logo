@@ -5,8 +5,14 @@ import path from "path";
 import { URL, fileURLToPath } from "node:url";
 
 const projectDirectory = fileURLToPath(new URL(".", import.meta.url));
+const repositoryName = process.env.GITHUB_REPOSITORY?.split("/")[1];
+const githubPagesBase =
+  repositoryName && !repositoryName.endsWith(".github.io")
+    ? `/${repositoryName}/`
+    : "/";
 
 export default defineConfig({
+  base: githubPagesBase,
   plugins: [react()],
   resolve: {
     alias: [
