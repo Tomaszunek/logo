@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/Tomaszunek/logo/issues"
   },
-  "homepage": "https://github.com/Tomaszunek/logo#readme",
+  "homepage": "https://tomaszunek.github.io/logo/",
   "dependencies": {
     "react": "19.2.8",
     "react-dom": "19.2.8",
