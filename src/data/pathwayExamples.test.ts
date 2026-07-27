@@ -13,6 +13,16 @@ const withoutIds = (commands: readonly ICommandModel[]): unknown[] =>
     ...(command.color2 === undefined ? {} : { color2: command.color2 }),
     ...(command.blend === undefined ? {} : { blend: command.blend }),
     ...(command.palette === undefined ? {} : { palette: command.palette }),
+    ...(command.animation === undefined
+      ? {}
+      : { animation: command.animation }),
+    ...(command.animations === undefined
+      ? {}
+      : { animations: command.animations }),
+    ...(command.depth === undefined ? {} : { depth: command.depth }),
+    ...(command.height === undefined ? {} : { height: command.height }),
+    ...(command.rotation === undefined ? {} : { rotation: command.rotation }),
+    ...(command.width === undefined ? {} : { width: command.width }),
     ...(command.commands
       ? { commands: withoutIds(command.commands) }
       : {}),
@@ -29,6 +39,21 @@ describe("pathwayExamples", () => {
       expect(withoutIds([example.command])).toEqual(withoutIds(parsedCommands));
     },
   );
+
+  it("includes a varied collection of advanced infinite animations", () => {
+    const motionExamples = pathwayExamples.filter(
+      (example) => example.type === "motion",
+    );
+    const techniques = motionExamples.map((example) => example.animationFocus);
+
+    expect(motionExamples).toHaveLength(13);
+    expect(techniques.every((technique) => technique !== undefined)).toBe(true);
+    expect(new Set(techniques)).toHaveLength(motionExamples.length);
+    motionExamples.forEach((example) => {
+      expect(example.path).toContain("anim[");
+      expect(example.path).toContain("infinite");
+    });
+  });
 
   it("uses every command available in the guide", async () => {
     const { commandDescriptions } = await import("./commandDescriptions");
