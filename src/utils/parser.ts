@@ -7,6 +7,7 @@ import {
   type ICommandAnimation,
   type ICommandModel,
 } from "src/models/Command";
+import type { IProcedureDefinition } from "src/models/Procedure";
 import type { CommandTypes } from "src/models/CommandTypes";
 
 interface Token {
@@ -17,6 +18,27 @@ interface Token {
 interface ParserError extends Error {
   position: number;
 }
+
+export interface ParsedProgram {
+  commands: ICommandModel[];
+  procedures: IProcedureDefinition[];
+}
+
+interface ExpansionState {
+  calls: number;
+}
+
+interface ParserContext {
+  allowDefinitions: boolean;
+  callStack: readonly string[];
+  expansionState: ExpansionState;
+  procedures: Map<string, IProcedureDefinition>;
+  variables: ReadonlyMap<string, string>;
+}
+
+const MAX_PROCEDURE_CALLS = 10_000;
+const procedureNamePattern = /^[a-z][a-z0-9_-]*$/u;
+const reservedProcedureNames = new Set(["anim", "end", "to"]);
 
 const commandByName: Readonly<Partial<Record<string, CommandTypes>>> = {
   arc: "arc",
@@ -178,25 +200,62 @@ export class Parser {
   public text: string;
   public index: number;
   private readonly tokens: Token[];
+  private readonly allowDefinitions: boolean;
+  private readonly callStack: readonly string[];
+  private readonly expansionState: ExpansionState;
+  private readonly procedures: Map<string, IProcedureDefinition>;
+  private readonly parsedProcedures: IProcedureDefinition[] = [];
+  private readonly variables: ReadonlyMap<string, string>;
 
-  public constructor(text: string) {
+  public constructor(
+    text: string,
+    procedures: readonly Readonly<IProcedureDefinition>[] = [],
+    context?: ParserContext,
+  ) {
     this.text = text;
     this.index = 0;
     this.tokens = tokenize(text);
+    this.allowDefinitions = context?.allowDefinitions ?? true;
+    this.callStack = context?.callStack ?? [];
+    this.expansionState = context?.expansionState ?? { calls: 0 };
+    this.procedures =
+      context?.procedures ??
+      new Map(
+        procedures.map((procedure) => [
+          procedure.name.toLowerCase(),
+          {
+            ...procedure,
+            name: procedure.name.toLowerCase(),
+            parameters: procedure.parameters.map((parameter) =>
+              parameter.toLowerCase(),
+            ),
+          },
+        ]),
+      );
+    this.variables = context?.variables ?? new Map();
   }
 
   public parse(onError: (text: string, parsedText: string) => void): ICommandModel[] {
+    return this.parseProgram(onError).commands;
+  }
+
+  public parseProgram(
+    onError: (text: string, parsedText: string) => void,
+  ): ParsedProgram {
     try {
       const parsed = this.parseSequence(false);
       if (this.index !== this.tokens.length) {
         throw parseError(this.tokens[this.index].start);
       }
-      return parsed;
+      return {
+        commands: parsed,
+        procedures: this.parsedProcedures,
+      };
     } catch (error: unknown) {
       const position =
         isParserError(error) ? error.position : this.text.length;
       onError(this.text, this.text.slice(0, position).trimEnd());
-      return [];
+      return { commands: [], procedures: [] };
     }
   }
 
@@ -210,10 +269,105 @@ export class Parser {
         }
         break;
       }
-      parsed.push(this.parseCommand());
+      if (this.peek()?.toLowerCase() === "to") {
+        if (insideRepeat || !this.allowDefinitions) {
+          throw parseError(this.currentPosition());
+        }
+        this.parseProcedureDefinition();
+      } else if (this.isProcedureCall(this.peek())) {
+        parsed.push(...this.parseProcedureCall());
+      } else {
+        parsed.push(this.parseCommand());
+      }
     }
 
     return parsed;
+  };
+
+  private readonly parseProcedureDefinition = () => {
+    this.take();
+    const nameToken = this.take();
+    const name = nameToken.value.toLowerCase();
+    if (
+      !procedureNamePattern.test(name) ||
+      reservedProcedureNames.has(name) ||
+      commandByName[name] !== undefined
+    ) {
+      throw parseError(nameToken.start);
+    }
+
+    const parameters: string[] = [];
+    while (this.peek()?.startsWith(":") === true) {
+      const parameterToken = this.take();
+      const parameter = parameterToken.value.slice(1).toLowerCase();
+      if (
+        !procedureNamePattern.test(parameter) ||
+        parameters.includes(parameter)
+      ) {
+        throw parseError(parameterToken.start);
+      }
+      parameters.push(parameter);
+    }
+
+    const bodyTokens: string[] = [];
+    while (
+      this.peek() !== undefined &&
+      this.peek()?.toLowerCase() !== "end"
+    ) {
+      if (this.peek()?.toLowerCase() === "to") {
+        throw parseError(this.currentPosition());
+      }
+      bodyTokens.push(this.take().value);
+    }
+    if (this.peek()?.toLowerCase() !== "end" || bodyTokens.length === 0) {
+      throw parseError(this.currentPosition());
+    }
+    this.take();
+
+    const definition: IProcedureDefinition = {
+      body: bodyTokens.join(" "),
+      name,
+      parameters,
+    };
+    this.procedures.set(name, definition);
+    this.parsedProcedures.push(definition);
+  };
+
+  private readonly parseProcedureCall = (): ICommandModel[] => {
+    const callToken = this.take();
+    const name = callToken.value.toLowerCase();
+    const procedure = this.procedures.get(name);
+    if (procedure === undefined || this.callStack.includes(name)) {
+      throw parseError(callToken.start);
+    }
+
+    this.expansionState.calls += 1;
+    if (this.expansionState.calls > MAX_PROCEDURE_CALLS) {
+      throw parseError(callToken.start);
+    }
+
+    const variables = new Map<string, string>();
+    procedure.parameters.forEach((parameter) => {
+      variables.set(parameter, this.takeResolved().value);
+    });
+
+    const child = new Parser(procedure.body, [], {
+      allowDefinitions: false,
+      callStack: [...this.callStack, name],
+      expansionState: this.expansionState,
+      procedures: this.procedures,
+      variables,
+    });
+
+    try {
+      const commands = child.parseSequence(false);
+      if (child.index !== child.tokens.length) {
+        throw parseError(callToken.start);
+      }
+      return commands;
+    } catch {
+      throw parseError(callToken.start);
+    }
   };
 
   private readonly parseCommand = (): ICommandModel => {
@@ -230,7 +384,7 @@ export class Parser {
     }
 
     if (name === "setblend") {
-      const blendToken = this.take();
+      const blendToken = this.takeResolved();
       const blend = blendModes.find(
         (candidate) => candidate === blendToken.value.toLowerCase(),
       );
@@ -331,7 +485,7 @@ export class Parser {
     while (
       this.peek() !== undefined &&
       this.peek() !== "]" &&
-      commandByName[this.peek()?.toLowerCase() ?? ""] === undefined
+      !this.isStatementStart(this.peek())
     ) {
       colors.push(this.takeColor());
     }
@@ -417,7 +571,7 @@ export class Parser {
       throw parseError(this.previousPosition());
     }
 
-    const easingToken = this.take();
+    const easingToken = this.takeResolved();
     const easing = animationEasings.find(
       (candidate) => candidate === easingToken.value.toLowerCase(),
     );
@@ -428,7 +582,7 @@ export class Parser {
     let mode: ICommandAnimation["mode"] = "once";
     let cycles: AnimationCycles = 1;
     if (this.peek() !== "]") {
-      const modeToken = this.take();
+      const modeToken = this.takeResolved();
       const parsedMode = animationModes.find(
         (candidate) => candidate === modeToken.value.toLowerCase(),
       );
@@ -436,7 +590,7 @@ export class Parser {
         throw parseError(modeToken.start);
       }
       mode = parsedMode;
-      const cyclesToken = this.take();
+      const cyclesToken = this.takeResolved();
       if (cyclesToken.value.toLowerCase() === "infinite") {
         cycles = "infinite";
       } else {
@@ -464,7 +618,7 @@ export class Parser {
     this.peek()?.toLowerCase() === "anim";
 
   private readonly takeNumber = (): number => {
-    const token = this.take();
+    const token = this.takeResolved();
     const number = Number(token.value);
     if (!Number.isFinite(number)) {
       throw parseError(token.start);
@@ -473,7 +627,7 @@ export class Parser {
   };
 
   private readonly takeColor = (): string => {
-    const color = this.take();
+    const color = this.takeResolved();
     if (!/^#?[0-9a-f]{6}$/iu.test(color.value)) {
       throw parseError(color.start);
     }
@@ -496,6 +650,36 @@ export class Parser {
     const token = this.tokens[this.index];
     this.index += 1;
     return token;
+  };
+
+  private readonly takeResolved = (): Token => {
+    const token = this.take();
+    if (!token.value.startsWith(":")) {
+      return token;
+    }
+
+    const variable = token.value.slice(1).toLowerCase();
+    const value = this.variables.get(variable);
+    if (value === undefined) {
+      throw parseError(token.start);
+    }
+    return { ...token, value };
+  };
+
+  private readonly isProcedureCall = (
+    value: string | undefined,
+  ): boolean =>
+    value !== undefined && this.procedures.has(value.toLowerCase());
+
+  private readonly isStatementStart = (
+    value: string | undefined,
+  ): boolean => {
+    const normalized = value?.toLowerCase();
+    return (
+      normalized === "to" ||
+      commandByName[normalized ?? ""] !== undefined ||
+      this.isProcedureCall(value)
+    );
   };
 
   private readonly peek = (): string | undefined =>

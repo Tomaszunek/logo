@@ -18,7 +18,8 @@
 }
 
 button,
-input {
+input,
+textarea {
   font: inherit;
 }
 
@@ -133,8 +134,11 @@ button {
 
 .button:focus-visible,
 input:focus-visible,
+textarea:focus-visible,
 .removeButton:focus-visible,
 .modalClose:focus-visible,
+.procedureToggle:focus-visible,
+.procedureActions button:focus-visible,
 .pathexample:focus-visible {
   outline: 3px solid rgba(121, 242, 192, 0.35);
   outline-offset: 2px;
@@ -360,7 +364,7 @@ input:focus-visible,
 .commandForm {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
+  align-items: start;
   gap: 10px;
   margin-top: 16px;
   padding: 7px 7px 7px 14px;
@@ -371,6 +375,7 @@ input:focus-visible,
 }
 
 .commandPrompt {
+  margin-top: 9px;
   color: var(--accent);
   font-family: "Cascadia Code", Consolas, monospace;
   font-weight: 800;
@@ -385,6 +390,10 @@ input:focus-visible,
   background: transparent;
   font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
   font-size: 0.86rem;
+  line-height: 1.5;
+  min-height: 66px;
+  padding: 7px 0;
+  resize: vertical;
 }
 
 .commandInput::placeholder {
@@ -392,12 +401,127 @@ input:focus-visible,
 }
 
 .runButton {
+  margin-top: 1px;
   min-height: 36px;
 }
 
 .inputHint,
 .inspectorIntro {
   font-size: 0.72rem;
+}
+
+.procedureLibrary {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.procedureLibraryHeader,
+.procedureCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.procedureLibraryHeader h3 {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.procedureLibraryControls {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.procedureToggle {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 5px 8px;
+  color: var(--ink-muted);
+  background: rgba(255, 255, 255, 0.035);
+  font-size: 0.67rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.procedureToggle:hover {
+  color: var(--ink);
+  border-color: rgba(121, 242, 192, 0.28);
+}
+
+.procedureLibraryEmpty {
+  margin: 12px 0 0;
+  padding: 13px;
+  border: 1px dashed rgba(156, 174, 208, 0.22);
+  border-radius: 11px;
+  color: var(--ink-muted);
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.72rem;
+}
+
+.procedureList {
+  display: grid;
+  gap: 9px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.procedureCard {
+  overflow: hidden;
+  border: 1px solid rgba(139, 124, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(139, 124, 255, 0.055);
+}
+
+.procedureCardHeader {
+  padding: 9px 10px;
+}
+
+.procedureSignature {
+  color: #c7bfff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.procedureActions {
+  display: flex;
+  gap: 5px;
+}
+
+.procedureActions button {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 4px 7px;
+  color: var(--ink-muted);
+  background: rgba(255, 255, 255, 0.035);
+  font-size: 0.65rem;
+  cursor: pointer;
+}
+
+.procedureActions button:hover {
+  color: var(--ink);
+  border-color: rgba(121, 242, 192, 0.28);
+}
+
+.procedureActions .procedureDelete:hover {
+  color: #ff8fa3;
+  border-color: rgba(255, 107, 129, 0.3);
+}
+
+.procedureBody {
+  max-height: 130px;
+  overflow: auto;
+  margin: 0;
+  padding: 10px;
+  border-top: 1px solid var(--line);
+  color: #b8c5db;
+  background: rgba(4, 8, 16, 0.45);
+  font-size: 0.7rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
 }
 
 .canvasPanel {
