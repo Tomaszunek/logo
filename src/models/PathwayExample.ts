@@ -1,9 +1,11 @@
 import type { ICommandModel } from "./Command";
+import type { IProcedureDefinition } from "./Procedure";
 
 export interface IPathwayExample {
   name: string;
   path: string;
   command: ICommandModel;
+  procedures: readonly IProcedureDefinition[];
   image: string;
   type: ExampleCategory;
   animationFocus?: string;

@@ -1238,6 +1238,19 @@ textarea:focus-visible,
   -webkit-line-clamp: 3;
 }
 
+.pathexample .procedureEntryPoint {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #c7bfff;
+  -webkit-line-clamp: unset;
+}
+
+.procedureEntryPoint span {
+  color: #a99dff;
+  font-weight: 800;
+}
+
 .tutorialPopup {
   width: min(860px, 100%);
 }

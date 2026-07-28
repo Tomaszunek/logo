@@ -40,6 +40,61 @@ describe("pathwayExamples", () => {
     },
   );
 
+  it("exposes every gallery scene as a named procedure", () => {
+    const procedureNames = pathwayExamples.map((example) => {
+      expect(example.procedures.length).toBeGreaterThanOrEqual(1);
+      expect(example.path).toContain("\nend\n");
+      const entryPoint =
+        example.procedures[example.procedures.length - 1];
+      expect(entryPoint).toBeDefined();
+      expect(example.command.procedureCalls).toEqual([
+        {
+          arguments: [],
+          name: entryPoint.name,
+        },
+      ]);
+      return entryPoint.name;
+    });
+
+    expect(new Set(procedureNames)).toHaveLength(pathwayExamples.length);
+  });
+
+  it("extracts meaningful helper procedures from repeated scene motifs", () => {
+    const examplesWithHelpers = pathwayExamples.filter(
+      (example) => example.procedures.length > 1,
+    );
+    const helperNames = new Set(
+      examplesWithHelpers.flatMap((example) =>
+        example.procedures.slice(0, -1).map((procedure) => procedure.name),
+      ),
+    );
+
+    expect(examplesWithHelpers.length).toBeGreaterThanOrEqual(30);
+    examplesWithHelpers.forEach((example) => {
+      example.procedures.slice(0, -1).forEach((helper, helperIndex) => {
+        const helperPattern = new RegExp(`\\b${helper.name}\\b`, "u");
+        const isCalled = example.procedures
+          .slice(helperIndex + 1)
+          .some((procedure) => helperPattern.test(procedure.body));
+        expect(isCalled).toBe(true);
+      });
+    });
+    [
+      "dot_ring",
+      "ellipse_ring",
+      "move_forward",
+      "move_to",
+      "place_cube",
+      "place_grid",
+      "place_sphere",
+      "reset_light",
+      "square",
+      "start_scene",
+    ].forEach((helperName) => {
+      expect(helperNames.has(helperName)).toBe(true);
+    });
+  });
+
   it("includes a varied collection of advanced infinite animations", () => {
     const motionExamples = pathwayExamples.filter(
       (example) => example.type === "motion",

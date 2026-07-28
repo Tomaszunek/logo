@@ -17,12 +17,18 @@ const getCommandNames = (
 
 const PathwayExample: React.FC<IProps> = ({ examplePath, onSelect }) => {
   const replaceCommands = useCommandStore((state) => state.replaceCommands);
-  const { animationFocus, name, path, image, performanceFocus, type } =
+  const defineProcedures = useCommandStore(
+    (state) => state.defineProcedures,
+  );
+  const { animationFocus, name, image, performanceFocus, procedures, type } =
     examplePath;
+  const entryPoint =
+    procedures[procedures.length - 1]?.name ?? name;
   const commandNames = getCommandNames(examplePath.command);
   const operationCount = getCommandComplexity([examplePath.command]).operations;
   const setCommands = () => {
     const { command } = examplePath;
+    defineProcedures(procedures);
     replaceCommands([command]);
     onSelect();
   };
@@ -60,7 +66,10 @@ const PathwayExample: React.FC<IProps> = ({ examplePath, onSelect }) => {
         ))}
         {commandNames.length > 5 && <code>+{commandNames.length - 5}</code>}
       </span>
-      <p className="path">{path}</p>
+      <p className="path procedureEntryPoint">
+        <span aria-hidden="true">ƒ</span>
+        {entryPoint}
+      </p>
     </button>
   );
 };
