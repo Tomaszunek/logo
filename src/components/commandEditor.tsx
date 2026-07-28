@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type { ICommandModel } from 'src/models';
 import { useCommandStore } from 'src/store/commandStore';
+import ProcedureCallBadge from "./procedureCallBadge";
 
 const formatAnimation = (
   animation: NonNullable<ICommandModel["animation"]>,
@@ -36,6 +37,7 @@ const CommandEditor: React.FC = () => {
       return (
         <li key={id} data-id={id} className={name}>
           <span className="tagName">
+            <ProcedureCallBadge calls={item.procedureCalls} />
             <strong>{name}</strong>
             {animation?.property === "value" ? (
               <span>{formatAnimation(animation)}</span>

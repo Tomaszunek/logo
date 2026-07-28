@@ -551,6 +551,134 @@ describe("Parser", () => {
     ]);
   });
 
+  it("defines and calls a parameterized Logo procedure", () => {
+    const onError = vi.fn();
+    const program = new Parser(`
+      to square :size
+        repeat 4 [fd :size tr 90]
+      end
+
+      square 75
+    `).parseProgram(onError);
+
+    expect(program.procedures).toEqual([
+      {
+        body: "repeat 4 [ fd :size tr 90 ]",
+        name: "square",
+        parameters: ["size"],
+      },
+    ]);
+    expect(program.commands).toMatchObject([
+      {
+        commands: [
+          { name: "fd", value: 75 },
+          { name: "tr", value: 90 },
+        ],
+        name: "repeat",
+        procedureCalls: [
+          { arguments: ["75"], name: "square" },
+        ],
+        value: 4,
+      },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it("uses a saved procedure in a later parser submission", () => {
+    const defineError = vi.fn();
+    const definition = new Parser(
+      "to polygonline :length :color setsc :color fd :length end",
+    ).parseProgram(defineError);
+    const callError = vi.fn();
+    const commands = new Parser(
+      "polygonline 120 ff00aa",
+      definition.procedures,
+    ).parse(callError);
+
+    expect(definition.commands).toEqual([]);
+    expect(commands).toMatchObject([
+      { color: "#ff00aa", name: "setsc" },
+      { name: "fd", value: 120 },
+    ]);
+    expect(defineError).not.toHaveBeenCalled();
+    expect(callError).not.toHaveBeenCalled();
+  });
+
+  it("expands procedure calls nested in procedures and repeats", () => {
+    const onError = vi.fn();
+    const program = new Parser(`
+      to spoke :length fd :length bk :length end
+      to wheel :radius repeat 6 [spoke :radius tr 60] end
+      wheel 90
+    `).parseProgram(onError);
+
+    expect(program.commands).toMatchObject([
+      {
+        commands: [
+          {
+            name: "fd",
+            procedureCalls: [
+              { arguments: ["90"], name: "spoke" },
+            ],
+            value: 90,
+          },
+          {
+            name: "bk",
+            procedureCalls: [
+              { arguments: ["90"], name: "spoke" },
+            ],
+            value: 90,
+          },
+          { name: "tr", value: 60 },
+        ],
+        name: "repeat",
+        procedureCalls: [
+          { arguments: ["90"], name: "wheel" },
+        ],
+        value: 6,
+      },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it("passes procedure parameters into animation values", () => {
+    const onError = vi.fn();
+    const program = new Parser(`
+      to glide :start :finish :time
+        fd anim[:start :finish :time ease-in-out]
+      end
+      glide 10 180 900
+    `).parseProgram(onError);
+
+    expect(program.commands).toMatchObject([
+      {
+        animation: {
+          durationMs: 900,
+          easing: "ease-in-out",
+          finish: 180,
+          start: 10,
+        },
+        name: "fd",
+        value: 180,
+      },
+    ]);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "to fd :size fd :size end",
+    "to shape :size fd :size",
+    "to shape :size :size fd :size end",
+    "to shape :size fd :missing end shape 10",
+    "to loop loop end loop",
+    "to nested to inner fd 10 end end",
+  ])("rejects invalid procedure input: %s", (input) => {
+    const { commands, onError } = parse(input);
+
+    expect(commands).toEqual([]);
+    expect(onError).toHaveBeenCalledOnce();
+  });
+
   it.each([
     "unknown 10",
     "fd",

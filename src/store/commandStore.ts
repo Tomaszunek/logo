@@ -1,10 +1,15 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import type { ICommandModel } from "../models";
+import type { ICommandModel, IProcedureDefinition } from "../models";
 
 export interface CommandStore {
   commands: readonly ICommandModel[];
+  procedures: readonly IProcedureDefinition[];
   addCommand: (command: Readonly<ICommandModel>) => void;
+  defineProcedures: (
+    procedures: readonly Readonly<IProcedureDefinition>[],
+  ) => void;
+  deleteProcedure: (name: string) => void;
   editCommand: (command: Readonly<ICommandModel>) => void;
   deleteCommand: (id: number) => void;
   replaceCommands: (commands: readonly ICommandModel[]) => void;
@@ -22,6 +27,14 @@ const cloneCommand = (command: Readonly<ICommandModel>): ICommandModel => ({
     ? { animations: command.animations.map((animation) => ({ ...animation })) }
     : {}),
   ...(command.palette ? { palette: [...command.palette] } : {}),
+  ...(command.procedureCalls
+    ? {
+        procedureCalls: command.procedureCalls.map((call) => ({
+          ...call,
+          arguments: [...call.arguments],
+        })),
+      }
+    : {}),
   ...(command.commands
     ? { commands: command.commands.map((child) => cloneCommand(child)) }
     : {}),
@@ -113,12 +126,48 @@ export const useCommandStore = create<CommandStore>()(
   devtools(
     (set) => ({
       commands: [],
+      procedures: [],
       addCommand: (command) =>
         { set(
           (state) => ({ commands: addToTree(state.commands, command) }),
           false,
           "commands/add",
         ); },
+      defineProcedures: (definitions) => {
+        set(
+          (state) => {
+            const procedures = [...state.procedures];
+            definitions.forEach((definition) => {
+              const existingIndex = procedures.findIndex(
+                ({ name }) => name === definition.name,
+              );
+              const clonedDefinition = {
+                ...definition,
+                parameters: [...definition.parameters],
+              };
+              if (existingIndex === -1) {
+                procedures.push(clonedDefinition);
+              } else {
+                procedures[existingIndex] = clonedDefinition;
+              }
+            });
+            return { procedures };
+          },
+          false,
+          "procedures/define",
+        );
+      },
+      deleteProcedure: (name) => {
+        set(
+          (state) => ({
+            procedures: state.procedures.filter(
+              (procedure) => procedure.name !== name,
+            ),
+          }),
+          false,
+          "procedures/delete",
+        );
+      },
       editCommand: (command) =>
         { set(
           (state) => ({ commands: editTree(state.commands, command) }),

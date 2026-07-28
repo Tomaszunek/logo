@@ -19,6 +19,416 @@ interface ExampleSpec {
 
 const round = (value: number): number => Math.round(value * 100) / 100;
 
+const getProcedureName = (exampleName: string): string =>
+  `draw_${exampleName
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/gu, "_")
+    .replace(/^_+|_+$/gu, "")}`;
+
+interface SourceProcedure {
+  body: string;
+  name: string;
+  parameters: readonly string[];
+}
+
+interface SourceTransform {
+  pattern: RegExp;
+  procedure: SourceProcedure;
+  replace: (...matches: string[]) => string;
+}
+
+const numberSource = String.raw`-?(?:\d+(?:\.\d+)?|\.\d+)`;
+const colorSource = String.raw`#?[0-9a-f]{6}`;
+
+const sourceTransforms: readonly SourceTransform[] = [
+  {
+    pattern: new RegExp(
+      `push penup setpos (${numberSource}) (${numberSource}) pendown cube (${numberSource}) (${numberSource}) pop`,
+      "gu",
+    ),
+    procedure: {
+      body: "push penup setpos :x :y pendown cube :size :depth pop",
+      name: "place_cube",
+      parameters: ["x", "y", "size", "depth"],
+    },
+    replace: (_match, x, y, size, depth) =>
+      `place_cube ${x} ${y} ${size} ${depth}`,
+  },
+  {
+    pattern: new RegExp(
+      `push penup setpos (${numberSource}) (${numberSource}) pendown sphere (${numberSource}) (${numberSource}) pop`,
+      "gu",
+    ),
+    procedure: {
+      body: "push penup setpos :x :y pendown sphere :radius :detail pop",
+      name: "place_sphere",
+      parameters: ["x", "y", "radius", "detail"],
+    },
+    replace: (_match, x, y, radius, detail) =>
+      `place_sphere ${x} ${y} ${radius} ${detail}`,
+  },
+  {
+    pattern: new RegExp(
+      `push penup setpos (${numberSource}) (${numberSource}) pendown star (${numberSource}) (${numberSource}) pop`,
+      "gu",
+    ),
+    procedure: {
+      body: "push penup setpos :x :y pendown star :points :radius pop",
+      name: "place_star",
+      parameters: ["x", "y", "points", "radius"],
+    },
+    replace: (_match, x, y, points, radius) =>
+      `place_star ${x} ${y} ${points} ${radius}`,
+  },
+  {
+    pattern: new RegExp(
+      `push penup setpos (${numberSource}) (${numberSource}) pendown ellipse (${numberSource}) (${numberSource}) pop`,
+      "gu",
+    ),
+    procedure: {
+      body: "push penup setpos :x :y pendown ellipse :radiusx :radiusy pop",
+      name: "place_ellipse",
+      parameters: ["x", "y", "radiusx", "radiusy"],
+    },
+    replace: (_match, x, y, radiusX, radiusY) =>
+      `place_ellipse ${x} ${y} ${radiusX} ${radiusY}`,
+  },
+  {
+    pattern: new RegExp(
+      `push penup setpos (${numberSource}) (${numberSource}) pendown dot (${numberSource}) pop`,
+      "gu",
+    ),
+    procedure: {
+      body: "push penup setpos :x :y pendown dot :size pop",
+      name: "place_dot",
+      parameters: ["x", "y", "size"],
+    },
+    replace: (_match, x, y, size) => `place_dot ${x} ${y} ${size}`,
+  },
+  {
+    pattern: new RegExp(
+      `push penup fd (${numberSource}) pendown sphere (${numberSource}) (${numberSource}) pop`,
+      "gu",
+    ),
+    procedure: {
+      body:
+        "push penup fd :distance pendown sphere :radius :detail pop",
+      name: "orbit_sphere",
+      parameters: ["distance", "radius", "detail"],
+    },
+    replace: (_match, distance, radius, detail) =>
+      `orbit_sphere ${distance} ${radius} ${detail}`,
+  },
+  {
+    pattern: new RegExp(
+      `push penup fd (${numberSource}) pendown dot (${numberSource}) pop`,
+      "gu",
+    ),
+    procedure: {
+      body: "push penup fd :distance pendown dot :size pop",
+      name: "orbit_dot",
+      parameters: ["distance", "size"],
+    },
+    replace: (_match, distance, size) => `orbit_dot ${distance} ${size}`,
+  },
+  {
+    pattern: new RegExp(
+      `repeat (${numberSource}) \\[orbit_dot (${numberSource}) (${numberSource}) tr (${numberSource})\\]`,
+      "gu",
+    ),
+    procedure: {
+      body:
+        "repeat :count [orbit_dot :distance :size tr :turn]",
+      name: "dot_ring",
+      parameters: ["count", "distance", "size", "turn"],
+    },
+    replace: (_match, count, distance, size, turn) =>
+      `dot_ring ${count} ${distance} ${size} ${turn}`,
+  },
+  {
+    pattern: new RegExp(
+      `repeat (${numberSource}) \\[orbit_sphere (${numberSource}) (${numberSource}) (${numberSource}) tr (${numberSource})\\]`,
+      "gu",
+    ),
+    procedure: {
+      body:
+        "repeat :count [orbit_sphere :distance :radius :detail tr :turn]",
+      name: "sphere_orbit",
+      parameters: ["count", "distance", "radius", "detail", "turn"],
+    },
+    replace: (_match, count, distance, radius, detail, turn) =>
+      `sphere_orbit ${count} ${distance} ${radius} ${detail} ${turn}`,
+  },
+  {
+    pattern: new RegExp(
+      `repeat (${numberSource}) \\[push penup fd (${numberSource}) pendown spray (${numberSource}) (${numberSource}) pop tr (${numberSource})\\]`,
+      "gu",
+    ),
+    procedure: {
+      body:
+        "repeat :count [push penup fd :distance pendown spray :radius :density pop tr :turn]",
+      name: "spray_orbit",
+      parameters: [
+        "count",
+        "distance",
+        "radius",
+        "density",
+        "turn",
+      ],
+    },
+    replace: (_match, count, distance, radius, density, turn) =>
+      `spray_orbit ${count} ${distance} ${radius} ${density} ${turn}`,
+  },
+  {
+    pattern: new RegExp(
+      `repeat (${numberSource}) \\[ellipse (${numberSource}) (${numberSource}) tr (${numberSource})\\]`,
+      "gu",
+    ),
+    procedure: {
+      body:
+        "repeat :count [ellipse :radiusx :radiusy tr :turn]",
+      name: "ellipse_ring",
+      parameters: ["count", "radiusx", "radiusy", "turn"],
+    },
+    replace: (_match, count, radiusX, radiusY, turn) =>
+      `ellipse_ring ${count} ${radiusX} ${radiusY} ${turn}`,
+  },
+  {
+    pattern: new RegExp(
+      `repeat (${numberSource}) \\[sphere (${numberSource}) (${numberSource}) tr (${numberSource})\\]`,
+      "gu",
+    ),
+    procedure: {
+      body:
+        "repeat :count [sphere :radius :detail tr :turn]",
+      name: "sphere_ring",
+      parameters: ["count", "radius", "detail", "turn"],
+    },
+    replace: (_match, count, radius, detail, turn) =>
+      `sphere_ring ${count} ${radius} ${detail} ${turn}`,
+  },
+  {
+    pattern: new RegExp(
+      `repeat (${numberSource}) \\[star (${numberSource}) (${numberSource}) tr (${numberSource})\\]`,
+      "gu",
+    ),
+    procedure: {
+      body:
+        "repeat :count [star :points :radius tr :turn]",
+      name: "star_ring",
+      parameters: ["count", "points", "radius", "turn"],
+    },
+    replace: (_match, count, points, radius, turn) =>
+      `star_ring ${count} ${points} ${radius} ${turn}`,
+  },
+  {
+    pattern: new RegExp(
+      `repeat (${numberSource}) \\[circle (${numberSource}) tr (${numberSource})\\]`,
+      "gu",
+    ),
+    procedure: {
+      body: "repeat :count [circle :radius tr :turn]",
+      name: "circle_ring",
+      parameters: ["count", "radius", "turn"],
+    },
+    replace: (_match, count, radius, turn) =>
+      `circle_ring ${count} ${radius} ${turn}`,
+  },
+  {
+    pattern: new RegExp(
+      `repeat (${numberSource}) \\[arc (${numberSource}) (${numberSource}) tr (${numberSource})\\]`,
+      "gu",
+    ),
+    procedure: {
+      body:
+        "repeat :count [arc :angle :radius tr :turn]",
+      name: "arc_ring",
+      parameters: ["count", "angle", "radius", "turn"],
+    },
+    replace: (_match, count, angle, radius, turn) =>
+      `arc_ring ${count} ${angle} ${radius} ${turn}`,
+  },
+  {
+    pattern: new RegExp(
+      `repeat 4 \\[fd (${numberSource}) tr 90\\]`,
+      "gu",
+    ),
+    procedure: {
+      body: "repeat 4 [fd :size tr 90]",
+      name: "square",
+      parameters: ["size"],
+    },
+    replace: (_match, size) => `square ${size}`,
+  },
+  {
+    pattern: new RegExp(
+      `repeat 3 \\[fd (${numberSource}) tr 120\\]`,
+      "gu",
+    ),
+    procedure: {
+      body: "repeat 3 [fd :size tr 120]",
+      name: "triangle",
+      parameters: ["size"],
+    },
+    replace: (_match, size) => `triangle ${size}`,
+  },
+  {
+    pattern: new RegExp(
+      `push penup setpos (${numberSource}) (${numberSource}) pendown seth (${numberSource}) grid3d (${numberSource}) (${numberSource}) pop`,
+      "gu",
+    ),
+    procedure: {
+      body:
+        "push penup setpos :x :y pendown seth :heading grid3d :size :divisions pop",
+      name: "place_grid",
+      parameters: ["x", "y", "heading", "size", "divisions"],
+    },
+    replace: (_match, x, y, heading, size, divisions) =>
+      `place_grid ${x} ${y} ${heading} ${size} ${divisions}`,
+  },
+  {
+    pattern: new RegExp(
+      `push penup setpos (${numberSource}) (${numberSource}) pendown seth (${numberSource}) fd (${numberSource}) pop`,
+      "gu",
+    ),
+    procedure: {
+      body:
+        "push penup setpos :x :y pendown seth :heading fd :distance pop",
+      name: "place_line",
+      parameters: ["x", "y", "heading", "distance"],
+    },
+    replace: (_match, x, y, heading, distance) =>
+      `place_line ${x} ${y} ${heading} ${distance}`,
+  },
+  {
+    pattern: new RegExp(
+      `push penup setpos (${numberSource}) (${numberSource}) pendown repeat (${numberSource}) \\[cube (${numberSource}) (${numberSource}) penup fd (${numberSource}) pendown\\] pop`,
+      "gu",
+    ),
+    procedure: {
+      body:
+        "push penup setpos :x :y pendown repeat :count [cube :size :depth penup fd :step pendown] pop",
+      name: "place_cube_row",
+      parameters: ["x", "y", "count", "size", "depth", "step"],
+    },
+    replace: (_match, x, y, count, size, depth, step) =>
+      `place_cube_row ${x} ${y} ${count} ${size} ${depth} ${step}`,
+  },
+  {
+    pattern: new RegExp(
+      `repeat (${numberSource}) \\[cube (${numberSource}) (${numberSource}) penup fd (${numberSource}) pendown\\]`,
+      "gu",
+    ),
+    procedure: {
+      body:
+        "repeat :count [cube :size :depth penup fd :step pendown]",
+      name: "cube_row",
+      parameters: ["count", "size", "depth", "step"],
+    },
+    replace: (_match, count, size, depth, step) =>
+      `cube_row ${count} ${size} ${depth} ${step}`,
+  },
+  {
+    pattern: new RegExp(
+      `gradientbg (${colorSource}) (${colorSource}) (${numberSource}) hideturtle`,
+      "gu",
+    ),
+    procedure: {
+      body: "gradientbg :color1 :color2 :angle hideturtle",
+      name: "start_scene",
+      parameters: ["color1", "color2", "angle"],
+    },
+    replace: (_match, color1, color2, angle) =>
+      `start_scene ${color1} ${color2} ${angle}`,
+  },
+  {
+    pattern: new RegExp(
+      `setbc (${colorSource}) hideturtle`,
+      "gu",
+    ),
+    procedure: {
+      body: "setbc :color hideturtle",
+      name: "start_solid_scene",
+      parameters: ["color"],
+    },
+    replace: (_match, color) => `start_solid_scene ${color}`,
+  },
+  {
+    pattern: new RegExp(
+      `penup setpos (${numberSource}) (${numberSource}) pendown`,
+      "gu",
+    ),
+    procedure: {
+      body: "penup setpos :x :y pendown",
+      name: "move_to",
+      parameters: ["x", "y"],
+    },
+    replace: (_match, x, y) => `move_to ${x} ${y}`,
+  },
+  {
+    pattern: new RegExp(
+      `penup fd (${numberSource}) pendown`,
+      "gu",
+    ),
+    procedure: {
+      body: "penup fd :distance pendown",
+      name: "move_forward",
+      parameters: ["distance"],
+    },
+    replace: (_match, distance) => `move_forward ${distance}`,
+  },
+  {
+    pattern:
+      /setblend source-over setalpha 1 setglow 0/gu,
+    procedure: {
+      body: "setblend source-over setalpha 1 setglow 0",
+      name: "reset_light",
+      parameters: [],
+    },
+    replace: () => "reset_light",
+  },
+  {
+    pattern:
+      /setsoftness 0 setflow 1 setsymmetry 1/gu,
+    procedure: {
+      body: "setsoftness 0 setflow 1 setsymmetry 1",
+      name: "reset_brush",
+      parameters: [],
+    },
+    replace: () => "reset_brush",
+  },
+] as const;
+
+const simplifyLogoSource = (
+  source: string,
+): {
+  procedures: readonly SourceProcedure[];
+  source: string;
+} => {
+  const procedures: SourceProcedure[] = [];
+  let simplifiedSource = source;
+
+  sourceTransforms.forEach(({ pattern, procedure, replace }) => {
+    pattern.lastIndex = 0;
+    if (pattern.test(simplifiedSource)) {
+      pattern.lastIndex = 0;
+      simplifiedSource = simplifiedSource.replace(pattern, replace);
+      procedures.push(procedure);
+    }
+  });
+
+  return { procedures, source: simplifiedSource };
+};
+
+const serializeProcedure = (
+  procedure: Readonly<SourceProcedure>,
+): string => {
+  const parameters = procedure.parameters
+    .map((parameter) => ` :${parameter}`)
+    .join("");
+  return `to ${procedure.name}${parameters}\n  ${procedure.body}\nend`;
+};
+
 const scalableFirstArguments = new Set<ICommandModel["name"]>([
   "bk",
   "circle",
@@ -238,10 +648,40 @@ const example = ({
           ],
         };
 
+  const procedureName = getProcedureName(spec.name);
+  const simplified = simplifyLogoSource(serializeCommand(command));
+  const helperProcedures = simplified.procedures.map(serializeProcedure);
+  const path = [
+    ...helperProcedures,
+    `to ${procedureName}`,
+    `  ${simplified.source}`,
+    "end",
+    procedureName,
+  ].join("\n");
+  const procedureProgram = new Parser(path).parseProgram(() => {
+    throw new Error(
+      `Invalid generated procedure example: ${spec.type} / ${spec.name}`,
+    );
+  });
+  if (procedureProgram.commands.length !== 1) {
+    throw new Error(
+      `Generated procedure example must contain one root command: ${spec.type} / ${spec.name}`,
+    );
+  }
+  if (
+    serializeCommand(procedureProgram.commands[0]) !==
+    serializeCommand(command)
+  ) {
+    throw new Error(
+      `Generated procedures changed the example output: ${spec.type} / ${spec.name}`,
+    );
+  }
+
   return {
     ...spec,
-    command,
-    path: serializeCommand(command),
+    command: procedureProgram.commands[0],
+    path,
+    procedures: procedureProgram.procedures,
   };
 };
 
