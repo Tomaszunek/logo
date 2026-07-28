@@ -27,6 +27,14 @@ const cloneCommand = (command: Readonly<ICommandModel>): ICommandModel => ({
     ? { animations: command.animations.map((animation) => ({ ...animation })) }
     : {}),
   ...(command.palette ? { palette: [...command.palette] } : {}),
+  ...(command.procedureCalls
+    ? {
+        procedureCalls: command.procedureCalls.map((call) => ({
+          ...call,
+          arguments: [...call.arguments],
+        })),
+      }
+    : {}),
   ...(command.commands
     ? { commands: command.commands.map((child) => cloneCommand(child)) }
     : {}),

@@ -41,6 +41,11 @@ export interface ICommandAnimation {
   start: number;
 }
 
+export interface IProcedureCall {
+  arguments: readonly string[];
+  name: string;
+}
+
 export interface ICommandModel {
   id: number;
   name: CommandTypes;
@@ -50,6 +55,7 @@ export interface ICommandModel {
   color2?: string;
   blend?: BlendMode;
   palette?: string[];
+  procedureCalls?: IProcedureCall[];
   commands?: ICommandModel[];
   animation?: ICommandAnimation;
   animations?: ICommandAnimation[];

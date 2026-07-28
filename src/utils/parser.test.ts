@@ -575,6 +575,9 @@ describe("Parser", () => {
           { name: "tr", value: 90 },
         ],
         name: "repeat",
+        procedureCalls: [
+          { arguments: ["75"], name: "square" },
+        ],
         value: 4,
       },
     ]);
@@ -612,11 +615,26 @@ describe("Parser", () => {
     expect(program.commands).toMatchObject([
       {
         commands: [
-          { name: "fd", value: 90 },
-          { name: "bk", value: 90 },
+          {
+            name: "fd",
+            procedureCalls: [
+              { arguments: ["90"], name: "spoke" },
+            ],
+            value: 90,
+          },
+          {
+            name: "bk",
+            procedureCalls: [
+              { arguments: ["90"], name: "spoke" },
+            ],
+            value: 90,
+          },
           { name: "tr", value: 60 },
         ],
         name: "repeat",
+        procedureCalls: [
+          { arguments: ["90"], name: "wheel" },
+        ],
         value: 6,
       },
     ]);

@@ -326,6 +326,49 @@ textarea:focus-visible,
   color: var(--accent);
 }
 
+.procedureCallBadge {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border: 1px solid rgba(199, 191, 255, 0.24);
+  border-radius: 999px;
+  color: #c7bfff;
+  background: rgba(139, 124, 255, 0.12);
+  font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.62rem;
+  line-height: 1;
+}
+
+.procedureCallBadge > span {
+  flex: none;
+  color: #a99dff;
+  font-weight: 800;
+}
+
+.procedureCallBadge code {
+  overflow: hidden;
+  color: #d8d2ff;
+  font-size: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.commandTitle .procedureCallBadge {
+  max-width: 150px;
+}
+
+.commandTitle .procedureCallBadge span {
+  overflow: visible;
+  color: #a99dff;
+}
+
+.commandTitle .procedureCallBadge code {
+  color: #d8d2ff;
+  font-weight: 600;
+}
+
 .nestedCommands {
   flex: 1;
   margin: 0;

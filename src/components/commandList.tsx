@@ -9,6 +9,7 @@ import {
   type ICommandModel,
 } from 'src/models';
 import { useCommandStore } from 'src/store/commandStore';
+import ProcedureCallBadge from "./procedureCallBadge";
 
 interface IProps {
   descriptions: Readonly<Record<string, ICommandDescription>>;
@@ -124,6 +125,7 @@ const CommandList: React.FC<IProps> = ({ descriptions }) => {
             <div className="commandTitle">
               <code>{short}</code>
               <span>{name}</span>
+              <ProcedureCallBadge calls={item.procedureCalls} />
             </div>
             <div className="commandFields">
               {shouldShowPrimaryValue(item) ?

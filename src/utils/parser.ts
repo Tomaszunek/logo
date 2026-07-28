@@ -346,9 +346,12 @@ export class Parser {
       throw parseError(callToken.start);
     }
 
+    const argumentsList: string[] = [];
     const variables = new Map<string, string>();
     procedure.parameters.forEach((parameter) => {
-      variables.set(parameter, this.takeResolved().value);
+      const argument = this.takeResolved().value;
+      argumentsList.push(argument);
+      variables.set(parameter, argument);
     });
 
     const child = new Parser(procedure.body, [], {
@@ -364,7 +367,13 @@ export class Parser {
       if (child.index !== child.tokens.length) {
         throw parseError(callToken.start);
       }
-      return commands;
+      return commands.map((command) => ({
+        ...command,
+        procedureCalls: [
+          { arguments: argumentsList, name },
+          ...(command.procedureCalls ?? []),
+        ],
+      }));
     } catch {
       throw parseError(callToken.start);
     }
